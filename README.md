@@ -118,3 +118,17 @@ TBD
 **Course & Year:** BSIT-3
 
 > Hello! My name is Kyle, and I'm just an average dude from the Philippines. I love playing games, enjoying music, and chilling with friends. I consider myself an ambivert. Currently, on my academic journey, I am learning Mobile App Development, Spring Boot, ReactJS, and Axios.
+=======
+
+# IT342 LEMS - Lite for Teachers
+
+
+Branchname: feature-myprofile-bandola
+
+# TEAM MEMBERS:
+
+### Member1
+### NAME: BANDOLA MARK JANZEN R.
+### COURSE & YEAR: BSIT-4
+
+I am a passionate person who loves anime manga games and many more. I live in salvador extension labangon. My favorite hobby is spending time with my loved one, and playing warthunder. I am a person who is willing to learn new things and enjoy overcoming challenges.
