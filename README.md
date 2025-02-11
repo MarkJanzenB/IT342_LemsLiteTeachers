@@ -34,7 +34,7 @@
 
 - **Login and Registration**
   - Users can login to their account or register a new account in order to use the system.
-  - Prevents unauthorized users from accessing features of the system.
+  - Prevents unauthorized users from accessing features of the system. 
 
 - **Scheduling System**
   - Users are able to view and manage requests for schedules, current schedules, and upcoming events.
