@@ -22,74 +22,45 @@
 <!-- Project Table of Contents -->
 
 ## Table of Contents
-- [Installation](#installation)
 - [Features](#features)
-- [Project Info](#project-info)
 - [Links](#links)
-- [Screenshots](#screenshots)
-- [Team Members](#team-members)
+- [Developers Profile](#developers-profile)
 
 <br>
 
-<!-- Project Installation -->
-
-## Installation
-
-TBD
-
-<br>
-
-<!-- Project Features -->
+<!-- List of Features -->
 
 ## Features
 
-TBD
+- **Login and Registration**
+  - Users can login to their account or register a new account in order to use the system.
+  - Prevents unauthorized users from accessing features of the system.
+
+- **Scheduling System**
+  - Users are able to view and manage requests for schedules, current schedules, and upcoming events.
+  - Multiple permission levels of access for the scheduling tasks among the LIC, LA, and ST.
+  Tabs for the modules of Request, Today, and Upcoming schedule are integrated as well.
+
+- **Equipment Borrowing System**
+  - Allow for browsing through existing equipment available by users who then can apply to borrow that.
+  - System which allows a facility for the borrowing of already used equipment after successful verification.
+  - Users are required to upload a picture of the equipment upon return for verification.
 
 <br>
 
-<!-- Project Info -->
-
-## Project Info
-
-#### Front End:
-TBD
-
-#### Back End:
-TBD
-
-### Database
-
-TBD
-
-### Database Info
-
-TBD
-
-### Tools
-
-<p align="left">
-    <a href="#tools"><img src="https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white" /></a>
-    <a href="#tools"><img src="https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white" /></a>
-    <a href="#tools"><img src="https://img.shields.io/badge/ClickUp-white?style=for-the-badge&logo=ClickUp&logoColor=black" /></a>
-    <a href="#tools"><img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" /></a>
-    <a href="#tools"><img src="https://img.shields.io/badge/Canva-%2300C4CC.svg?&style=for-the-badge&logo=Canva&logoColor=white" /></a>
-</p>
-
-<br>
+<!-- Links -->
 
 ## Links
 
-TBD
+- [Figma](https://www.figma.com/design/x8eVFyInjGaCYjB77RRnCk/LEMS?node-id=775-404&t=Ra8nGCYHk3oKFDcH-1)
+- [Diagrams]()
+- [Documentation]()
 
 <br>
 
-## Screenshots
+<!-- Developers Profile -->
 
-TBD
-
-<br>
-
-## Team Members
+## Developers Profile
 
 <br>
 
