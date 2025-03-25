@@ -1,4 +1,4 @@
-package com.capstone.LEMS.Controller;
+package edu.cit.lemslite.controller;
 
 import java.util.List;
 

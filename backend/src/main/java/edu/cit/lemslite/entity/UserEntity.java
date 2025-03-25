@@ -1,4 +1,4 @@
-package edu.cit.lemslite;
+package edu.cit.lemslite.entity;
 
 import java.util.ArrayList;
 import java.util.List;
