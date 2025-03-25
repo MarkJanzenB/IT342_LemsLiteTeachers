@@ -1,4 +1,4 @@
-package com.capstone.LEMS.Controller;
+package edu.cit.lemslite.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.capstone.LEMS.Entity.InventoryEntity;
-import com.capstone.LEMS.Service.InventoryService;
+import edu.cit.lemslite.entity.InventoryEntity;
+import edu.cit.lemslite.service.InventoryService;
 @RestController
 @RequestMapping("/inventory")
 @CrossOrigin

@@ -1,4 +1,4 @@
-package com.capstone.LEMS.Entity;
+package edu.cit.lemslite.entity;
 
 import java.util.ArrayList;
 import java.util.List;

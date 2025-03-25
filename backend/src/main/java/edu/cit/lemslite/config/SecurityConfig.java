@@ -1,4 +1,4 @@
-package edu.cit.lemslite;
+package edu.cit.lemslite.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

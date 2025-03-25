@@ -1,4 +1,4 @@
-package com.capstone.LEMS.Controller;
+package edu.cit.lemslite.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.capstone.LEMS.Entity.UserEntity;
-import com.capstone.LEMS.Service.UserService;
+import edu.cit.lemslite.entity.UserEntity;
+import edu.cit.lemslite.service.UserService;
 
 @RestController
 @RequestMapping("/user")

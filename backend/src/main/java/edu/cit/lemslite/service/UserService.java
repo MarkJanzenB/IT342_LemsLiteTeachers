@@ -1,4 +1,4 @@
-package com.capstone.LEMS.Service;
+package edu.cit.lemslite.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,8 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.capstone.LEMS.Entity.UserEntity;
-import com.capstone.LEMS.Repository.UserRepository;
+import edu.cit.lemslite.entity.UserEntity;
+import edu.cit.lemslite.repository.UserRepository;
 
 @Service
 public class UserService {

@@ -1,6 +1,6 @@
-package com.capstone.LEMS.Repository;
+package edu.cit.lemslite.repository;
 
-import com.capstone.LEMS.Entity.InventoryEntity;
+import edu.cit.lemslite.entity.InventoryEntity;
 
 import java.util.List;
 
