@@ -1,4 +1,4 @@
-package com.capstone.LEMS.Filter;
+package edu.cit.lemslite.filter;
 
 import java.io.IOException;
 
@@ -11,8 +11,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.capstone.LEMS.Service.JwtService;
-import com.capstone.LEMS.Service.MyUserDetailsService;
+import edu.cit.lemslite.service.JwtService;
+import edu.cit.lemslite.service.MyUserDetailsService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

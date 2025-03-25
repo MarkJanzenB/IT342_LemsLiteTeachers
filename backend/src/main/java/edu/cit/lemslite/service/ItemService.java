@@ -192,7 +192,6 @@ public class ItemService {
             itemsToReturn.forEach(item -> {
                 item.setStatus(status);
                 item.setUser(null);
-                item.setBorrowCart(null);
                 itemsToUpdate.add(item);
             });
         }

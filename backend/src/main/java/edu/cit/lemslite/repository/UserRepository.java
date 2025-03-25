@@ -1,11 +1,11 @@
-package edu.cit.lemslite;
+package edu.cit.lemslite.repository;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.capstone.LEMS.Entity.UserEntity;
+import edu.cit.lemslite.entity.UserEntity;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer>{
