@@ -19,7 +19,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.capstone.LEMS.Filter.JwtFilter;
+import edu.cit.lemslite.filter.JwtFilter;
 
 import java.util.Arrays;
 
