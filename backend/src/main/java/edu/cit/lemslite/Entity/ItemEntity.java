@@ -122,13 +122,7 @@ public class ItemEntity {
     public boolean isAutoUid() {
         return isAutoUid;
     }
-	public InventoryEntity getInventory() {
-		return inventory;
-	}
 
-	public void setInventory(InventoryEntity inventory) {
-		this.inventory = inventory;
-	}
     public BorrowItemEntity getBorrowItemEntity() {
         return borrowItemEntity;
     }
@@ -136,9 +130,7 @@ public class ItemEntity {
     public void setBorrowItemEntity(BorrowItemEntity borrowItemEntity) {
         this.borrowItemEntity = borrowItemEntity;
     }
-	public boolean isAutoUid() {
-		return isAutoUid;
-	}
+
 
     public void setAutoUid(boolean isAutoUid) {
         this.isAutoUid = isAutoUid;
@@ -209,13 +201,7 @@ public class ItemEntity {
         this.borrowCart = borrowCart;
     }
 
-    public BorrowItemEntity getBorrowItemEntity() {
-        return BorrowItemEntity;
-    }
 
-    public void setBorrowItemEntity(BorrowItemEntity BorrowItemEntity) {
-        this.BorrowItemEntity = BorrowItemEntity;
-    }
 
 //    public ManufacturerEntity getManufacturer() {
 //        return manufacturer;
