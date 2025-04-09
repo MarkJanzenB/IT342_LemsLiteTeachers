@@ -20,6 +20,10 @@ public class ItemEntity {
     private int itemId;
     @Column(name = "item_name")
     private String itemName;
+
+    @ManyToOne
+    @JoinColumn(name = "borrow_item_id", nullable = true)
+    private BorrowItemEntity borrowItemEntity;
     @Column(name = "unique_id")
     private String uniqueId;
     @Column(name = "is_auto_uid")
@@ -91,7 +95,13 @@ public class ItemEntity {
 	public void setInventory(InventoryEntity inventory) {
 		this.inventory = inventory;
 	}
+    public BorrowItemEntity getBorrowItemEntity() {
+        return borrowItemEntity;
+    }
 
+    public void setBorrowItemEntity(BorrowItemEntity borrowItemEntity) {
+        this.borrowItemEntity = borrowItemEntity;
+    }
 	public boolean isAutoUid() {
 		return isAutoUid;
 	}

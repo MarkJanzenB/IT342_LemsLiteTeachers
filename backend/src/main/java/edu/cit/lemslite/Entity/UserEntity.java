@@ -47,9 +47,9 @@ public class UserEntity {
 	@JsonIgnore
 	private List<RequestEntity> requests = new ArrayList<>();
 
-//	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-//	@JsonIgnore
-//	private List<BorrowItemEntity> borrowedItems = new ArrayList<>();
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	private List<BorrowItemEntity> borrowedItems = new ArrayList<>();
 
 	@OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = false)
 	@JsonIgnore
