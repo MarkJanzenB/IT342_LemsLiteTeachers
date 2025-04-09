@@ -44,9 +44,9 @@ public class BorrowItemEntity {
     @JoinColumn(name = "teacher_schedule_id")
     private TeacherScheduleEntity teacherSchedule;
 
-    @OneToMany(mappedBy = "BorrowItemEntity", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = false)
-    @JsonIgnore
-    private List<ItemEntity> items = new ArrayList<>();
+//    @OneToMany(mappedBy = "BorrowItemEntity", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = false)
+//    @JsonIgnore
+//    private List<ItemEntity> items = new ArrayList<>();
 
     // Static atomic counter for auto increment number (per month/year)
     private static final AtomicInteger autoIncrement = new AtomicInteger(1);

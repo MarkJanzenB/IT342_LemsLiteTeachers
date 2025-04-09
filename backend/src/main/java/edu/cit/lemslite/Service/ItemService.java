@@ -170,9 +170,9 @@ public class ItemService {
             int borrowCartID = (int) itemReq.get("borrowCartID");
             String status = (String) itemReq.get("status");
             int quantity = (int) itemReq.get("quantity");
-            
+
             List<ItemEntity> items = itemrepo.findByItemNameAndBorrowCart_Id(itemName, borrowCartID);
-            
+
             if (items.isEmpty()) {
                 return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
