@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.capstone.LEMS.Entity.RoleEntity;
-import com.capstone.LEMS.Service.RoleService;
+import edu.cit.lemslite.entity.RoleEntity;
+import edu.cit.lemslite.service.RoleService;
 
 @RestController
 @RequestMapping("/role")
