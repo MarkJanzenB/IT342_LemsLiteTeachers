@@ -17,7 +17,6 @@ public class ItemEntity {
     @Column(name = "item_name")
     private String itemName;
 
-
     @ManyToOne
     @JoinColumn(name = "borrow_item_id", nullable = true)
     private BorrowItemEntity borrowItemEntity;
@@ -60,9 +59,9 @@ public class ItemEntity {
 //    @JoinColumn(name = "manufacturer_id", nullable = true)
 //    private ManufacturerEntity manufacturer;
 //
-//    @ManyToOne
-//    @JoinColumn(name = "resupply_id", nullable = true)
-//    private BatchResupplyEntity batchResupply;
+    @ManyToOne
+    @JoinColumn(name = "resupply_id", nullable = true)
+    private BatchResupplyEntity batchResupply;
 
     public ItemEntity() {
         super();
@@ -136,9 +135,6 @@ public class ItemEntity {
     public void setBorrowItemEntity(BorrowItemEntity borrowItemEntity) {
         this.borrowItemEntity = borrowItemEntity;
     }
-	public boolean isAutoUid() {
-		return isAutoUid;
-	}
 
     public void setAutoUid(boolean isAutoUid) {
         this.isAutoUid = isAutoUid;
@@ -185,14 +181,6 @@ public class ItemEntity {
         this.variant = variant;
     }
 
-    public InventoryEntity getInventory() {
-        return inventory;
-    }
-
-    public void setInventory(InventoryEntity inventory) {
-        this.inventory = inventory;
-    }
-
     public UserEntity getUser() {
         return user;
     }
@@ -209,13 +197,6 @@ public class ItemEntity {
         this.borrowCart = borrowCart;
     }
 
-    public BorrowItemEntity getBorrowItemEntity() {
-        return BorrowItemEntity;
-    }
-
-    public void setBorrowItemEntity(BorrowItemEntity BorrowItemEntity) {
-        this.BorrowItemEntity = BorrowItemEntity;
-    }
 
 //    public ManufacturerEntity getManufacturer() {
 //        return manufacturer;
@@ -225,11 +206,11 @@ public class ItemEntity {
 //        this.manufacturer = manufacturer;
 //    }
 //
-//    public BatchResupplyEntity getBatchResupply() {
-//        return batchResupply;
-//    }
-//
-//    public void setBatchResupply(BatchResupplyEntity batchResupply) {
-//        this.batchResupply = batchResupply;
-//    }
+    public BatchResupplyEntity getBatchResupply() {
+        return batchResupply;
+    }
+
+    public void setBatchResupply(BatchResupplyEntity batchResupply) {
+        this.batchResupply = batchResupply;
+    }
 }
