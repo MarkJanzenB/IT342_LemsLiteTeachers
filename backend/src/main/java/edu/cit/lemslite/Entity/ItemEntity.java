@@ -208,4 +208,10 @@ public class ItemEntity {
     public void setBatchResupply(BatchResupplyEntity batchResupply) {
         this.batchResupply = batchResupply;
     }
+    public InventoryEntity getInventory() {
+        return inventory;
+    }
+    public void setInventory(InventoryEntity inventory) {
+        this.inventory = inventory;
+    }
 }
