@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">LEMS Lite</string>
+    <string name="onboarding_ni_hehe">Hello, onboarding ni, hehe!</string>
+    <string name="skip">Skip</string>
+    <string name="start">Start</string>
+    <string name="Welcome_to_LEMS_Lite">Welcome to LEMS Lite</string>
 </resources>
