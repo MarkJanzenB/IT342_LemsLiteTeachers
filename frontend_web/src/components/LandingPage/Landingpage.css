@@ -1,0 +1,113 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#wrapper {
+  height: 90vh;
+  width: 100vw;
+}
+body, html {
+  overflow: hidden;
+}
+
+@keyframes fadeInSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landing-page {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  animation: fadeInSlideUp 1s ease-out;
+}
+
+
+.waterMark {
+  background-image: url("src/assets/static/img/Cebu_Institute_of_Technology_University_logo.png");
+  width: 720px;
+  top: 25%;
+  height: 600px;
+  left: 60.5%;
+  display: inline-block;
+  position: absolute;
+  background-size: cover;
+  background-repeat:no-repeat;
+}
+
+.landing-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.landing-page::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(255, 223, 0, 0.5), rgba(255, 223, 0, 0));
+  z-index: 2;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 60%;
+  padding: 20px;
+  margin-left: 75px;
+  height: 90%;
+  z-index: 3;
+  animation: fadeInSlideUp 1s ease-out;
+  animation-delay: 0.2s;
+}
+
+.content h1 {
+  font-family: 'Sansita', sans-serif;
+  font-size: 3.2rem;
+  color: #056765;
+  font-weight: bold;
+}
+
+.content p {
+  font-family: 'Sansita', sans-serif;
+  font-size: 1.25rem;
+  color: #056765;
+  margin-top: 10px;
+}
+
+#imgcontainer {
+  width: 500px;
+  height: 450px;
+  border-radius: 5%;
+  background-color: #016565;
+  margin-right: 50px;
+  z-index: 3;
+}
+
+#imgcontainer img {
+  width: 450px;
+  height: 450px;
+  margin-top: -10px;
+  margin-left: 20px;
+}
