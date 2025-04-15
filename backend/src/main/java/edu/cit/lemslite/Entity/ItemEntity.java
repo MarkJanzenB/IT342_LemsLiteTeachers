@@ -192,6 +192,14 @@ public class ItemEntity {
         this.borrowCart = borrowCart;
     }
 
+    public InventoryEntity getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(InventoryEntity inventory) {
+        this.inventory = inventory;
+    }
+
 
 //    public ManufacturerEntity getManufacturer() {
 //        return manufacturer;
