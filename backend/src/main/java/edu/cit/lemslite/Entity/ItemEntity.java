@@ -1,219 +1,213 @@
 package edu.cit.lemslite.Entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
 @Entity
-@Table(name="Item")
+@Table(name = "Item")
 public class ItemEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "item_id")
-    private int itemId;
 
-    @Column(name = "item_name")
-    private String itemName;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "item_id")
+	private int itemId;
 
-    @ManyToOne
-    @JoinColumn(name = "borrow_item_id", nullable = true)
-    private BorrowItemEntity borrowItemEntity;
-    @Column(name = "unique_id")
-    private String uniqueId;
+	@Column(name = "item_name")
+	private String itemName;
 
-    @Column(name = "is_auto_uid")
-    private boolean isAutoUid;
+	@Column(name = "unique_id")
+	private String uniqueId;
 
-    private String status;
+	@Column(name = "is_auto_uid")
+	private boolean isAutoUid;
 
-    @Column(name = "date_added")
-    private LocalDate dateAdded;
+	private String status;
 
-    private int quantity;
+	@Column(name = "date_added")
+	private LocalDate dateAdded;
 
-    @Column(name = "expiry_date")
-    private LocalDate expiryDate;
+	private int quantity;
 
-    @Column(nullable = false)
-    private String variant;
+	@Column(name = "expiry_date")
+	private LocalDate expiryDate;
 
-    @ManyToOne
-    @JoinColumn(name = "inventory_id", nullable = true)
-    private InventoryEntity inventory;
+	@Column(nullable = false)
+	private String variant;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = true)
-    private UserEntity user;
+	@ManyToOne
+	@JoinColumn(name = "inventory_id", nullable = true)
+	private InventoryEntity inventory;
 
-    @ManyToOne
-    @JoinColumn(name = "borrowcart_id", nullable = true)
-    private BorrowCartEntity borrowCart;
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = true)
+	private UserEntity user;
 
-    @ManyToOne
-    @JoinColumn(name = "BorrowItemEntity_id", nullable = true)
-    private BorrowItemEntity BorrowItemEntity;
+	@ManyToOne
+	@JoinColumn(name = "borrowcart_id", nullable = true)
+	private BorrowCartEntity borrowCart;
 
-//    @ManyToOne
-//    @JoinColumn(name = "manufacturer_id", nullable = true)
-//    private ManufacturerEntity manufacturer;
-//
-    @ManyToOne
-    @JoinColumn(name = "resupply_id", nullable = true)
-    private BatchResupplyEntity batchResupply;
+	@ManyToOne
+	@JoinColumn(name = "BorrowItemEntity_id", nullable = true)
+	private BorrowItemEntity BorrowItemEntity;
 
-    public ItemEntity() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+	@ManyToOne
+	@JoinColumn(name = "manufacturer_id", nullable = true)
+	private ManufacturerEntity manufacturer;
 
-    public ItemEntity(int itemId, String itemName, String uniqueId, InventoryEntity inventory, UserEntity user, String status, BorrowCartEntity borrowCart, BorrowItemEntity BorrowItemEntity, int quantity, LocalDate expiryDate, String variant) {
-        super();
-        this.itemId = itemId;
-        this.itemName = itemName;
-        this.uniqueId = uniqueId;
-        this.inventory = inventory;
-        this.isAutoUid = false;
-        this.user = user;
-        this.status = status;
-        this.borrowCart = borrowCart;
-        this.BorrowItemEntity = BorrowItemEntity;
-        this.quantity = quantity;
-        this.expiryDate = expiryDate;
-        this.variant = variant;
-//        this.manufacturer = manufacturer;
-//        this.batchResupply = batchResupply;
-    }
+	@ManyToOne
+	@JoinColumn(name = "resupply_id", nullable = true)
+	private BatchResupplyEntity batchResupply;
 
-    @PrePersist
-    protected void onCreate() {
-        this.dateAdded = LocalDate.now();
-    }
+	public ItemEntity() {
+		super();
+	}
 
-    @JsonProperty("item_id")
-    public int getItemId() {
-        return itemId;
-    }
+	public ItemEntity(int itemId, String itemName, String uniqueId, InventoryEntity inventory, UserEntity user, String status, BorrowCartEntity borrowCart, BorrowItemEntity BorrowItemEntity, int quantity, LocalDate expiryDate, String variant, ManufacturerEntity manufacturer, BatchResupplyEntity batchResupply) {
+		super();
+		this.itemId = itemId;
+		this.itemName = itemName;
+		this.uniqueId = uniqueId;
+		this.inventory = inventory;
+		this.isAutoUid = false;
+		this.user = user;
+		this.status = status;
+		this.borrowCart = borrowCart;
+		this.BorrowItemEntity = BorrowItemEntity;
+		this.quantity = quantity;
+		this.expiryDate = expiryDate;
+		this.variant = variant;
+		this.manufacturer = manufacturer;
+		this.batchResupply = batchResupply;
+	}
 
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
-    }
+	@PrePersist
+	protected void onCreate() {
+		this.dateAdded = LocalDate.now();
+	}
 
-    @JsonProperty("item_name")
-    public String getItemName() {
-        return itemName;
-    }
+	@JsonProperty("item_id")
+	public int getItemId() {
+		return itemId;
+	}
 
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
+	public void setItemId(int itemId) {
+		this.itemId = itemId;
+	}
 
-    @JsonProperty("unique_id")
-    public String getUniqueId() {
-        return uniqueId;
-    }
+	@JsonProperty("item_name")
+	public String getItemName() {
+		return itemName;
+	}
 
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
+	}
 
-    public boolean isAutoUid() {
-        return isAutoUid;
-    }
+	@JsonProperty("unique_id")
+	public String getUniqueId() {
+		return uniqueId;
+	}
 
-    public BorrowItemEntity getBorrowItemEntity() {
-        return borrowItemEntity;
-    }
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
+	}
 
-    public void setBorrowItemEntity(BorrowItemEntity borrowItemEntity) {
-        this.borrowItemEntity = borrowItemEntity;
-    }
+	public boolean isAutoUid() {
+		return isAutoUid;
+	}
 
+	public void setAutoUid(boolean isAutoUid) {
+		this.isAutoUid = isAutoUid;
+	}
 
-    public void setAutoUid(boolean isAutoUid) {
-        this.isAutoUid = isAutoUid;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	@JsonProperty("date_added")
+	public LocalDate getDateAdded() {
+		return dateAdded;
+	}
 
-    @JsonProperty("date_added")
-    public LocalDate getDateAdded() {
-        return dateAdded;
-    }
+	public void setDateAdded(LocalDate dateAdded) {
+		this.dateAdded = dateAdded;
+	}
 
-    public void setDateAdded(LocalDate dateAdded) {
-        this.dateAdded = dateAdded;
-    }
+	public int getQuantity() {
+		return quantity;
+	}
 
-    public int getQuantity() {
-        return quantity;
-    }
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+	public LocalDate getExpiryDate() {
+		return expiryDate;
+	}
 
-    public LocalDate getExpiryDate() {
-        return expiryDate;
-    }
+	public void setExpiryDate(LocalDate expiryDate) {
+		this.expiryDate = expiryDate;
+	}
 
-    public void setExpiryDate(LocalDate expiryDate) {
-        this.expiryDate = expiryDate;
-    }
+	public String getVariant() {
+		return variant;
+	}
 
-    public String getVariant() {
-        return variant;
-    }
+	public void setVariant(String variant) {
+		this.variant = variant;
+	}
 
-    public void setVariant(String variant) {
-        this.variant = variant;
-    }
+	public InventoryEntity getInventory() {
+		return inventory;
+	}
 
-    public UserEntity getUser() {
-        return user;
-    }
+	public void setInventory(InventoryEntity inventory) {
+		this.inventory = inventory;
+	}
 
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
+	public UserEntity getUser() {
+		return user;
+	}
 
-    public BorrowCartEntity getBorrowCart() {
-        return borrowCart;
-    }
+	public void setUser(UserEntity user) {
+		this.user = user;
+	}
 
-    public void setBorrowCart(BorrowCartEntity borrowCart) {
-        this.borrowCart = borrowCart;
-    }
+	public BorrowCartEntity getBorrowCart() {
+		return borrowCart;
+	}
 
-    public InventoryEntity getInventory() {
-        return inventory;
-    }
+	public void setBorrowCart(BorrowCartEntity borrowCart) {
+		this.borrowCart = borrowCart;
+	}
 
-    public void setInventory(InventoryEntity inventory) {
-        this.inventory = inventory;
-    }
+	public BorrowItemEntity getBorrowItemEntity() {
+		return BorrowItemEntity;
+	}
 
+	public void setBorrowItemEntity(BorrowItemEntity BorrowItemEntity) {
+		this.BorrowItemEntity = BorrowItemEntity;
+	}
 
-//    public ManufacturerEntity getManufacturer() {
-//        return manufacturer;
-//    }
-//
-//    public void setManufacturer(ManufacturerEntity manufacturer) {
-//        this.manufacturer = manufacturer;
-//    }
-//
-    public BatchResupplyEntity getBatchResupply() {
-        return batchResupply;
-    }
+	public ManufacturerEntity getManufacturer() {
+		return manufacturer;
+	}
 
-    public void setBatchResupply(BatchResupplyEntity batchResupply) {
-        this.batchResupply = batchResupply;
-    }
+	public void setManufacturer(ManufacturerEntity manufacturer) {
+		this.manufacturer = manufacturer;
+	}
+
+	public BatchResupplyEntity getBatchResupply() {
+		return batchResupply;
+	}
+
+	public void setBatchResupply(BatchResupplyEntity batchResupply) {
+		this.batchResupply = batchResupply;
+	}
 }
