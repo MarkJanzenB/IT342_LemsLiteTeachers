@@ -13,7 +13,5 @@ class OnboardingActivity : AppCompatActivity() {
 
         val viewPager = findViewById<ViewPager2>(R.id.viewPager)
         viewPager.adapter = OnboardingAdapter(this)
-
-        // Optional: Add a listener to detect when onboarding is finished
     }
 }
