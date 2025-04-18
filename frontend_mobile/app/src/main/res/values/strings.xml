@@ -20,4 +20,6 @@
     <string name="dont_have_account">Don\'t have an account?</string>
     <string name="click_here">Click here</string>
     <string name="login_to_your_account">Log In To Your Account</string>
+    <string name="create_your_accont">Create Your Account</string>
+    <string name="image_desc">Image Description</string>
 </resources>
