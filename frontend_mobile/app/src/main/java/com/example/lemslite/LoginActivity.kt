@@ -1,20 +1,113 @@
 package com.example.lemslite
 
+import ApiService
+import JwtService
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.example.lemslite.databinding.ActivityLoginBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import androidx.core.content.edit
 
 class LoginActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityLoginBinding
+    private val sharedPreferences by lazy {
+        getSharedPreferences("user_session", Context.MODE_PRIVATE)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_login)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        // Check if a valid token exists
+        val token = sharedPreferences.getString("jwt_token", null)
+        if (token != null && !isTokenExpired(token)) {
+            navigateToLoginSuccess()
+            return
+        }
+
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.btnLogin.setOnClickListener {
+            val instiId = binding.idNumberInputTextLayout.editText?.text.toString().trim()
+            val password = binding.passwordInputTextLayout.editText?.text.toString().trim()
+
+            if (instiId.isNotEmpty() && password.isNotEmpty()) {
+                loginUser(instiId, password)
+            } else {
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun loginUser(instiId: String, password: String) {
+        val apiService = RetrofitInstance.retrofit.create(ApiService::class.java)
+        val loginDetails = mapOf("insti_id" to instiId, "password" to password)
+
+        val call = apiService.login(loginDetails)
+        call.enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.isSuccessful) {
+                    val token = response.body()
+                    if (token != null) {
+                        handleToken(token)
+                    } else {
+                        Log.e("LoginActivity", "Empty response body")
+                        Toast.makeText(this@LoginActivity, "Server returned an empty response. Please try again.", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    val errorMessage = response.errorBody()?.string() ?: "An unexpected error occurred."
+                    Log.e("LoginActivity", "Login failed: $errorMessage")
+                    Toast.makeText(this@LoginActivity, "Login failed: $errorMessage", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Log.e("LoginActivity", "Network error: ${t.message}", t)
+                Toast.makeText(this@LoginActivity, "Unable to connect. Please check your internet connection.", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun handleToken(token: String) {
+        try {
+            saveToken(token)
+            Toast.makeText(this, "Welcome! Login successful.", Toast.LENGTH_SHORT).show()
+            navigateToLoginSuccess()
+        } catch (e: Exception) {
+            Log.e("LoginActivity", "Error processing token: ${e.message}", e)
+            Toast.makeText(this, "Invalid token received. Please contact support.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun saveToken(token: String) {
+        sharedPreferences.edit { putString("jwt_token", token) }
+    }
+
+    private fun isTokenExpired(token: String): Boolean {
+        return try {
+            Log.d("LoginActivity", "Validating token expiration")
+            val jwtService = JwtService()
+            jwtService.isTokenExpired(token)
+        } catch (e: Exception) {
+            Log.e("LoginActivity", "Error validating token: ${e.message}", e)
+            true
+        }
+    }
+
+    private fun navigateToLoginSuccess() {
+        if (!isFinishing) {
+            Log.d("LoginActivity", "Navigating to LoginSuccessActivity")
+            val intent = Intent(this, LoginSuccessActivity::class.java)
+            startActivity(intent)
+            finish()
+        } else {
+            Log.w("LoginActivity", "Activity is finishing, cannot navigate")
         }
     }
 }
