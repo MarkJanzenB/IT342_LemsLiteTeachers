@@ -25,10 +25,7 @@
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".Login"
-            android:exported="false" />
-        <activity
-            android:name=".HomeActivity"
+            android:name=".LandingPageActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
@@ -36,7 +33,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashScreenActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
