@@ -17,7 +17,7 @@ class OnboardingFragment3 : Fragment() {
 
         val startButton = view.findViewById<Button>(R.id.btn_start)
         startButton.setOnClickListener {
-            val intent = Intent(requireContext(), HomeActivity::class.java)
+            val intent = Intent(requireContext(), LandingPageActivity::class.java)
             startActivity(intent)
             requireActivity().finish()
         }
