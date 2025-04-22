@@ -1,31 +1,32 @@
-import { useState } from 'react'
-import './App.css'
-import AppRoutes from "./components/Routes.jsx";
-import { BrowserRouter } from 'react-router-dom';
+import React from "react";
+import { unstable_HistoryRouter as HistoryRouter } from "react-router-dom";
+import { createBrowserHistory } from "history";
+import Routes from "./components/Routes.jsx";
+import "./App.css";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
-// const history = createBrowserHistory();
+// Create browser history instance
+const history = createBrowserHistory();
 
 function App() {
     return (
-        // <HelmetProvider>
+        <HelmetProvider>
             <div className="MainBG">
-                {/*<HistoryRouter*/}
-                {/*    history={history}*/}
-                {/*    future={{*/}
-                {/*        v7_startTransition: true,*/}
-                {/*        v7_relativeSplatPath: true,*/}
-                {/*    }}*/}
-                {/*>*/}
-                {/*    <Helmet>*/}
-                {/*        <title>LEMS</title>*/}
-                {/*    </Helmet>*/}
-                <BrowserRouter>
-                    <AppRoutes />
-                    </BrowserRouter>
-                {/*</HistoryRouter>*/}
+                <HistoryRouter
+                    history={history}
+                    future={{
+                        v7_startTransition: true,
+                        v7_relativeSplatPath: true,
+                    }}
+                >
+                    <Helmet>
+                        <title>LEMS</title>
+                    </Helmet>
+                    <Routes />
+                </HistoryRouter>
             </div>
-        // </HelmetProvider>
+        </HelmetProvider>
     );
 }
 
-export default App
+export default App;
