@@ -1,0 +1,69 @@
+/* Appbar.css */
+.appbar-toolbar {
+  background-color: #F2EE9D;
+
+
+
+}
+
+.appbar-logo {
+
+height: 90px;
+    width: 200px;
+}
+body {
+font-family: 'Poppins', sans-serif;
+}
+
+.appbar-typography {
+font-family: 'Poppins', sans-serif;
+}
+
+.vertical-line {
+border-left: 1px solid #000; /* Adjust color and width as needed */
+height: 50%; /* Adjust height as needed */
+margin: 5px; /* Adjust spacing as needed */
+}
+.space-grotesk-font1 {
+    font-family: "Space Grotesk", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+}
+
+.h1{
+    font-family: "Space Grotesk", sans-serif;
+}
+.appbar-typography {
+    font-family: "Space Grotesk", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+ /*font-family: Sansita;*/
+ /*font-weight: bold;*/
+
+
+}
+
+
+/*.appbar-button {*/
+/*  color: #056765;*/
+/* font-weight: bold;*/
+/* margin-left: 16px;*/
+/*}*/
+
+.appbar-button-signup {
+ margin-left: 8px;
+font-weight: bold;
+}
+.appbar{
+  width: 100%;
+}
+
+.appbar-profile-pic{
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  background-size: cover;
+  background-position: center;
+}
