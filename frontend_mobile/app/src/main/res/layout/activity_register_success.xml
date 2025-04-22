@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginSuccessActivity">
+    tools:context=".RegisterSuccessActivity">
 
     <ImageView
         android:id="@+id/imageView4"
@@ -42,12 +42,12 @@
             android:textStyle="normal|bold" />
 
         <TextView
-            android:id="@+id/loggedInMessage"
+            android:id="@+id/registeredMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:text="You have successfully logged \ninto the system!"
+            android:text="You have successfully registered \ninto the system!"
             android:textColor="#000000"
             android:textSize="16sp" />
 
