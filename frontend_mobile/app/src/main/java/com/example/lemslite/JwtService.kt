@@ -7,8 +7,7 @@ import java.util.Date
 import javax.crypto.SecretKey
 
 class JwtService {
-
-    // Decode the Base64-encoded secret key
+    
     private val secretKey: SecretKey = Keys.hmacShaKeyFor(
         Base64.decode("TEVNUy1MSVRFU1lTSU5URUcyMDI1MjYyNjI2MjYyNjI2MjY=", Base64.DEFAULT)
     )
