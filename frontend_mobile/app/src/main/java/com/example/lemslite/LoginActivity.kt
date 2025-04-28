@@ -1,7 +1,6 @@
 package com.example.lemslite
 
 import ApiService
-import JwtService
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +12,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import androidx.core.content.edit
+import com.google.gson.JsonObject
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -47,7 +47,11 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginUser(instiId: String, password: String) {
         val apiService = RetrofitInstance.retrofit.create(ApiService::class.java)
-        val loginDetails = mapOf("insti_id" to instiId, "password" to password)
+
+        val loginDetails = JsonObject().apply {
+            addProperty("insti_id", instiId)
+            addProperty("password", password)
+        }
 
         val call = apiService.login(loginDetails)
         call.enqueue(object : Callback<String> {
@@ -76,9 +80,16 @@ class LoginActivity : AppCompatActivity() {
 
     private fun handleToken(token: String) {
         try {
-            saveToken(token)
-            Toast.makeText(this, "Welcome! Login successful.", Toast.LENGTH_SHORT).show()
-            navigateToLoginSuccess()
+            val jwtService = JwtService()
+            val roleId = jwtService.getRoleIdFromToken(token)
+
+            if (roleId == 1) {
+                saveToken(token)
+                Toast.makeText(this, "Welcome! Login successful.", Toast.LENGTH_SHORT).show()
+                navigateToLoginSuccess()
+            } else {
+                Toast.makeText(this, "Only teachers can log in to this application.", Toast.LENGTH_SHORT).show()
+            }
         } catch (e: Exception) {
             Log.e("LoginActivity", "Error processing token: ${e.message}", e)
             Toast.makeText(this, "Invalid token received. Please contact support.", Toast.LENGTH_SHORT).show()
@@ -90,14 +101,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun isTokenExpired(token: String): Boolean {
-        return try {
-            Log.d("LoginActivity", "Validating token expiration")
-            val jwtService = JwtService()
-            jwtService.isTokenExpired(token)
-        } catch (e: Exception) {
-            Log.e("LoginActivity", "Error validating token: ${e.message}", e)
-            true
-        }
+        val jwtService = JwtService()
+        return jwtService.isTokenExpired(token)
     }
 
     private fun navigateToLoginSuccess() {

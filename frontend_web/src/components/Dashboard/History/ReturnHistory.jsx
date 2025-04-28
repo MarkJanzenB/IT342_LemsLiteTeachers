@@ -72,9 +72,9 @@ export default function ReturnHistory({ userId }) {
         try {
             let apiUrl;
             if (userRole === "1") {
-                apiUrl = `http://localhost:8080/api/preparing-items/getpreparingitems?instiId=${instiId}&status=Returned`;
+                apiUrl = `https://it342-lemsliteteachers.onrender.com/api/preparing-items/getpreparingitems?instiId=${instiId}&status=Returned`;
             } else {
-                apiUrl = `http://localhost:8080/api/preparing-items/getpreparingitems?status=Returned`;
+                apiUrl = `https://it342-lemsliteteachers.onrender.com/api/preparing-items/getpreparingitems?status=Returned`;
             }
 
             const response = await axios.get(apiUrl, {
@@ -111,8 +111,8 @@ export default function ReturnHistory({ userId }) {
 
         try {
             const apiUrl = userRole === "1"
-                ? `http://localhost:8080/api/preparing-items/getpreparingitems?instiId=${instiId}&status=In-use`
-                : `http://localhost:8080/api/preparing-items/getpreparingitems?status=In-use`;
+                ? `https://it342-lemsliteteachers.onrender.com/api/preparing-items/getpreparingitems?instiId=${instiId}&status=In-use`
+                : `https://it342-lemsliteteachers.onrender.com/api/preparing-items/getpreparingitems?status=In-use`;
             const response = await axios.get(apiUrl, { headers: { Authorization: `Bearer ${token}` } });
 
             const data = Array.isArray(response.data) ? response.data : [];
@@ -156,7 +156,7 @@ export default function ReturnHistory({ userId }) {
         }
 
         try {
-            await axios.put(`http://localhost:8080/api/borrowitem/updateStatus/${borrowedId}`, null, {
+            await axios.put(`https://it342-lemsliteteachers.onrender.com/api/borrowitem/updateStatus/${borrowedId}`, null, {
                 params: { status },
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -196,7 +196,7 @@ export default function ReturnHistory({ userId }) {
 
         const consumables = batch.filter(item => item.categoryName === "Consumables");
 
-        axios.post("http://localhost:8080/item/getbypreparingids", preparingIds, {
+        axios.post("https://it342-lemsliteteachers.onrender.com/item/getbypreparingids", preparingIds, {
             headers: {
               "Authorization": `Bearer ${token}`,
               "Content-Type": "application/json"
@@ -266,7 +266,7 @@ export default function ReturnHistory({ userId }) {
             alert("Non-consumable items should have return status")
             return
         }
-        axios.post(`http://localhost:8080/batchreturn/add?uid=${uid}`, payload, {
+        axios.post(`https://it342-lemsliteteachers.onrender.com/batchreturn/add?uid=${uid}`, payload, {
             headers: {
                 "Authorization": `Bearer ${token}`
             }

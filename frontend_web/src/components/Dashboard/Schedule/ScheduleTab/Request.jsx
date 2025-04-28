@@ -133,7 +133,7 @@ export default function Request() {
     };
 
     const handleEditClick = (row) => {
-        axios.get("http://localhost:8080/user/getallusersbyroleid?roleId=1", {
+        axios.get("https://it342-lemsliteteachers.onrender.com/user/getallusersbyroleid?roleId=1", {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
@@ -150,7 +150,7 @@ export default function Request() {
             console.log(error);
         })
 
-        axios.get("http://localhost:8080/subject/getallsubject", {
+        axios.get("https://it342-lemsliteteachers.onrender.com/subject/getallsubject", {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
@@ -251,7 +251,7 @@ export default function Request() {
         const timeString = `${formattedHour}:${formattedMinute}:00`;
         const endtimeString = `${endformattedHour}:${endformattedMinute}:00`;
 
-         axios.put(`http://localhost:8080/request/updaterequest?reqId=${requestId}`, {
+         axios.put(`https://it342-lemsliteteachers.onrender.com/request/updaterequest?reqId=${requestId}`, {
             teacher:{
                 user_id: getTeacherId
             },
@@ -318,7 +318,7 @@ export default function Request() {
             setIsLoading(true);
             try {
                 if (userRole === 3) {
-                    const response = await axios.get(`http://localhost:8080/request/getrequests`, {
+                    const response = await axios.get(`https://it342-lemsliteteachers.onrender.com/request/getrequests`, {
                         headers: {
                             "Authorization": `Bearer ${jwtToken}`
                         }
@@ -326,7 +326,7 @@ export default function Request() {
                     formatData(response.data);
                 }else{
                     const uid = getJWTUid();
-                    const response = await axios.get(`http://localhost:8080/request/teacher/${uid}`,{
+                    const response = await axios.get(`https://it342-lemsliteteachers.onrender.com/request/teacher/${uid}`,{
                         headers:{
                             "Authorization": `Bearer ${jwtToken}`
                         }
