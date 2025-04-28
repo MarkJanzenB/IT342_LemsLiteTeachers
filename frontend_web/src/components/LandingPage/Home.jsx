@@ -1,6 +1,6 @@
 import React from 'react';
 import Appbar from '../Appbar/Appbar';
-import './Landingpage.css';
+import './LandingPage.css';
 import universityLogo from '/src/assets/static/img/Cebu_Institute_of_Technology_University_logo.png';
 
 const LandingPage = () => {

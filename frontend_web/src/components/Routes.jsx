@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Login from './Authentication/Login.jsx';
 import Register from './Authentication/Register.jsx';
 import Dashboard from './Dashboard/Dashboard.jsx';
-import Home from './Landingpage/Home.jsx';
+import Home from './LandingPage/Home.jsx';
 import Schedule from "./Dashboard/Schedule/Schedule.jsx";
 import Inventory from "./Dashboard/Inventory/Inventory.jsx";
 import Export from "./Dashboard/Inventory/Export.jsx";
