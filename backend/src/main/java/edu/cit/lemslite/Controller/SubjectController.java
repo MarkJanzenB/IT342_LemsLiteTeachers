@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/subject")
+@CrossOrigin(origins = "https://cit-lems.vercel.app")
 public class SubjectController {
 
     @Autowired

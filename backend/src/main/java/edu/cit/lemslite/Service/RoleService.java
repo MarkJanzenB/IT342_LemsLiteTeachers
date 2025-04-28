@@ -1,12 +1,11 @@
 package edu.cit.lemslite.Service;
 
-import java.util.List;
-
+import edu.cit.lemslite.Entity.RoleEntity;
+import edu.cit.lemslite.Repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import edu.cit.lemslite.Entity.RoleEntity;
-import edu.cit.lemslite.Repository.RoleRepository;
+import java.util.List;
 
 @Service
 public class RoleService {

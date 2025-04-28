@@ -15,9 +15,11 @@ import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import {DatePicker} from "@mui/x-date-pickers";
 import CircularProgress from "@mui/material/CircularProgress";
 import MyPaper from "../../../MyPaper.jsx";
+import { FormControl, InputLabel } from "@mui/material"
 import CustomTable from "../../../Table and Pagination/Table.jsx";
 import CustomTablePagination from "../../../Table and Pagination/Pagination.jsx";
 import { format, parseISO, parse } from 'date-fns';
+
 
 // const columns = [
 //     { id: 'teacher', label: 'Teacher', minWidth: 100 },
@@ -47,6 +49,8 @@ const columns = [
     { field: 'lab_num', headerName: 'Room' },
     { field: 'teacher_id', headerName: 'teacher ID' },
     { field: 'date', headerName: 'Date' },
+    {field:'yearSection', headerName:'Year & Section'},
+
 ];
 
 const theme = createTheme({
@@ -96,6 +100,7 @@ export default function UpcomingSchedule() {
                     // teacher_id: request.teacher?.user_id || 0,
                     teacher_id: 0,
                     date: '',
+                    yearSection: '',
     }]);
 
     const [openModal, setOpenModal] = useState(false);
@@ -134,7 +139,65 @@ export default function UpcomingSchedule() {
     const [dateUnchanged, setDateUnchanged] = useState();
     const [isEditMode, setIsEditMode] = useState(false);
     const [modalTitle, setModalTitle] = useState("Create New Schedule");
+    const [yearSections, setYearSections] = useState([ ]);
 
+    // const generateSchoolYearOptions = () => {
+    //     const currentYear = new Date().getFullYear();
+    //     const years = [];
+    //     // Generate options for past 2 years and next year
+    //     for (let i = -2; i <= 1; i++) {
+    //         const startYear = (currentYear + i).toString().slice(-2);
+    //         const endYear = (currentYear + i + 1).toString().slice(-2);
+    //         years.push(`${startYear}${endYear}`);
+    //     }
+    //     return years;
+    // };
+    // const [selectedSchoolYear, setSelectedSchoolYear] = useState(generateSchoolYearOptions()[2]);
+
+    const generateSchoolYearOptions = () => {
+        const currentYear = new Date().getFullYear();
+        const years = [];
+        // Generate options for past 2 years, current, and next year
+        for (let i = -2; i <= 1; i++) {
+            const startYear = currentYear + i;
+            const endYear = currentYear + i + 1;
+            years.push(`${startYear}-${endYear}`);
+        }
+        // Recent years first
+        return years.reverse();
+    };
+    const [selectedSchoolYear, setSelectedSchoolYear] = useState(generateSchoolYearOptions()[0]);
+
+    // const fetchYearSections = () => {
+    //     axios.get("http://localhost:8080/yearsection/getall", {
+    //         headers: {
+    //             "Authorization": `Bearer ${jwtToken}`
+    //         }
+    //     })
+    //         .then(response => {
+    //             setYearSections(response.data);
+    //         })
+    //         .catch(error => {
+    //             console.log(error);
+    //         });
+    // };
+
+    // First, add debug logging to your fetchYearSections function
+    const fetchYearSections = () => {
+        console.log("Fetching year sections...");
+        axios.get("http://localhost:8080/yearsection/getall", {
+            headers: {
+                "Authorization": `Bearer ${jwtToken}`
+            }
+        })
+            .then(response => {
+                console.log("Year sections data:", response.data);
+                setYearSections(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching year sections:", error);
+            });
+    };
 
     const handleSelectSlot = ({ start, end }) => {
         const today = new Date();
@@ -456,6 +519,7 @@ export default function UpcomingSchedule() {
         if (openCModal) {
             fetchTeachers();
             fetchSubjects();
+            fetchYearSections();
         }
     }, [openCModal]);
 
@@ -530,24 +594,12 @@ export default function UpcomingSchedule() {
 
             start_time: timeString,
             end_time: endTimeString,
-            year_and_section: null,
+            year_and_section: getYearSection,
             lab_num: getRoom,
             date: format(getDate, 'yyyy-MM-dd')
         };
 
-        // if (userRole !== 1) {
-        //  teacherScheduleData.date_approved = getFormattedLocalDateTime();
-        //  teacherScheduleData.date_requested = getFormattedLocalDateTime();
-        //  teacherScheduleData.approver = { user_id: getJWTUid() };
-        // } else {
-        //  teacherScheduleData.date_requested = getFormattedLocalDateTime();
-        // }
 
-        // axios.post(`http://localhost:8080/teacherschedule/addtsched?createdby=${getJWTUid()}`, teacherScheduleData, {
-        //     headers: {
-        //         "Authorization": `Bearer ${jwtToken}`
-        //     }
-        // })
         axios.post(`http://localhost:8080/teacherschedule/addtsched?teacherId=${teacherId}&createdby=${getJWTUid()}`,
             teacherScheduleData, {
                 headers: {
@@ -799,11 +851,39 @@ export default function UpcomingSchedule() {
                 <Appbar page={"schedules"} />
                 <Sidebar page={"schedules"} />
                 <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <div style={{ flex: .2, padding: '5px', marginTop:'100px' }}>
-                        {userRole !== 1 && (
-                        <Button variant={'contained'} onClick={handleOpenModal} sx={{ml:'15px', height:'50px'}}>Import Excel File</Button>
-                        )}
-                            <TextField variant={'outlined'} sx={{
+                    <div style={{ flex: .2, padding: '5px', marginTop:'100px', mR:'5px' }}>
+                        {/*{userRole !== 1 && (*/}
+                        {/*<Button variant={'contained'} onClick={handleOpenModal} sx={{ml:'15px', height:'50px'}}>Import Excel File</Button>*/}
+                        {/*)}*/}
+                        {/*<Select*/}
+                        {/*    value={selectedSchoolYear}*/}
+                        {/*    onChange={(e) => setSelectedSchoolYear(e.target.value)}*/}
+                        {/*    sx={{ marginBottom: '10px', marginRight: '10px', width: '150px' }}*/}
+                        {/*>*/}
+                        {/*    {generateSchoolYearOptions().map((year) => (*/}
+                        {/*        <MenuItem key={year} value={year}>{year}</MenuItem>*/}
+                        {/*    ))}*/}
+                        {/*</Select>*/}
+
+                        <FormControl  size = "small" variant="outlined" sx={{ minWidth:80, marginLeft: '15px', marginBottom: '10px', width: '150px' }}>
+                            <InputLabel id="school-year-label">School Year</InputLabel>
+                            <Select
+                                labelId="school-year-label"
+                                id="school-year"
+                                value={selectedSchoolYear}
+                                label="School Year"
+                                onChange={(e) => setSelectedSchoolYear(e.target.value)}
+                                sx={{ backgroundColor: '#F3F7FA' }}
+                            >
+                                {generateSchoolYearOptions().map((year) => (
+                                    <MenuItem value={year} key={year}>
+                                        {year}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+
+                        <TextField variant={'outlined'} sx={{
                             marginLeft: view === 'table' ? '65px' : '100px',
                             width: '50%'
                         }} placeholder={'Search'}
@@ -1140,13 +1220,21 @@ export default function UpcomingSchedule() {
                                 },
                             }}
                         >
-                            <MenuItem value="" disabled>
+                            <MenuItem key="default" value="" disabled>
                                 Select Year and Section
                             </MenuItem>
-                            <MenuItem value="Year 1 - Section A">Year 1 - Section A</MenuItem>
-                            <MenuItem value="Year 1 - Section B">Year 1 - Section B</MenuItem>
-                            <MenuItem value="Year 2 - Section A">Year 2 - Section A</MenuItem>
-                            <MenuItem value="Year 2 - Section B">Year 2 - Section B</MenuItem>
+                            {yearSections && yearSections.length > 0 ? (
+                                yearSections.map((section) => (
+                                    <MenuItem
+                                        key={section.year_section_id}
+                                        value={section.year_section_id}
+                                    >
+                                        {`${section.year} - ${section.section}`}
+                                    </MenuItem>
+                                ))
+                            ) : (
+                                <MenuItem value="" disabled>Loading sections...</MenuItem>
+                            )}
                         </Select>
                         <Select
                             value={getSubject || ''}
@@ -1163,10 +1251,7 @@ export default function UpcomingSchedule() {
                             <MenuItem value="" disabled>
                                 Select Subject
                             </MenuItem>
-                            {/* <MenuItem value="Mathematics">Mathematics</MenuItem>
-                                <MenuItem value="Science">Science</MenuItem>
-                                <MenuItem value="History">History</MenuItem>
-                                <MenuItem value="English">English</MenuItem> */}
+
                             {subjects.map((subject) => (
                                 <MenuItem key={subject.subject_id} value={subject.subject_name} onClick={() => setSubjectId(subject.subject_id)}>
                                     {subject.subject_name}

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/manufacturer")
-@CrossOrigin
+@CrossOrigin(origins = "https://cit-lems.vercel.app")
 public class ManufacturerController {
 	@Autowired
 	ManufacturerService mserv;

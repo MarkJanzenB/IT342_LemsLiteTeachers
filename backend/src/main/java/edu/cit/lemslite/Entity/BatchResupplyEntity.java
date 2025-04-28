@@ -1,9 +1,11 @@
 package edu.cit.lemslite.Entity;
 
+import edu.cit.lemslite.Entity.TransactionHistory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -13,27 +15,47 @@ public class BatchResupplyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "resupply_id")
     private int resupplyId;
+    private int itemId; // Add this field
+    private String itemName; // Add this field
 
+    public int getItemId() { // Add this method
+        return itemId;
+    }
+
+    public void setItemId(int itemId) { // Optional setter if needed
+        this.itemId = itemId;
+    }
+
+    public String getItemName() { // Add this method
+        return itemName;
+    }
+
+    public void setItemName(String itemName) { // Optional setter if needed
+        this.itemName = itemName;
+    }
     @Column(name = "date_resupply")
-    private Date dateResupply;
+    private LocalDate dateResupply;
 
     @ManyToOne
     @JoinColumn(name = "added_by", nullable = false)
     private UserEntity addedBy;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "batchResupply", cascade = CascadeType.ALL)
     private List<ItemEntity> items;
+
+    @OneToMany(mappedBy = "batchResupply", cascade = CascadeType.ALL)
+    private List<TransactionHistory> transactionHistories; // Link to transaction history
 
     public BatchResupplyEntity() {
         super();
     }
 
-    public BatchResupplyEntity(int resupplyId, Date dateResupply, UserEntity addedBy, List<ItemEntity> items) {
+    public BatchResupplyEntity(int resupplyId, LocalDate dateResupply, UserEntity addedBy) {
         super();
         this.resupplyId = resupplyId;
         this.dateResupply = dateResupply;
         this.addedBy = addedBy;
-        this.items = items;
     }
 
     @JsonProperty("resupply_id")
@@ -46,11 +68,11 @@ public class BatchResupplyEntity {
     }
 
     @JsonProperty("date_resupply")
-    public Date getDateResupply() {
+    public LocalDate getDateResupply() {
         return dateResupply;
     }
 
-    public void setDateResupply(Date dateResupply) {
+    public void setDateResupply(LocalDate dateResupply) {
         this.dateResupply = dateResupply;
     }
 
@@ -61,14 +83,5 @@ public class BatchResupplyEntity {
 
     public void setAddedBy(UserEntity addedBy) {
         this.addedBy = addedBy;
-    }
-
-    @JsonProperty("items")
-    public List<ItemEntity> getItems() {
-        return items;
-    }
-
-    public void setItems(List<ItemEntity> items) {
-        this.items = items;
     }
 }

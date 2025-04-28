@@ -2,6 +2,8 @@ package edu.cit.lemslite.Entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "borrow_cart")
 public class BorrowCartEntity {
@@ -22,15 +24,29 @@ public class BorrowCartEntity {
     @Column(nullable = false)
     private int quantity;
 
+    private String selectedVariant;
+
+    @Transient
+    private List<String> availableVariants;
+
     // Default constructor
     public BorrowCartEntity() {}
 
-    // Constructor without itemId (for unfinalized items)
+    // Constructor without selectedVariant
     public BorrowCartEntity(String instiId, String itemName, String categoryName, int quantity) {
         this.instiId = instiId;
         this.itemName = itemName;
         this.categoryName = categoryName;
         this.quantity = quantity;
+    }
+
+    // Constructor with selectedVariant
+    public BorrowCartEntity(String instiId, String itemName, String categoryName, int quantity, String selectedVariant) {
+        this.instiId = instiId;
+        this.itemName = itemName;
+        this.categoryName = categoryName;
+        this.quantity = quantity;
+        this.selectedVariant = selectedVariant;
     }
 
     // Getters and Setters
@@ -72,5 +88,21 @@ public class BorrowCartEntity {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getSelectedVariant() {
+        return selectedVariant;
+    }
+
+    public void setSelectedVariant(String selectedVariant) {
+        this.selectedVariant = selectedVariant;
+    }
+
+    public List<String> getAvailableVariants() {
+        return availableVariants;
+    }
+
+    public void setAvailableVariants(List<String> availableVariants) {
+        this.availableVariants = availableVariants;
     }
 }
