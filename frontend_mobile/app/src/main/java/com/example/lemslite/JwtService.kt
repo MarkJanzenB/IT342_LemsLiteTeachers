@@ -1,23 +1,95 @@
+package com.example.lemslite
+
+import android.util.Base64
+import android.util.Log
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import javax.crypto.SecretKey
 import java.util.Date
+import javax.crypto.SecretKey
 
 class JwtService {
-    private val secretKey: SecretKey = Keys.hmacShaKeyFor(ByteArray(32) { it.toByte() })
+
+    private val secretKey: SecretKey = Keys.hmacShaKeyFor(
+        Base64.decode("TEVNUy1MSVRFU1lTSU5URUcyMDI1MjYyNjI2MjYyNjI2MjY=", Base64.DEFAULT)
+    )
 
     fun isTokenExpired(token: String): Boolean {
-        val claims = extractAllClaims(token)
-        val expiration = claims.expiration
-        return expiration.before(Date())
+        return try {
+            val claims = extractAllClaims(token)
+            val expiration = claims.expiration
+            expiration.before(Date())
+        } catch (e: Exception) {
+            Log.e("com.example.lemslite.JwtService", "Error validating token: ${e.message}", e)
+            true
+        }
     }
 
-    fun extractAllClaims(token: String): Claims {
+    private fun extractAllClaims(token: String): Claims {
         return Jwts.parserBuilder()
             .setSigningKey(secretKey)
             .build()
             .parseClaimsJws(token)
             .body
+    }
+
+    fun getSubFromToken(token: String): String? {
+        return try {
+            val claims = extractAllClaims(token)
+            claims["subject"] as? String
+        } catch (e: Exception) {
+            Log.e("com.example.lemslite.JwtService", "Error extracting subject: ${e.message}", e)
+            null
+        }
+    }
+
+    fun getFNameFromToken(token: String): String? {
+        return try {
+            val claims = extractAllClaims(token)
+            claims["first_name"] as? String
+        } catch (e: Exception) {
+            Log.e("com.example.lemslite.JwtService", "Error extracting first_name: ${e.message}", e)
+            null
+        }
+    }
+
+    fun getLNameFromToken(token: String): String? {
+        return try {
+            val claims = extractAllClaims(token)
+            claims["last_name"] as? String
+        } catch (e: Exception) {
+            Log.e("com.example.lemslite.JwtService", "Error extracting last_name: ${e.message}", e)
+            null
+        }
+    }
+
+    fun getFullNameFromToken(token: String): String? {
+        return try {
+            val claims = extractAllClaims(token)
+            claims["full_name"] as? String
+        } catch (e: Exception) {
+            Log.e("com.example.lemslite.JwtService", "Error extracting full_name: ${e.message}", e)
+            null
+        }
+    }
+
+    fun getRoleIdFromToken(token: String): Int? {
+        return try {
+            val claims = extractAllClaims(token)
+            claims["role_id"]?.toString()?.toIntOrNull()
+        } catch (e: Exception) {
+            Log.e("JwtService", "Error extracting role_id: ${e.message}", e)
+            null
+        }
+    }
+
+    fun getUidFromToken(token: String): String? {
+        return try {
+            val claims = extractAllClaims(token)
+            claims["uid"] as? String
+        } catch (e: Exception) {
+            Log.e("JwtService", "Error extracting uid: ${e.message}", e)
+            null
+        }
     }
 }
