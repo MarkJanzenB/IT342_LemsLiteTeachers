@@ -1,0 +1,79 @@
+@keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  body {
+      font-family: 'Poppins', sans-serif;
+  }
+  
+  .register-container {
+      display: flex;
+      justify-content: space-between; 
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+      overflow: hidden;
+      background-color: #F2EE9D;
+      
+  }
+  
+  .register-background {
+      background-image: url('../../assets/static/img/registerbg.jpg');
+      background-size: cover;
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 60%;
+      height: 100%;
+      opacity: 0.3;
+      z-index: 1;
+ 
+  }
+  
+  .register-paper {
+      max-width: 400px;
+      max-height: fit-content;
+      width: 100%;
+      text-align: center;
+      height: auto;
+      border: 1px solid grey;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 4px 8px rgba(18, 17, 17, 0.1);
+      background-color: #e9eded;
+      position: relative;
+      z-index: 2;
+      margin-left: 95px;
+      animation: fadeIn 1s ease-out;
+  }
+  
+  .image-side {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      width: 60%;
+      padding: 20px;
+      z-index: 2;
+      animation: fadeIn 1.5s ease-out;
+  }
+  
+  .custom-paragraph {
+      font-size: 20px; 
+      color: #800000;
+      animation: fadeIn 2s ease-out;
+  }
+  
+  .next-button {
+      color: #800000;
+      animation: fadeIn 2s ease-out;
+  }
+  

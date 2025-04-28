@@ -31,7 +31,7 @@ public class ManufacturerEntity {
 		super();
 	}
 	public ManufacturerEntity(int id, String name, String email, String phone, String address, String website,
-                              String status) {
+			String status) {
 		super();
 		this.id = id;
 		this.name = name;

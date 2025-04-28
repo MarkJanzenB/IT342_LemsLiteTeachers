@@ -1,5 +1,6 @@
 package edu.cit.lemslite.Config;
 
+import edu.cit.lemslite.Filter.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,23 +20,24 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import edu.cit.lemslite.Filter.JwtFilter;
-
 import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    
-    @Autowired
-    private UserDetailsService userDetailsService;
-    
-    @Autowired
-    private JwtFilter jwtFilter;
-    
+	
+	@Autowired
+	private UserDetailsService userDetailsService;
+	
+	@Autowired
+	private JwtFilter jwtFilter;
+	
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList(
+        	    "http://localhost:5173",
+        	    "https://cit-lems.vercel.app"
+        	));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
@@ -43,34 +45,34 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-    
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-            .cors(c -> c.configurationSource(corsConfigurationSource()))
-            .csrf(customizer -> customizer.disable())
-            .authorizeHttpRequests(request -> request
-                    .requestMatchers("/user/login", "/user/register", "/user/isuseralrdyexists", "/user/message", "/")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated())
-            .httpBasic(Customizer.withDefaults())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-            .build();
-    }
-    
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
-        provider.setUserDetailsService(userDetailsService);
-        
-        return provider;
-    }
-    
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+	
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		return http
+			.cors(c -> c.configurationSource(corsConfigurationSource()))
+			.csrf(customizer -> customizer.disable())
+			.authorizeHttpRequests(request -> request
+					.requestMatchers("/user/login", "/user/register", "/user/isuseralrdyexists", "/user/message")
+					.permitAll()
+					.anyRequest()
+					.authenticated())
+			.httpBasic(Customizer.withDefaults())
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+			.build();
+	}
+	
+	@Bean
+	public AuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
+		provider.setUserDetailsService(userDetailsService);
+		
+		return provider;
+	}
+	
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+		return config.getAuthenticationManager();
+	}
 }

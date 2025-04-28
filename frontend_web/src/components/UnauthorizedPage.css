@@ -1,0 +1,66 @@
+.unauthorized-page {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+.waterMark {
+    background-image: url("src/assets/static/img/Cebu_Institute_of_Technology_University_logo.png");
+    width: 720px;
+    top: 25%;
+    height: 700px;
+    left: 60.5%;
+    display: inline-block;
+    position: absolute;
+    background-size: cover;
+    opacity: 0.2;
+    background-repeat: no-repeat;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 60%;
+    padding: 20px;
+    text-align: center;
+    z-index: 3;
+}
+
+.content h1 {
+    font-family: 'Sansita', sans-serif;
+    font-size: 3.2rem;
+    color: #056765;
+    font-weight: bold;
+}
+
+.content p {
+    font-family: 'Sansita', sans-serif;
+    font-size: 1.25rem;
+    color: #056765;
+    margin-top: 10px;
+}
+
+.back-button {
+    font-family: 'Sansita', sans-serif;
+    font-size: 0.875rem;
+    color: #FFF;
+    background-color: #800000;
+    border: none;
+    padding: 5px 20px;
+    width: fit-content;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #5c0000;
+}

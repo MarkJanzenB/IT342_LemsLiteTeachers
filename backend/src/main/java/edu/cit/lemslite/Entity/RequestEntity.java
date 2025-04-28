@@ -1,19 +1,11 @@
 package edu.cit.lemslite.Entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name="requests")
@@ -30,7 +22,6 @@ public class RequestEntity {
 	@Column(name="class_status")
 	private String classStatus;
 
-	@Column(name="status")
 	private String status;
 
 	@Column(name="date_requested")
@@ -51,15 +42,13 @@ public class RequestEntity {
 	
 	@Column(name="date_approved")
 	private LocalDateTime dateApproved;
-
-	@Column(name="remarks")
+	
 	private String remarks;
 	
-//	@ManyToOne
-//	@JoinColumn(name = "subject_id", nullable = true)
-//	private SubjectEntity subject;
-
-	@Column(name="room")
+	@ManyToOne
+	@JoinColumn(name = "subject_id", nullable = true)
+	private SubjectEntity subject;
+	
 	private String room;
 	
 	public RequestEntity() {
@@ -70,7 +59,7 @@ public class RequestEntity {
 
 	public RequestEntity(int requestId, UserEntity teacher, String classStatus, String status, LocalDateTime dateRequested,
 						 LocalDate dateSchedule, LocalTime startTime, LocalTime endTime, UserEntity approver,
-						 LocalDateTime dateApproved, String remarks,  String room) {
+						 LocalDateTime dateApproved, String remarks, SubjectEntity subject, String room) {
 		super();
 		this.requestId = requestId;
 		this.teacher = teacher;
@@ -83,6 +72,7 @@ public class RequestEntity {
 		this.approver = approver;
 		this.dateApproved = dateApproved;
 		this.remarks = remarks;
+		this.subject = subject;
 		this.room = room;
 	}
 
@@ -182,6 +172,13 @@ public class RequestEntity {
 		this.remarks = remarks;
 	}
 
+	public SubjectEntity getSubject() {
+		return subject;
+	}
+
+	public void setSubject(SubjectEntity subject) {
+		this.subject = subject;
+	}
 
 	public String getRoom() {
 		return room;

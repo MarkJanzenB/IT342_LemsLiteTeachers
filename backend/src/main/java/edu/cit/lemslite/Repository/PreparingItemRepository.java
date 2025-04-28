@@ -8,5 +8,7 @@ import java.util.List;
 
 @Repository
 public interface PreparingItemRepository extends JpaRepository<PreparingItemEntity, Integer> {
-    List<PreparingItemEntity> findAllByInstiId(String instiId);  // Fetch preparing items by institution ID
+    List<PreparingItemEntity> findByInstiIdAndStatus(String instiId, String status);
+    List<PreparingItemEntity> findByStatus(String status);
+    List<PreparingItemEntity> findByReferenceCode(String referenceCode);
 }

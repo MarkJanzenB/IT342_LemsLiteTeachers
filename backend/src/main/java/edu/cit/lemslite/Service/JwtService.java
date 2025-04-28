@@ -31,7 +31,7 @@ public class JwtService {
 		claims.put("last_name", last_name);
 		claims.put("full_name", first_name + " " + last_name);
 		claims.put("uid", uid);
-
+		
 		return Jwts.builder()
 				.setClaims(claims)
 				.setSubject(insti_id)
@@ -49,12 +49,12 @@ public class JwtService {
 	public String extractInstiId(String token) {
 		return extractClaim(token, Claims::getSubject);
 	}
-
+	
 	private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
 		final Claims claims = extractAllClaims(token);
 		return claimResolver.apply(claims);
 	}
-
+	
 	private Claims extractAllClaims(String token) {
 		return Jwts.parser()
 				.setSigningKey(getKey())
@@ -62,11 +62,11 @@ public class JwtService {
 				.parseClaimsJws(token)
 				.getBody();
 	}
-
+	
 	public boolean isTokenExpired(String token) {
 		return extractExpirationToken(token).before(new Date());
 	}
-
+	
 	public Date extractExpirationToken(String token) {
 		return extractClaim(token, Claims::getExpiration);
 	}
