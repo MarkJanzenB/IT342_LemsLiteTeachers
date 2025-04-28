@@ -215,12 +215,11 @@ export default function Sidebar({ page }) {
                         <button className={`sidebar-button ${isActive('/inventory') ? 'active' : ''}`}
                             onClick={handleAllItems} style={{display: 'block'}}>All Items
                         </button>
-                        {userRole !== 1 && (
                             <button className={`sidebar-button ${isActive('/inventory/categories') ? 'active' : ''}`} onClick={handleCategoryPage} style={{ display: 'block' }}>Categories</button>
-                        )}
                         {userRole === 1 && (
                             <button className={`sidebar-button ${isActive('/borrowcart') ? 'active' : ''}`} onClick={handleBorrowCart} style={{ display: 'block' }}>Borrow Cart</button>
                         )}
+                        <button className={`sidebar-button ${isActive('/history/PreparingItem') ? 'active' : ''}`} onClick={handlePreparingItem} style={{ display: 'block' }}>Preparing Item</button>
                     </>
                 )}
                 {page === 'reports' && (
@@ -238,7 +237,6 @@ export default function Sidebar({ page }) {
                         {userRole !== 1 && (
                             <button className={`sidebar-button ${isActive('/history/ResupplyHistory') ? 'active' : ''}`} onClick={handleResupplyHistory} style={{ display: 'block' }}>Resupplies</button>
                         )}
-                        <button className={`sidebar-button ${isActive('/history/PreparingItem') ? 'active' : ''}`} onClick={handlePreparingItem} style={{ display: 'block' }}>Preparing Item</button>
                         <button className={`sidebar-button ${isActive('/history/ReturnHistory') ? 'active' : ''}`} onClick={handleReturnHistory} style={{ display: 'block' }}>Returns</button>
 
                     </>

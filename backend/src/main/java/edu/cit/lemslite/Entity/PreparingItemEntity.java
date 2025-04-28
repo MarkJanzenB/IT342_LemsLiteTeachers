@@ -1,6 +1,11 @@
 package edu.cit.lemslite.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "preparing_item")
@@ -8,49 +13,52 @@ public class PreparingItemEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id; // Auto-generated ID (primary key)
+    private int id;
 
-    @Column(nullable = false)
-    private String referenceCode;  // Reference code like PI-LA0015 (automatically generated)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
-    @Column(name = "unique_id", nullable = true)
-    private String uniqueId;  // Lab in charge assigns a unique ID (if applicable)
+    private String referenceCode;
+    private String instiId;
+    private String itemName;
+    private String categoryName;
+    private int quantity;
+    private String status;
+    @Column(name = "date_created")
+    private LocalDate dateCreated;
+    private String variant;
 
-    @Column(nullable = false)
-    private String instiId;  // Institution/borrower's ID (temporary reference for whom the items are being prepared)
+    @ManyToOne
+    @JoinColumn(name = "teacher_schedule_id")
+    private TeacherScheduleEntity teacherSchedule;
 
-    @Column(nullable = false)
-    private String itemName;  // Name of the item
+    @OneToMany(mappedBy = "preparingItem", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = false)
+    @JsonIgnore
+    private List<ItemEntity> items = new ArrayList<>();
 
-    @Column(nullable = false)
-    private String categoryName;  // Category of the item (e.g., Electronics, Furniture)
-
-    @Column(nullable = false)
-    private int quantity;  // Number of items requested by the borrower
-
-    @Column(nullable = false)
-    private String status;  // Status of the preparation (e.g., "preparing", "finalized")
-
-    // Relationship to ItemEntity (many PreparingItemEntities can refer to one ItemEntity)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)  // Foreign key reference to ItemEntity
-    private ItemEntity item;
-
-    // Constructor, Getters, and Setters
     public PreparingItemEntity() {}
 
-    public PreparingItemEntity(String referenceCode, String instiId, String itemName, String categoryName, int quantity, String status, ItemEntity item) {
+    public PreparingItemEntity(String referenceCode, String instiId, String itemName, String categoryName, int quantity, String status, LocalDate dateCreated, TeacherScheduleEntity teacherSchedule) {
         this.referenceCode = referenceCode;
-        this.uniqueId = null;  // Initially null, can be set later
         this.instiId = instiId;
         this.itemName = itemName;
         this.categoryName = categoryName;
         this.quantity = quantity;
         this.status = status;
-        this.item = item;  // Associate the ItemEntity with the PreparingItem
+        this.dateCreated = dateCreated;
+        this.teacherSchedule = teacherSchedule;
+
     }
 
-    // Getters and setters
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
     public int getId() {
         return id;
     }
@@ -65,14 +73,6 @@ public class PreparingItemEntity {
 
     public void setReferenceCode(String referenceCode) {
         this.referenceCode = referenceCode;
-    }
-
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
     }
 
     public String getInstiId() {
@@ -115,12 +115,28 @@ public class PreparingItemEntity {
         this.status = status;
     }
 
-    // Getter and setter for the associated ItemEntity
-    public ItemEntity getItem() {
-        return item;
+    public LocalDate getDateCreated() {
+        return dateCreated;
     }
 
-    public void setItem(ItemEntity item) {
-        this.item = item;
+    public void setDateCreated(LocalDate dateCreated) {
+        this.dateCreated = dateCreated;
     }
+
+    public TeacherScheduleEntity getTeacherSchedule() {
+        return teacherSchedule;
+    }
+
+    public void setTeacherSchedule(TeacherScheduleEntity teacherSchedule) {
+        this.teacherSchedule = teacherSchedule;
+    }
+
+    public String getVariant() {
+        return variant;
+    }
+
+    public void setVariant(String variant) {
+        this.variant = variant;
+    }
+
 }

@@ -6,6 +6,7 @@ import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 import {DatePicker} from "@mui/x-date-pickers";
 import { format } from 'date-fns';
+import { getJWTUid } from "../../../Authentication/jwt";
 
 const UseResupply = ({jwttoken, onModalClose, editdataname, editdata, opensnackbar}) => {
     const [editData, setEditData] = useState(editdata);
@@ -35,6 +36,7 @@ const UseResupply = ({jwttoken, onModalClose, editdataname, editdata, opensnackb
             quantity:updatedEditData.item_category.category_name === 'Consumables' ? amountToAdd : 0,
             variant: itemVariant,
             expiry_date: getDate != null ? format(getDate, 'yyyy-MM-dd') : null,
+            uid: getJWTUid(),
         }, {
             headers: {
                 "Authorization": `Bearer ${jwttoken}`
@@ -252,7 +254,9 @@ const UseResupply = ({jwttoken, onModalClose, editdataname, editdata, opensnackb
                       left: '50%',
                       transform: 'translate(-50%, -50%)',
                       width: 500,
+                      maxHeight: '90vh',
                       bgcolor: '#F2EE9D',
+                      overflowY: 'auto',
                       boxShadow: 24,
                       p: 4,
                       display: 'flex',

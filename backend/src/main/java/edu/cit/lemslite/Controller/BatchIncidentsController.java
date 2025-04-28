@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "https://cit-lems.vercel.app")
 @RestController
 @RequestMapping("/api/batch-incidents")
 public class BatchIncidentsController {

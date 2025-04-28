@@ -2,16 +2,11 @@ import React from "react";
 import { useState } from "react";
 import axios from "axios";
 import { Button, Modal, Box, Typography, TextField,  FormControl, InputLabel, MenuItem, Select,} from "@mui/material";
-import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
-import {DatePicker} from "@mui/x-date-pickers";
-import { format } from 'date-fns';
 
 const UseAddItem = ({jwttoken, onModalClose, opensnackbar}) => {
     const [newItemCategory, setNewItemCategory] = useState(0);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [getDate, setDate] = useState(null);
     const [newItem, setNewItem] = useState({
         item_name: '',
         unique_id: '',
@@ -24,6 +19,7 @@ const UseAddItem = ({jwttoken, onModalClose, opensnackbar}) => {
         variant:'',
       });
 
+    //NOTE: this API is not up to date and WILL cause errors if used without updating
     const handleAddItem = () => {
         if (!newItem.item_name || !newItem.unit || newItemCategory === 0 || !newItem.variant) {
             setError("Please fill in all required fields.");
@@ -157,7 +153,7 @@ const UseAddItem = ({jwttoken, onModalClose, opensnackbar}) => {
                     label="Name"
                     variant="outlined"
                     fullWidth
-                    required={true}
+                    required
                     autoComplete={'off'}
                 />
                 {message && <Typography color="primary" sx={{ mt: 0.5, fontSize: '14px' }}>{message}</Typography>}

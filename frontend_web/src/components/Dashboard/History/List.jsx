@@ -4,18 +4,33 @@ import Sidebar from '../../Sidebar/Sidebar.jsx';
 import Appbar from '../../Appbar/Appbar.jsx';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
-    TablePagination, Button, Modal, Box, Typography, TextField, Select, MenuItem, Snackbar, IconButton
+    TablePagination, Button, Modal, Box, Typography, TextField, Select, MenuItem, Snackbar, IconButton,
+    Accordion, AccordionSummary, AccordionDetails
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { getJWTUid } from '../../Authentication/jwt.jsx';
+import { getJWTSub, getJWTUid } from '../../Authentication/jwt.jsx';
 import {useNavigate} from "react-router-dom";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const theme = createTheme({
     palette: {
         primary: { main: '#016565' },
         secondary: { main: '#000000' }
-    }
+    },
+    components: {
+        MuiTableCell: {
+            styleOverrides: {
+                head: {
+                    backgroundColor: '#016565',
+                    color: '#FFFFFF',
+                },
+                body: {
+                    fontSize: 14,
+                },
+            },
+        },
+    },
 });
 
 export default function List({ userId }) {
@@ -34,8 +49,12 @@ export default function List({ userId }) {
     const [categories, setCategories] = useState([]);
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarText, setSnackbarText] = useState("");
-    const uid = getJWTUid();
+    const [groupedItems, setGroupedItems] = useState({});
+    const instiId = getJWTSub();
     const navigate = useNavigate();
+    const [teacherSchedule, setTeacherSchedule] = useState("N/A");
+    const [itemStatuses, setItemStatuses] = useState({});
+
 
     useEffect(() => {
         fetchBorrowData();
@@ -55,9 +74,9 @@ export default function List({ userId }) {
         try {
             let apiUrl;
             if (userRole === "1") {
-                apiUrl = `http://localhost:8080/api/borrowitem/uid/${uid}`;
+                apiUrl = `http://localhost:8080/api/preparing-items/getpreparingitems?instiId=${instiId}&status=In-use`;
             } else {
-                apiUrl = `http://localhost:8080/api/borrowitem/all`;
+                apiUrl = `http://localhost:8080/api/preparing-items/getpreparingitems?status=In-use`;
             }
 
             const response = await axios.get(apiUrl, {
@@ -65,11 +84,13 @@ export default function List({ userId }) {
             });
 
             if (Array.isArray(response.data)) {
-                const groupedData = response.data.reduce((acc, item) => {
-                    if (!acc[item.borrowedId]) {
-                        acc[item.borrowedId] = [];
+                const revrsedDate = response.data.reverse();
+                const groupedData = revrsedDate.reduce((acc, item) => {
+                    const refCode  = item.referenceCode;
+                    if (!acc[refCode ]) {
+                        acc[refCode ] = [];
                     }
-                    acc[item.borrowedId].push(item);
+                    acc[refCode ].push(item);
                     return acc;
                 }, {});
 
@@ -79,6 +100,34 @@ export default function List({ userId }) {
             console.error("Error fetching borrow items:", error);
         }
     };
+
+
+        const fetchTeacherSchedule = async (preparingItemId) => {
+            const token = localStorage.getItem("jwtToken");
+            if (!token) {
+                console.error("No JWT token found. Please log in again.");
+                setTeacherSchedule("N/A");
+                return;
+            }
+
+            try {
+                const response = await axios.get(
+                    `http://localhost:8080/api/preparing-items/teacherSchedule/${preparingItemId}`,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                if (response.data) {
+                    const schedule = response.data;
+                    const formattedSchedule = `${new Date(schedule.date).toLocaleDateString()} | ${schedule.startTime} - ${schedule.endTime} | Lab ${schedule.labNum || schedule.location || 'N/A'}`;
+                    setTeacherSchedule(formattedSchedule);
+                } else {
+                    setTeacherSchedule("N/A");
+                }
+            } catch (error) {
+                console.error("Error fetching teacher schedule:", error);
+                setTeacherSchedule("N/A");
+            }
+        };
+
 
     const fetchBorrowList = async () => {
         const instiId = localStorage.getItem("instiId");
@@ -92,8 +141,8 @@ export default function List({ userId }) {
 
         try {
             const apiUrl = userRole === "1"
-                ? `http://localhost:8080/api/borrowitem/uid/${uid}`
-                : `http://localhost:8080/api/borrowitem/all`;
+                ? `http://localhost:8080/api/preparing-items/getpreparingitems?instiId=${instiId}&status=In-use`
+                : `http://localhost:8080/api/preparing-items/getpreparingitems?status=In-use`;
             const response = await axios.get(apiUrl, { headers: { Authorization: `Bearer ${token}` } });
 
             const data = Array.isArray(response.data) ? response.data : [];
@@ -164,17 +213,109 @@ export default function List({ userId }) {
         setPage(0);
     };
 
-    const handleOpenModal = (borrowId) => {
-        setSelectedBatch(borrowGroups[borrowId] || []);
+    const handleOpenModal = async (borrowId) => {
+        const token = localStorage.getItem("jwtToken");
+        const batch = borrowGroups[borrowId] || [];
+        setSelectedBatch(batch);
         setSelectedBorrowId(borrowId);
         setOpenModal(true);
+
+        // Fetch teacher schedule when modal opens
+        if (batch && batch[0]?.id) {
+            fetchTeacherSchedule(batch[0].id);
+        } else {
+            setTeacherSchedule("N/A");
+        }
+
+        const preparingIds = batch
+            .filter(item => item.categoryName !== "Consumables")
+            .map(item => item.id);
+
+        const consumables = batch.filter(item => item.categoryName === "Consumables");
+
+        axios.post("http://localhost:8080/item/getbypreparingids", preparingIds, {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json"
+            }
+        })
+        .then(response => {
+            const nonConsumableItems = response.data;
+            const allItems = [...nonConsumableItems, ...consumables];
+            const grouped = groupByItemName(allItems);
+            setGroupedItems(grouped);
+        })
+        .catch(error => {
+            console.error(error);
+        })
     };
 
     const handleCloseModal = () => {
         setOpenModal(false);
         setSelectedBatch(null);
         setSelectedBorrowId(null);
+        setGroupedItems({})
+        setItemStatuses([]);
     };
+
+    const groupByItemName = (batch) => {
+
+        return batch.reduce((acc, item) => {
+        const name = item.item_name || item.itemName;
+          if (!acc[name]) {
+            acc[name] = [];
+          }
+          acc[name].push(item);
+          return acc;
+        }, {});
+    };
+
+    const handleStatusChangePerItem = (status, itemId) => {
+        const newStatus = status;
+
+        setItemStatuses((prevStatuses) => {
+            return {
+                ...prevStatuses,
+                [itemId]: newStatus,  // Set the new status for the specific itemId
+            };
+        });
+    };
+
+    useEffect(() => {
+        Object.entries(groupedItems).forEach(([itemName, items]) => {
+            if (items[0].categoryName !== 'Consumables') {
+                items.forEach(item => {
+                    handleStatusChangePerItem("", item.item_id);
+                });
+            }
+        });
+    }, [groupedItems]);
+
+    const handleReturnItems = () => {
+        const token = localStorage.getItem("jwtToken");
+        const uid = getJWTUid();
+        const hasBlankStatus = Object.values(itemStatuses).includes("");
+        const payload = {
+            referenceCode: selectedBatch[0].referenceCode,
+            itemStatuses: itemStatuses
+        }
+        if(hasBlankStatus){
+            alert("Non-consumable items should have return status")
+            return
+        }
+        axios.post(`http://localhost:8080/batchreturn/add?uid=${uid}`, payload, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            handleCloseModal();
+            fetchBorrowData();
+        })
+        .catch(error => {
+            console.error(error);
+        })
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -190,13 +331,35 @@ export default function List({ userId }) {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                        <Button variant="contained" onClick={() => setShowBorrowList(!showBorrowList)}>
+                        <Button variant="contained"
+                                onClick={() => setShowBorrowList(!showBorrowList)}
+                                sx={{
+                                    minWidth: '150px', // Adjust as needed
+                                    height: '50px',    // Adjust as needed for consistent height
+                                    whiteSpace: 'nowrap', // Prevent text from wrapping to maintain size
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis', // Show ellipsis for longer text
+                                    justifyContent: 'center' // Center text horizontally
+                                }}
+                        >
                             {showBorrowList ? "View Main List" : "View Borrow List"}
                         </Button>
-                        <Button variant="contained" style={{ backgroundColor: "#4CAF50", color: "white" }} onClick={() => navigate("/inventory")}>
+                        {localStorage.getItem("userRole") === '1' && (
+                        <Button variant="contained"
+                                style={{ backgroundColor: "#4CAF50", color: "white" }}
+                                onClick={() => navigate("/inventory")}
+                                sx={{
+                                    minWidth: '150px', // Same minWidth
+                                    height: '50px',    // Same height
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    justifyContent: 'center'
+                                }}
+                        >
                             Borrow More
-
                         </Button>
+                        )}
                         {showBorrowList ? (
                             <Select
                                 displayEmpty
@@ -217,6 +380,7 @@ export default function List({ userId }) {
                                 value={statusFilter}
                                 onChange={(e) => setStatusFilter(e.target.value)}
                                 style={{ width: "200px" }}
+                                disabled
                             >
                                 <MenuItem value="">All Statuses</MenuItem>
                                 <MenuItem value="Preparing">Preparing</MenuItem>
@@ -243,12 +407,16 @@ export default function List({ userId }) {
                                     <TableBody>
                                         {filteredBorrowList.map((item) => (
                                             <TableRow key={item.id}>
-                                                <TableCell>{item.borrowedId || "N/A"}</TableCell>
+                                                <TableCell>{item.referenceCode || "N/A"}</TableCell>
                                                 <TableCell>{item.categoryName || "N/A"}</TableCell>
                                                 <TableCell>{item.itemName || "N/A"}</TableCell>
                                                 <TableCell>{item.quantity}</TableCell>
                                                 <TableCell>
-                                                    {item.borrowedDate ? new Date(item.borrowedDate).toLocaleString() : "N/A"}
+                                                    {item.dateCreated ? new Date(item.dateCreated).toLocaleDateString("en-US", {
+                                                        year: "numeric",
+                                                        month: "long",
+                                                        day: "numeric",
+                                                    }) : "N/A"}
                                                 </TableCell>
                                                 <TableCell>{item.status}</TableCell>
                                             </TableRow>
@@ -277,7 +445,6 @@ export default function List({ userId }) {
                                             <TableRow>
                                                 <TableCell>Borrow ID</TableCell>
                                                 <TableCell>Teacher Name</TableCell>
-                                                <TableCell>Institution ID</TableCell>
                                                 <TableCell>Borrowed Date</TableCell>
                                                 <TableCell>Status</TableCell>
                                             </TableRow>
@@ -289,10 +456,15 @@ export default function List({ userId }) {
                                                         handleOpenModal(borrowId);
                                                     }
                                                 }}>
-                                                    <TableCell>{borrowId}</TableCell>
+                                                    <TableCell>{items[0].referenceCode}</TableCell>
                                                     <TableCell>{items[0].user?.first_name && items[0].user?.last_name ? `${items[0].user.first_name} ${items[0].user.last_name}` : "N/A"}</TableCell>
-                                                    <TableCell>{items[0].user.insti_id || "N/A"}</TableCell>
-                                                    <TableCell>{items[0].borrowedDate ? new Date(items[0].borrowedDate).toLocaleString() : "N/A"}</TableCell>
+                                                    <TableCell>
+                                                    {items[0].dateCreated ? new Date(items[0].dateCreated).toLocaleDateString("en-US", {
+                                                        year: "numeric",
+                                                        month: "long",
+                                                        day: "numeric",
+                                                    }) : "N/A"}
+                                                </TableCell>
                                                     <TableCell>
                                                         {localStorage.getItem("userRole") !== "1" ? (
                                                             <Select
@@ -300,6 +472,7 @@ export default function List({ userId }) {
                                                                 value={items[0].status}
                                                                 onChange={(e) => handleStatusChange(borrowId, e.target.value)}
                                                                 onClick={(e) => e.stopPropagation()}
+                                                                disabled
                                                             >
                                                                 <MenuItem value="Preparing">Preparing</MenuItem>
                                                                 <MenuItem value="In-use">In-use</MenuItem>
@@ -328,62 +501,156 @@ export default function List({ userId }) {
                 </div>
             </div>
             <Modal open={openModal} onClose={handleCloseModal}>
-                <Box sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    maxHeight: '90%',
-                    transform: 'translate(-50%, -50%)',
-                    bgcolor: '#F2EE9D',
-                    boxShadow: 24,
-                    p: 4,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 2,
-                    overflow: 'auto'
-                }}>
-                    {selectedBatch && (
-                        <>
-                            <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold', color: '#016565', textAlign: 'center' }}>
-                                Borrowed ID {selectedBorrowId}
-                            </Typography>
-                            <Typography>
-                                <strong>Teacher Name:</strong> {selectedBatch[0]?.user?.first_name && selectedBatch[0]?.user?.last_name
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: '90%',
+                        maxHeight: '90%',
+                        bgcolor: '#FFF',
+                        boxShadow: 24,
+                        p: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                        borderRadius: '25px',
+                        overflow: 'auto',
+                        color: '#016565',
+                    }}
+                >
+                    <div style={{position: 'absolute', top: 24, right: 8}}>
+                        <Button onClick={handleCloseModal}><img src={"/exit.gif"} style={{
+                            width: '30px',
+                            height: '30px',
+                        }}/></Button>
+                    </div>
+                    {selectedBatch && (<>
+                        <Typography variant="h6" component="h2"
+                                sx={{fontWeight: 'bold', color: '#016565', textAlign: 'center'}}>
+                        Borrow ID {selectedBorrowId}
+                        </Typography>
+
+                        <Typography variant="body1">Date Borrowed: {selectedBatch[0].dateCreated ? new Date(selectedBatch[0].dateCreated).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                            }) : "N/A"}
+                        </Typography>
+                        <Typography className="modal-info"><strong>Schedule:</strong> {teacherSchedule}</Typography>
+                        <Typography variant="body1">Teacher: {selectedBatch[0]?.user?.first_name && selectedBatch[0]?.user?.last_name
                                 ? `${selectedBatch[0].user.first_name} ${selectedBatch[0].user.last_name}`
-                                : "N/A"}
-                            </Typography>
-                            <Typography>
-                                <strong>Schedule:</strong> "N/A"
-                            </Typography>
-                            <Typography>
-                                <strong>Date Borrowed:</strong> {selectedBatch[0]?.borrowedDate ? new Date(selectedBatch[0].borrowedDate).toLocaleString() : "N/A"}
-                            </Typography>
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableHead>
+                                : "N/A"}</Typography>
+                        <TableContainer component={Paper} style={{width: '100%', height: '100%'}} stickyHeader>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell
+                                            sx={{
+                                        position: 'sticky',
+                                        top: 0,
+                                        backgroundColor: '#F2EE9D',
+                                        zIndex: 1,
+                                        color: '#016565'
+                                    }}>Item Name</TableCell>
+                                    <TableCell sx={{
+                                        position: 'sticky',
+                                        top: 0,
+                                        backgroundColor: '#F2EE9D',
+                                        zIndex: 1,
+                                        color: '#016565',
+                                        textAlign: 'right',
+                                        paddingRight: '100px'
+                                    }}>Quantity</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {Object.entries(groupedItems).map(([itemName, items]) => (
+                                    <React.Fragment key={itemName}>
                                         <TableRow>
-                                            <TableCell>Borrowed ID</TableCell>
-                                            <TableCell>Category</TableCell>
-                                            <TableCell>Item Name</TableCell>
-                                            <TableCell>Quantity</TableCell>
-                                            <TableCell>Status</TableCell>
+                                            <TableCell colSpan={2}>
+                                                <Accordion>
+                                                    <AccordionSummary
+                                                        expandIcon={<ExpandMoreIcon />}
+                                                        aria-controls={`panel${itemName}-content`}
+                                                        id={`panel${itemName}-header`}
+                                                    >
+                                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                                                            <Typography>{itemName}</Typography>
+                                                            <Typography sx={{ marginRight: 2 }}>Quantity: {items[0].categoryName === 'Consumables' ? items[0].quantity : items.length}</Typography>
+                                                        </Box>
+                                                    </AccordionSummary>
+                                                    <AccordionDetails>
+                                                        <Table size="small">
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    <TableCell>Item</TableCell>
+                                                                    <TableCell>Serial Number</TableCell>
+                                                                    <TableCell>Category</TableCell>
+                                                                    {items[0].categoryName !== 'Consumables' && <TableCell sx={{width: '250px'}}>Return Status</TableCell>}
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                {items.map((item, index) => {
+                                                                    return(
+                                                                        <TableRow key={index}>
+                                                                            <TableCell>{item.item_name ? item.item_name : item.itemName}</TableCell>
+                                                                            <TableCell>{item.unique_id ? item.unique_id : ""}</TableCell>
+                                                                            <TableCell>{item.categoryName ? item.categoryName : item.inventory.item_category.category_name}</TableCell>
+                                                                            {items[0].categoryName !== 'Consumables' &&
+                                                                                <TableCell>
+                                                                                    <Select
+                                                                                        value={itemStatuses[item.item_id]}
+                                                                                        onChange={(e) => handleStatusChangePerItem(e.target.value, item.item_id)}
+                                                                                        sx={{
+                                                                                            width: '200px',
+                                                                                            bgcolor:
+                                                                                              itemStatuses[item.item_id] === "Damage"
+                                                                                                ? '#c33130'
+                                                                                                : itemStatuses[item.item_id] === "Missing"
+                                                                                                ? '#a86a0d'
+                                                                                                : itemStatuses[item.item_id] === "Wrong Item"
+                                                                                                ? '#ffcc00'
+                                                                                                : itemStatuses[item.item_id] === "Available"
+                                                                                                ? '#0c9a17'
+                                                                                                : '',
+                                                                                            color: itemStatuses[item.item_id] === "Wrong Item"
+                                                                                                ? 'black'
+                                                                                                : 'white'
+                                                                                        }}
+                                                                                    >
+                                                                                        <MenuItem value="Available">Available</MenuItem>
+                                                                                        <MenuItem value="Damage">Damage</MenuItem>
+                                                                                        <MenuItem value="Missing">Missing</MenuItem>
+                                                                                        <MenuItem value="Wrong Item">Wrong Item</MenuItem>
+                                                                                    </Select>
+                                                                                </TableCell>
+                                                                            }
+                                                                        </TableRow>
+                                                                    )
+                                                                })}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </AccordionDetails>
+                                                </Accordion>
+                                            </TableCell>
                                         </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {selectedBatch.map((item, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell>{item.borrowedId}</TableCell>
-                                                <TableCell>{item.categoryName}</TableCell>
-                                                <TableCell>{item.itemName}</TableCell>
-                                                <TableCell>{item.quantity}</TableCell>
-                                                <TableCell>{item.status}</TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </>
-                    )}
+                                    </React.Fragment>
+                                ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </>)}
+                    <Box display="flex" justifyContent="space-between" mt={2}>
+                        <Button variant="outlined" sx={{color: '#800000', borderColor: '#800000'}}
+                                onClick={handleCloseModal}>Close</Button>
+                        <Button variant="contained" sx={{
+                                                        backgroundColor: '#800000',
+                                                        color: '#FFF',
+                                                        '&:hover': {backgroundColor: '#5c0000'}
+                                                    }} onClick={handleReturnItems}>Return Items</Button>
+                    </Box>
                 </Box>
             </Modal>
         </ThemeProvider>

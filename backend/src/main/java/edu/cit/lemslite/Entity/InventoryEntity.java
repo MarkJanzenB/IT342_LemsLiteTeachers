@@ -1,20 +1,10 @@
 package edu.cit.lemslite.Entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Inventory")
@@ -24,14 +14,14 @@ public class InventoryEntity {
     @Column(name = "inventory_id")
     private int inventoryId;
     @Column(name = "quantity")
-    private float quantity;
+    private int quantity;
     @Column(name = "unit")
     private String unit;
     private String name;
     private String status;
     private String description;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = true)
     private ItemCategoryEntity itemCategory;
     
@@ -43,7 +33,7 @@ public class InventoryEntity {
 
     }
 
-    public InventoryEntity(int inventoryId, float quantity, String unit, ItemCategoryEntity item_category, String name, String status, String description) {
+    public InventoryEntity(int inventoryId, int quantity, String unit, ItemCategoryEntity item_category, String name, String status, String description) {
 		super();
 		this.inventoryId = inventoryId;
 		this.quantity = quantity;
@@ -64,11 +54,11 @@ public class InventoryEntity {
     }
 
     @JsonProperty("quantity")
-    public float getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(float quantity) {this.quantity = quantity; }
+    public void setQuantity(int quantity) {this.quantity = quantity; }
 
     @JsonProperty("unit")
     public String  getUnit() {

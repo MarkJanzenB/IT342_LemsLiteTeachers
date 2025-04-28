@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Appbar from "../../Appbar/Appbar.jsx";
 import Sidebar from "../../Sidebar/Sidebar.jsx";
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TablePagination, Modal, Box, TextField, Typography, useMediaQuery, Select, MenuItem } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from "axios";
 
 // Helper function to generate school year options
 const generateSchoolYearOptions = () => {
@@ -18,42 +19,6 @@ const generateSchoolYearOptions = () => {
     }
     return years;
 };
-
-const ResupplyHistoryData = [
-    { id: 1, day: 'Monday', date: '2024-01-15', processedBy: 'John Smith' },
-    { id: 2, day: 'Tuesday', date: '2024-01-16', processedBy: 'Maria Garcia' },
-    { id: 3, day: 'Wednesday', date: '2024-01-17', processedBy: 'David Chen' },
-    { id: 4, day: 'Thursday', date: '2024-01-18', processedBy: 'Sarah Johnson' },
-    { id: 5, day: 'Friday', date: '2024-01-19', processedBy: 'James Wilson' },
-    { id: 6, day: 'Monday', date: '2024-01-22', processedBy: 'Emily Brown' },
-    { id: 7, day: 'Tuesday', date: '2024-01-23', processedBy: 'Michael Lee' },
-    { id: 8, day: 'Wednesday', date: '2024-01-24', processedBy: 'Lisa Anderson' },
-    { id: 9, day: 'Thursday', date: '2024-01-25', processedBy: 'Robert Taylor' },
-    { id: 10, day: 'Friday', date: '2024-01-26', processedBy: 'Jennifer Martinez' },
-];
-
-const itemsBorrowed = [
-    { 
-        id: 1, 
-        name: 'Test Tubes', 
-        quantity: 5,
-        variants: [
-            { id: 1, name: 'Pyrex 100mL Test Tube', serialNumber: 'TT100-001' },
-            { id: 2, name: 'Pyrex 100mL Test Tube', serialNumber: 'TT100-002' },
-            { id: 3, name: 'Pyrex 100mL Test Tube', serialNumber: 'TT100-003' },
-        ]
-    },
-    { 
-        id: 2, 
-        name: 'Beakers', 
-        quantity: 3,
-        variants: [
-            { id: 1, name: 'Glass Beaker 250mL', serialNumber: 'BK250-001' },
-            { id: 2, name: 'Glass Beaker 250mL', serialNumber: 'BK250-002' },
-            { id: 3, name: 'Glass Beaker 250mL', serialNumber: 'BK250-003' },
-        ]
-    },
-];
 
 const theme = createTheme({
     palette: {
@@ -76,6 +41,9 @@ const theme = createTheme({
 });
 
 export default function ResupplyHistory() {
+    const jwtToken = localStorage.getItem("jwtToken");
+    const [ResupplyHistoryData, setResupplyHistoryData] = useState([]);
+    const [itemsBorrowed, setItemsBorrowed] = useState(null);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [openModal, setOpenModal] = useState(false);
@@ -83,6 +51,48 @@ export default function ResupplyHistory() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedSchoolYear, setSelectedSchoolYear] = useState(generateSchoolYearOptions()[2]); // Default to current school year
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+    useEffect(() => {
+        getAllDistinct()
+    }, [])
+
+    const getAllDistinct = () => {
+        axios.get(`http://localhost:8080/batchresupply/getalldistinct`, {
+            headers: {
+                "Authorization": `Bearer ${jwtToken}`
+            }
+        })
+        .then(response => {
+            const transformedData = response.data.map((entry, index) => {
+                const [date, user] = entry;
+                return{
+                    id: index + 1,
+                    day: new Date(date).toLocaleDateString('en-US', {weekday: 'long'}),
+                    date: date,
+                    processedBy: `${user.first_name} ${user.last_name}`,
+                    user: user,
+                }
+            })
+            setResupplyHistoryData(transformedData);
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    }
+
+    const getResupplyHistory = (date, uid) => {
+        axios.get(`http://localhost:8080/item/resupplyhistory?dateResupply=${date}&uid=${uid}`, {
+            headers: {
+                "Authorization": `Bearer ${jwtToken}`
+            }
+        })
+        .then(response => {
+            setItemsBorrowed(response.data)
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    }
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -95,6 +105,8 @@ export default function ResupplyHistory() {
 
     const handleOpenModal = (row) => {
         setOpenModal(true);
+        setSelectedItem(row);
+        getResupplyHistory(row.date, row.user.user_id);
     };
 
     const handleCloseModal = () => {
@@ -118,7 +130,8 @@ export default function ResupplyHistory() {
             row.date.toLowerCase().includes(searchQuery.toLowerCase()) ||
             row.processedBy.toLowerCase().includes(searchQuery.toLowerCase())
         );
-    });
+    })
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 
     const displayedRows = filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
@@ -152,6 +165,7 @@ export default function ResupplyHistory() {
                                     <TableCell>Day</TableCell>
                                     <TableCell>Date</TableCell>
                                     <TableCell>Processed By</TableCell>
+                                    <TableCell>Role</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -160,6 +174,7 @@ export default function ResupplyHistory() {
                                         <TableCell>{row.day}</TableCell>
                                         <TableCell>{row.date}</TableCell>
                                         <TableCell>{row.processedBy}</TableCell>
+                                        <TableCell>{row.user.role.role_name}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -231,7 +246,8 @@ export default function ResupplyHistory() {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {itemsBorrowed.map((item, index) => (
+                                    {itemsBorrowed && (<>
+                                        {itemsBorrowed.map((item, index) => (
                                         <React.Fragment key={item.id}>
                                             <TableRow>
                                                 <TableCell colSpan={2}>
@@ -269,6 +285,8 @@ export default function ResupplyHistory() {
                                             </TableRow>
                                         </React.Fragment>
                                     ))}
+                                    </>)
+                                    }
                                 </TableBody>
                             </Table>
                         </TableContainer>

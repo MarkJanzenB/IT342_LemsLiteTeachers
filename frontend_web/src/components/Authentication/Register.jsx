@@ -6,11 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import './Register.css';
 import { Box, MenuItem, Select, FormControl, InputLabel, CircularProgress } from '@mui/material';
 import axios from "axios";
+import lemslogo from '/src/assets/static/img/LEMS1.png';
+
 
 const register = async (credentials) => {
     console.log("Request payload:", credentials);
 
     try {
+        // const response = await axios.post("http://localhost:8080/user/register", credentials);
         const response = await axios.post("http://localhost:8080/user/register", credentials);
         console.log("Response data:", response.data);
         return response.data;
@@ -235,7 +238,7 @@ export default function Register() {
                         SIGN IN
                     </Button>
                     <img
-                        src="../src/assets/static/img/LEMS1.png"
+                        src={lemslogo}
                         alt="LEMS logo"
                         style={{
                             position: 'absolute',

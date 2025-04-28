@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Login from './Authentication/Login.jsx';
 import Register from './Authentication/Register.jsx';
-import Dashboard from './Dashboard/Dashboard.jsx';
+import Dashboard from './Dashboard/capDashboard.jsx';
 import Home from './Landingpage/Home.jsx';
 import Schedule from "./Dashboard/Schedule/Schedule.jsx";
 import Inventory from "./Dashboard/Inventory/Inventory.jsx";
