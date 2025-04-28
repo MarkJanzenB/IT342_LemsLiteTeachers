@@ -1,4 +1,4 @@
 package edu.cit.lemslite.Controller;
 
-public class ExcelContoller {
+public class ExcelController {
 }
