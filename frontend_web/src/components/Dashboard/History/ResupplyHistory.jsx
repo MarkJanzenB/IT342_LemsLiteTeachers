@@ -57,7 +57,7 @@ export default function ResupplyHistory() {
     }, [])
 
     const getAllDistinct = () => {
-        axios.get(`https://it342-lemsliteteachers.onrender.com/batchresupply/getalldistinct`, {
+        axios.get(`http://localhost:8080/batchresupply/getalldistinct`, {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
@@ -81,7 +81,7 @@ export default function ResupplyHistory() {
     }
 
     const getResupplyHistory = (date, uid) => {
-        axios.get(`https://it342-lemsliteteachers.onrender.com/item/resupplyhistory?dateResupply=${date}&uid=${uid}`, {
+        axios.get(`http://localhost:8080/item/resupplyhistory?dateResupply=${date}&uid=${uid}`, {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }

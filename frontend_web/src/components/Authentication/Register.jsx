@@ -13,8 +13,8 @@ const register = async (credentials) => {
     console.log("Request payload:", credentials);
 
     try {
-        // const response = await axios.post("https://it342-lemsliteteachers.onrender.com/user/register", credentials);
-        const response = await axios.post("https://it342-lemsliteteachers.onrender.com/user/register", credentials);
+        // const response = await axios.post("http://localhost:8080/user/register", credentials);
+        const response = await axios.post("http://localhost:8080/user/register", credentials);
         console.log("Response data:", response.data);
         return response.data;
     } catch (error) {
@@ -70,8 +70,8 @@ export default function Register() {
             return setError('Institute ID should not contain special characters')
         }
 
-        // const isUserAlrdyExists = await axios.get(`https://it342-lemsliteteachers.onrender.com/user/isuseralrdyexists?instiId=${credentials.insti_id}`);
-        const isUserAlrdyExists = await axios.get(`https://it342-lemsliteteachers.onrender.com/user/isuseralrdyexists?instiId=${credentials.insti_id}`);
+        // const isUserAlrdyExists = await axios.get(`http://localhost:8080/user/isuseralrdyexists?instiId=${credentials.insti_id}`);
+        const isUserAlrdyExists = await axios.get(`http://localhost:8080/user/isuseralrdyexists?instiId=${credentials.insti_id}`);
         if (isUserAlrdyExists.data) {
             setError("Institute ID already exists. Sign in instead?");
             return;

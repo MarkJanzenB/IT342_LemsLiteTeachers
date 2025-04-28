@@ -24,7 +24,7 @@ const Export = () => {
 
   useEffect(() => {
     const jwtToken = localStorage.getItem("jwtToken");
-    axios.get('https://it342-lemsliteteachers.onrender.com/inventory/getAllInventory', {
+    axios.get('http://localhost:8080/inventory/getAllInventory', {
       headers: {
         "authorization": `Bearer ${jwtToken}`,
       }

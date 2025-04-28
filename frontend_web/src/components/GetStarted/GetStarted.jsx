@@ -130,7 +130,7 @@ export default function GetStarted(){
             }
 
             console.log("Request payload:", payload);
-            const response = await axios.put("https://it342-lemsliteteachers.onrender.com/user/tonotnew", payload, {
+            const response = await axios.put("http://localhost:8080/user/tonotnew", payload, {
                 headers: {
                     "authorization": `Bearer ${jwtToken}`,
                 }});
@@ -318,7 +318,7 @@ const verifySchoolYearSaved = async () => {
 
         // Make a request to get current school year from server
         const response = await axios.get(
-            `https://it342-lemsliteteachers.onrender.com/schoolyear/${jwtSub.insti_id}`,
+            `http://localhost:8080/schoolyear/${jwtSub.insti_id}`,
             {
                 headers: {
                     "authorization": `Bearer ${jwtToken}`

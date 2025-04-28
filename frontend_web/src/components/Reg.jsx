@@ -17,7 +17,7 @@ import axios from "axios";
 
 const register = async (credentials) => {
     try {
-        const response = await axios.post("https://it342-lemsliteteachers.onrender.com/user/register", credentials);
+        const response = await axios.post("http://localhost:8080/user/register", credentials);
         return response.data;
     } catch (error) {
         console.error("Error:", error);

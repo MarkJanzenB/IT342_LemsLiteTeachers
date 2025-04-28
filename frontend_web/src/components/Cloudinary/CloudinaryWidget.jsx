@@ -27,7 +27,7 @@ const CloudinaryWidget = ({onClose}) => {
             showAdvancedOptions: false,
         }, function(error, result){
             if(result.event === 'success'){
-                axios.put(`https://it342-lemsliteteachers.onrender.com/user/editpfp`, 
+                axios.put(`http://localhost:8080/user/editpfp`, 
                     {
                         pfp_url: result.info.secure_url,
                         uid: getJWTUid(),

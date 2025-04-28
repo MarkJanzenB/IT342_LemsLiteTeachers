@@ -28,7 +28,7 @@ const UseResupply = ({jwttoken, onModalClose, editdataname, editdata, opensnackb
           quantity: editData.quantity + amountToAdd
         };
 
-        axios.post(`https://it342-lemsliteteachers.onrender.com/item/insertitem?bulkSize=${amountToAdd}`, {
+        axios.post(`http://localhost:8080/item/insertitem?bulkSize=${amountToAdd}`, {
             item_name: updatedEditData.name,
             inventory_id: updatedEditData.inventory_id,
             unique_ids:customSNValues,
@@ -43,7 +43,7 @@ const UseResupply = ({jwttoken, onModalClose, editdataname, editdata, opensnackb
             }
         })
         .then(response => {
-            axios.put(`https://it342-lemsliteteachers.onrender.com/inventory/updateinventory?id=${updatedEditData.inventory_id}`, updatedEditData, {
+            axios.put(`http://localhost:8080/inventory/updateinventory?id=${updatedEditData.inventory_id}`, updatedEditData, {
                 headers: {
                     "Authorization": `Bearer ${jwttoken}`
                 }

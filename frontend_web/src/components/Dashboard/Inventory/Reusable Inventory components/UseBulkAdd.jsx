@@ -61,7 +61,7 @@ const UseBulkAdd = ({jwttoken, onModalClose, opensnackbar}) => {
             }
         }
     
-        axios.post("https://it342-lemsliteteachers.onrender.com/inventory/addinventory", newItems, {
+        axios.post("http://localhost:8080/inventory/addinventory", newItems, {
             headers: {
                 "Authorization": `Bearer ${jwttoken}`
             }

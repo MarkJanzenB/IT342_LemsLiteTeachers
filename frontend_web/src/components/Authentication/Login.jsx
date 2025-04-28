@@ -44,8 +44,8 @@ export default function Login() {
     setDisableSUBtn(true);
 
     try {
-      // const response = await axios.post("https://it342-lemsliteteachers.onrender.com/user/login", formData);
-      const response = await axios.post("https://it342-lemsliteteachers.onrender.com/user/login", formData);
+      // const response = await axios.post("http://localhost:8080/user/login", formData);
+      const response = await axios.post("http://localhost:8080/user/login", formData);
       const token = response.data;
 
       if (!token) {

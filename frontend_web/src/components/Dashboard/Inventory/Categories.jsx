@@ -142,7 +142,7 @@ export default function Categories() {
         }
         try {
             const response = await axios.post(
-                'https://it342-lemsliteteachers.onrender.com/api/borrowcart/addToBorrowCart',
+                'http://localhost:8080/api/borrowcart/addToBorrowCart',
                 null,
                 {
                     params: {
@@ -169,7 +169,7 @@ export default function Categories() {
                 )
             );
 
-            const response2 = await axios.put("https://it342-lemsliteteachers.onrender.com/item/borrow",
+            const response2 = await axios.put("http://localhost:8080/item/borrow",
                 {
                     "userID": getJWTUid(),
                     "borrowCartID": response.data.id,
@@ -221,14 +221,14 @@ export default function Categories() {
 
     const fetchData = async (categoryId) => {
         if(categoryId != 5){
-            const response = await axios.get(`https://it342-lemsliteteachers.onrender.com/inventory/getinventorybycategory?categoryId=${categoryId+1}`, {
+            const response = await axios.get(`http://localhost:8080/inventory/getinventorybycategory?categoryId=${categoryId+1}`, {
                 headers: {
                     "authorization": `Bearer ${jwtToken}`,
                 }});
             console.log(response.data);
             setData(response.data);
         }else{
-            const response = await axios.get("https://it342-lemsliteteachers.onrender.com/inventory/getAllInventory", {
+            const response = await axios.get("http://localhost:8080/inventory/getAllInventory", {
                 headers: {
                     "authorization": `Bearer ${jwtToken}`,
                 }});
@@ -260,7 +260,7 @@ export default function Categories() {
 
     const handleRemoveItem = (category_id) => {
         const jwtToken =localStorage.getItem("jwtToken");
-        axios.delete(`https://it342-lemsliteteachers.onrender.com/inventory/delete/${category_id}`, {
+        axios.delete(`http://localhost:8080/inventory/delete/${category_id}`, {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
