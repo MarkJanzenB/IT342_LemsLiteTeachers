@@ -37,7 +37,7 @@ export default function BorrowCart() {
         }
 
         try {
-            const response = await axios.get(`http://localhost:8080/api/borrowcart/instiId/${getJWTSub()}`, {
+            const response = await axios.get(`https://it342-lemsliteteachers.onrender.com/api/borrowcart/instiId/${getJWTSub()}`, {
                 headers: { 'Authorization': `Bearer ${jwtToken}` }
             });
 
@@ -60,7 +60,7 @@ export default function BorrowCart() {
     useEffect(() => {
         if (openModal) {
             console.log("Fetched UID: ", getJWTUid());
-            axios.get(`http://localhost:8080/api/borrowcart/teacherSchedule/${getJWTUid()}`, {
+            axios.get(`https://it342-lemsliteteachers.onrender.com/api/borrowcart/teacherSchedule/${getJWTUid()}`, {
                 headers: { 'Authorization': `Bearer ${jwtToken}` }
             })
                 .then(res => {
@@ -82,7 +82,7 @@ export default function BorrowCart() {
 
         try {
             const response = await axios.get(
-                `http://localhost:8080/api/items/variants?itemName={itemName}`,
+                `https://it342-lemsliteteachers.onrender.com/api/items/variants?itemName={itemName}`,
                 {
                     headers: {  //  Include headers here!
                         'Authorization': `Bearer ${jwtToken}`
@@ -110,7 +110,7 @@ export default function BorrowCart() {
             const instiId = getJWTSub(); // Assuming getJWTSub() returns the instiId
             console.log('Fetching teacher schedule for instiId:', instiId);
             const response = await axios.get(
-                `http://localhost:8080/api/borrowcart/teacherSchedule/${instiId}`, // Call the BorrowCartController endpoint
+                `https://it342-lemsliteteachers.onrender.com/api/borrowcart/teacherSchedule/${instiId}`, // Call the BorrowCartController endpoint
                 {
                     headers: {
                         Authorization: `Bearer ${jwtToken}` // Still include the authorization header
@@ -138,7 +138,7 @@ export default function BorrowCart() {
         }
 
         try {
-            await axios.delete(`http://localhost:8080/api/borrowcart/${borrowCartId}`, {
+            await axios.delete(`https://it342-lemsliteteachers.onrender.com/api/borrowcart/${borrowCartId}`, {
                 headers: {
                     Authorization: `Bearer ${jwtToken}`
                 }
@@ -172,7 +172,7 @@ export default function BorrowCart() {
 
                 const response = await axios.put(
 
-                    `http://localhost:8080/api/borrowcart/${borrowCartId}`,
+                    `https://it342-lemsliteteachers.onrender.com/api/borrowcart/${borrowCartId}`,
 
                     { quantity: newQuantity },
 
@@ -234,7 +234,7 @@ export default function BorrowCart() {
 
             console.log("Payload:", payload);
             await axios.post(
-                `http://localhost:8080/api/borrowcart/finalize/${getJWTSub()}`,
+                `https://it342-lemsliteteachers.onrender.com/api/borrowcart/finalize/${getJWTSub()}`,
                 payload, // <-- Include the payload in the request body
                 {
                     headers: {
@@ -246,7 +246,7 @@ export default function BorrowCart() {
 
             // Clear borrow cart after finalization
             await axios.delete(
-                `http://localhost:8080/api/borrowcart/clear/${getJWTSub()}`,
+                `https://it342-lemsliteteachers.onrender.com/api/borrowcart/clear/${getJWTSub()}`,
                 {
                     headers: {
                         Authorization: `Bearer ${jwtToken}`
@@ -334,7 +334,7 @@ export default function BorrowCart() {
                                                         );
                                                         try {
                                                             await axios.put(
-                                                                `http://localhost:8080/api/borrowcart/updateVariant/${item.id}`,
+                                                                `https://it342-lemsliteteachers.onrender.com/api/borrowcart/updateVariant/${item.id}`,
                                                                 { variant: newVariant },
                                                                 { headers: { Authorization: `Bearer ${token}` } }
                                                             );

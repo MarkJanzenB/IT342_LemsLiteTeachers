@@ -81,9 +81,9 @@ export default function PreparingItem() {
         }
 
         try {
-            let apiUrl = `http://localhost:8080/api/preparing-items/getpreparingitems?instiId=${instiId}&status=Preparing`;
+            let apiUrl = `https://it342-lemsliteteachers.onrender.com/api/preparing-items/getpreparingitems?instiId=${instiId}&status=Preparing`;
             if (userRole !== "1") {
-                apiUrl = `http://localhost:8080/api/preparing-items/getpreparingitems?status=Preparing`;
+                apiUrl = `https://it342-lemsliteteachers.onrender.com/api/preparing-items/getpreparingitems?status=Preparing`;
             }
 
             const response = await axios.get(apiUrl, { headers: { Authorization: `Bearer ${token}` } });
@@ -136,7 +136,7 @@ export default function PreparingItem() {
     const fetchTeacherSchedule = async (preparingItemId) => {
         try {
             const response = await axios.get(
-                `http://localhost:8080/api/preparing-items/teacherSchedule/${preparingItemId}`,
+                `https://it342-lemsliteteachers.onrender.com/api/preparing-items/teacherSchedule/${preparingItemId}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             if (response.data) {
@@ -154,7 +154,7 @@ export default function PreparingItem() {
 
     const fetchUniqueIdsForItemName = async (itemName, category) => {
         const response = await axios.get(
-            `http://localhost:8080/item/getuniqueids?itemName=${itemName}&category=${category}`,
+            `https://it342-lemsliteteachers.onrender.com/item/getuniqueids?itemName=${itemName}&category=${category}`,
             { headers: { Authorization: `Bearer ${token}` } }
         );
         const options = response.data.map(id => ({ value: id, label: id }));
@@ -183,7 +183,7 @@ export default function PreparingItem() {
             uniqueIdsMap: uniqueIds,
         };
 
-        axios.put("http://localhost:8080/api/preparing-items/proceedtocheckout", payload, {
+        axios.put("https://it342-lemsliteteachers.onrender.com/api/preparing-items/proceedtocheckout", payload, {
             headers: {
                 "Authorization": `Bearer ${token}`
             }
