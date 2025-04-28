@@ -22,7 +22,7 @@ import React, { useState, useEffect } from 'react';
                       const jwtToken = localStorage.getItem("jwtToken");
                       if(jwtToken){
                         setIsAuthenticated(true);
-                        axios.get(`http://localhost:8080/user/getuser?uid=${getJWTUid()}`, {
+                        axios.get(`https://it342-lemsliteteachers.onrender.com/user/getuser?uid=${getJWTUid()}`, {
                           headers: {
                               "Authorization": `Bearer ${jwtToken}`
                           }

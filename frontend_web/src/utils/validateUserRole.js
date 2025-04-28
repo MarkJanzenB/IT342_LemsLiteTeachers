@@ -5,7 +5,7 @@ const validateUserRole = async () => {
     if (!jwtToken) return false;
 
     try {
-        const response = await axios.get('http://localhost:8080/user/role', {
+        const response = await axios.get('https://it342-lemsliteteachers.onrender.com/user/role', {
             headers: { "Authorization": `Bearer ${jwtToken}` },
         });
         const serverRole = response.data.role;

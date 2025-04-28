@@ -169,7 +169,7 @@ export default function UpcomingSchedule() {
     const [selectedSchoolYear, setSelectedSchoolYear] = useState(generateSchoolYearOptions()[0]);
 
     // const fetchYearSections = () => {
-    //     axios.get("http://localhost:8080/yearsection/getall", {
+    //     axios.get("https://it342-lemsliteteachers.onrender.com/yearsection/getall", {
     //         headers: {
     //             "Authorization": `Bearer ${jwtToken}`
     //         }
@@ -185,7 +185,7 @@ export default function UpcomingSchedule() {
     // First, add debug logging to your fetchYearSections function
     const fetchYearSections = () => {
         console.log("Fetching year sections...");
-        axios.get("http://localhost:8080/yearsection/getall", {
+        axios.get("https://it342-lemsliteteachers.onrender.com/yearsection/getall", {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
@@ -351,7 +351,7 @@ export default function UpcomingSchedule() {
         fetchSubjects();
         
         // Fetch required data for dropdowns
-        axios.get("http://localhost:8080/user/getallusersbyroleid?roleId=1", {
+        axios.get("https://it342-lemsliteteachers.onrender.com/user/getallusersbyroleid?roleId=1", {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
@@ -369,7 +369,7 @@ export default function UpcomingSchedule() {
                 console.log(error);
             })
 
-        axios.get("http://localhost:8080/subject/getallsubject", {
+        axios.get("https://it342-lemsliteteachers.onrender.com/subject/getallsubject", {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
@@ -415,7 +415,7 @@ export default function UpcomingSchedule() {
     };
 
     const fetchSubjects = () => {
-        axios.get("http://localhost:8080/subject/getallsubject", {
+        axios.get("https://it342-lemsliteteachers.onrender.com/subject/getallsubject", {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
@@ -429,7 +429,7 @@ export default function UpcomingSchedule() {
     }
 
     const fetchTeachers = () => {
-        axios.get("http://localhost:8080/user/getallusersbyroleid?roleId=1", {
+        axios.get("https://it342-lemsliteteachers.onrender.com/user/getallusersbyroleid?roleId=1", {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
@@ -452,13 +452,13 @@ export default function UpcomingSchedule() {
         // console.log(format(karun, 'yyyy-MM-dd'))
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/teacherschedule/getAllTeacherSchedules`, {
+                const response = await axios.get(`https://it342-lemsliteteachers.onrender.com/teacherschedule/getAllTeacherSchedules`, {
                     headers: {
                         "Authorization": `Bearer ${jwtToken}`
                     }
                 });
 
-                const teacherResponse = await axios.get("http://localhost:8080/user/getallusersbyroleid?roleId=1", {
+                const teacherResponse = await axios.get("https://it342-lemsliteteachers.onrender.com/user/getallusersbyroleid?roleId=1", {
                     headers: {
                         "Authorization": `Bearer ${jwtToken}`
                     }
@@ -600,7 +600,7 @@ export default function UpcomingSchedule() {
         };
 
 
-        axios.post(`http://localhost:8080/teacherschedule/addtsched?teacherId=${teacherId}&createdby=${getJWTUid()}`,
+        axios.post(`https://it342-lemsliteteachers.onrender.com/teacherschedule/addtsched?teacherId=${teacherId}&createdby=${getJWTUid()}`,
             teacherScheduleData, {
                 headers: {
                     "Authorization": `Bearer ${jwtToken}`
@@ -640,7 +640,7 @@ export default function UpcomingSchedule() {
 
     const removeConflictingSchedules = (conflicts) => {
         conflicts.forEach(conflict => {
-            axios.delete(`http://localhost:8080/request/deleterequest/${conflict.id}`, {
+            axios.delete(`https://it342-lemsliteteachers.onrender.com/request/deleterequest/${conflict.id}`, {
                 headers: {
                     "Authorization": `Bearer ${jwtToken}`
                 }
@@ -803,7 +803,7 @@ export default function UpcomingSchedule() {
         const endtimeString = `${endformattedHour}:${endformattedMinute}:00`;
 
         console.log(format(getDate, 'yyyy-MM-dd'))
-        axios.put(`http://localhost:8080/teacherschedule/update?teacherScheduleId=${requestId}`, {
+        axios.put(`https://it342-lemsliteteachers.onrender.com/teacherschedule/update?teacherScheduleId=${requestId}`, {
             date: format(getDate, 'yyyy-MM-dd'),
             start_time: timeString,
             end_time: endtimeString,

@@ -26,7 +26,7 @@ const UseAddItem = ({jwttoken, onModalClose, opensnackbar}) => {
             return;
         }
     
-        axios.get(`http://localhost:8080/inventory/isinventoryexists?inventoryName=${newItem.item_name}`, {
+        axios.get(`https://it342-lemsliteteachers.onrender.com/inventory/isinventoryexists?inventoryName=${newItem.item_name}`, {
                 headers: {
                     "Authorization": `Bearer ${jwttoken}`
                 }
@@ -36,7 +36,7 @@ const UseAddItem = ({jwttoken, onModalClose, opensnackbar}) => {
                 })
                 .catch(error => {
                     if (error.response.status == 409) {
-                        axios.post("http://localhost:8080/inventory/addinventory", {
+                        axios.post("https://it342-lemsliteteachers.onrender.com/inventory/addinventory", {
                             unit: newItem.unit,
                             name: newItem.item_name,
                             description: newItem.description,
@@ -96,7 +96,7 @@ const UseAddItem = ({jwttoken, onModalClose, opensnackbar}) => {
 
     const checkItemExists = async (itemName) => {
         try {
-            const response = await axios.get(`http://localhost:8080/inventory/isinventoryexists?inventoryName=${itemName}`, {
+            const response = await axios.get(`https://it342-lemsliteteachers.onrender.com/inventory/isinventoryexists?inventoryName=${itemName}`, {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
