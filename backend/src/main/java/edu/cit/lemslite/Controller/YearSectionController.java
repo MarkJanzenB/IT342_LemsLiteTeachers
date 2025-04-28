@@ -30,11 +30,6 @@ public class YearSectionController {
         return yrsecserv.getYearSectionsByYearAndSection(year, section);
     }
 
-//    @GetMapping("/active")
-//    public ResponseEntity<?> getActiveYearSections() {
-//        return yrsecserv.getActiveYearSections();
-//    }
-
     @PostMapping
     public ResponseEntity<?> createYearSection(@RequestBody YearSectionEntity yearSection) {
         return yrsecserv.createYearSection(yearSection);
