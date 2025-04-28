@@ -2,13 +2,20 @@ package edu.cit.lemslite.Service;
 
 import edu.cit.lemslite.Entity.ItemEntity;
 import edu.cit.lemslite.Entity.PreparingItemEntity;
-import edu.cit.lemslite.Repository.ItemRepository;
-import edu.cit.lemslite.Repository.PreparingItemRepository;
+import edu.cit.lemslite.Entity.TeacherScheduleEntity;
+import edu.cit.lemslite.Entity.UserEntity;
+import edu.cit.lemslite.Repository.*;
+import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Service
 public class PreparingItemService {
@@ -19,68 +26,156 @@ public class PreparingItemService {
     @Autowired
     private ItemRepository itemRepository;
 
-    // Finalize preparing item (Validate unique_id and assign)
-    public void finalizePreparingItem(int id, String uniqueId) {
-        // Fetch the PreparingItem by its ID
-        Optional<PreparingItemEntity> optionalItem = preparingItemRepository.findById(id);
-        if (optionalItem.isPresent()) {
-            PreparingItemEntity preparingItem = optionalItem.get();
+    @Autowired
+    private UserRepository userRepository;
 
-            // Fetch the associated ItemEntity (use the item_id that was saved in the PreparingItemEntity)
-            ItemEntity item = preparingItem.getItem();
+	@Autowired
+	private TeacherScheduleRepository teacherScheduleRepository;
 
-            if (item != null) {
-                // You can now use the `item` to access its `uniqueId`
-                String itemUniqueId = item.getUniqueId();
+    @Autowired
+    InventoryRepository invrepo;
 
-                // Set the uniqueId for PreparingItemEntity based on ItemEntity's uniqueId
-                preparingItem.setUniqueId(itemUniqueId);
+    /*
+     * REFACTOR: remove loggers and sysouts once deployed
+     * because this would cause too many logs in backend console
+     * due to many request made by different users
+     * */
+    private static final Logger logger = LoggerFactory.getLogger(PreparingItemService.class); // Initialize logger
 
-                // Update other fields as needed
-                preparingItem.setStatus("finalized");  // Change status to finalized
-                preparingItem.setReferenceCode("PI-" + item.getItemName().charAt(0) + itemUniqueId); // Generate Reference Code
+	private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    
+    public PreparingItemEntity addToPreparingItem(String instiId, String itemName, String categoryName, int quantity, String status) {
+        PreparingItemEntity item = new PreparingItemEntity();
+        item.setInstiId(instiId);
+        item.setItemName(itemName);
+        item.setCategoryName(categoryName);
+        item.setQuantity(quantity);
+        item.setStatus(status);
 
-                // Save the updated PreparingItem
-                preparingItemRepository.save(preparingItem);
-            } else {
-                throw new RuntimeException("Item not found.");
-            }
+        UserEntity user = userRepository.findByInstiId(instiId);
+        if (user != null) {
+            item.setUser(user);
         } else {
-            throw new RuntimeException("Preparing item not found.");
+            logger.warn("User not found for instiId: {}", instiId);
         }
+
+        return preparingItemRepository.save(item);
     }
 
+    /*
+     * REFACTOR: either move the moveToPreparingItem logic in this service
+     * for maintainablity
+     * */
 
-    // Checkout preparing item and mark it as Borrowed
-    public void checkoutPreparingItem(int id) {
-        Optional<PreparingItemEntity> optionalItem = preparingItemRepository.findById(id);
-        if (optionalItem.isPresent()) {
-            PreparingItemEntity preparingItem = optionalItem.get();
+    public List<PreparingItemEntity> getPreparingItems(String instiId, String status) {
+    	if(instiId == null) {
+    		return preparingItemRepository.findByStatus(status);
+    	}
+    	return preparingItemRepository.findByInstiIdAndStatus(instiId, status);
+    }
+    
+    @Transactional
+    public void proceedToCheckOut(Map<Integer, Integer> itemQuantities, Map<Integer, Map<String, String>> uniqueIdsMap){
 
-            // Ensure the item is finalized before checking out
-            if ("finalized".equals(preparingItem.getStatus())) {
-                preparingItem.setStatus("Borrowed");  // Change status to Borrowed
-                preparingItemRepository.save(preparingItem);  // Save the updated PreparingItem
-            } else {
-                throw new RuntimeException("Item is not finalized yet.");
-            }
-        } else {
-            throw new RuntimeException("Preparing item not found.");
-        }
+    	/*
+    	 * Loop through all the PreparingItem record
+    	 * based on its ID gathered from the key in itemQuantities
+    	 * Then update their status
+    	 * */
+    	for(Map.Entry<Integer, Integer> entry: itemQuantities.entrySet()) {
+    		Integer prepItemId = entry.getKey(); 
+    		int quantity = entry.getValue(); 
+    		PreparingItemEntity prepItem = preparingItemRepository.findById(prepItemId).orElseThrow();
+    		UserEntity user = prepItem.getUser(); 
+    		String categoryName = prepItem.getCategoryName();
+    		String itemName = prepItem.getItemName();
+    		prepItem.setStatus("In-use");
+    		preparingItemRepository.save(prepItem);
+			
+    		if(categoryName == null || !categoryName.equalsIgnoreCase("Consumables")) {
+    			/*
+        		 * Finds the item base on unique id
+        		 * and if the status is available
+        		 * then update their status and user
+        		 * */
+        		Map<String, String> uniqueIdMap = uniqueIdsMap.get(prepItemId);
+        		int handled = 0;
+        		if(uniqueIdMap != null) {
+        			for(String key: uniqueIdMap.keySet()) {
+        				String uid = uniqueIdMap.get(key);
+        				if (uid != null && !uid.isEmpty()) {
+        					ItemEntity item = itemRepository.findByUniqueId(uid);
+        					if(item != null && item.getStatus().equals("Available")) {
+        						item.setStatus("In-use");
+        						item.setUser(user);
+        						item.setPreparingItem(prepItem);
+        						itemRepository.save(item);
+        						handled++;
+        					}
+        				}
+        			}
+        		}
+        		
+        		/*
+        		 * Finds the item with an auto generated unique id
+        		 * this will run if the number of quantity is greater than the
+        		 * number of unique ids
+        		 * */
+        		int remaining = quantity - handled;
+        		if(remaining > 0) {
+        			List<ItemEntity> autoItems = itemRepository.findByItemNameAndIsAutoUidTrueAndStatus(
+        					itemName, "Available", PageRequest.of(0, remaining));
+        			
+        			/*
+        			 * Auto assign items
+        			 * Prioritizing the items
+        			 * with auto generated unique id
+        			 * */
+        			int autoHandled = 0;
+        			for(ItemEntity item: autoItems) {
+        				item.setStatus("In-use");
+        				item.setUser(user);
+        				item.setPreparingItem(prepItem);
+        				itemRepository.save(item);
+        				autoHandled++;
+        			}
+        			
+        			/*
+        			 * If items with auto generated unique id runs out
+        			 * it will auto assign to the manual
+        			 * */
+        			int fallbackRemaining = remaining - autoHandled;
+        			if(fallbackRemaining > 0) {
+        				List<ItemEntity> manualItems = itemRepository.findByItemNameAndIsAutoUidFalseAndStatus(
+        						itemName, "Available", PageRequest.of(0, fallbackRemaining));
+        				for(ItemEntity item: manualItems) {
+        					item.setStatus("In-use");
+            				item.setUser(user);
+            				item.setPreparingItem(prepItem);
+            				itemRepository.save(item);
+        				}
+        			}
+        		}
+    		}
+    	}
     }
 
-    // Fetch all preparing items by institution ID
-    public List<PreparingItemEntity> getPreparingItemsByInstiId(String instiId) {
-        return preparingItemRepository.findAllByInstiId(instiId);
-    }
+	public Map<String, Object> getTeacherScheduleByPreparingItemId(int preparingItemId) {
+		PreparingItemEntity preparingItem = preparingItemRepository.findById(preparingItemId)
+				.orElseThrow(() -> new RuntimeException("Preparing item not found with ID: " + preparingItemId));
+		TeacherScheduleEntity teacherSchedule = preparingItem.getTeacherSchedule();
 
-    // Create a new preparing item
-    public PreparingItemEntity createPreparingItem(PreparingItemEntity preparingItemEntity) {
-        return preparingItemRepository.save(preparingItemEntity);
-    }
+		if (teacherSchedule != null) {
+			Map<String, Object> scheduleData = new HashMap<>();
+			scheduleData.put("date", teacherSchedule.getDate());
+			scheduleData.put("startTime", teacherSchedule.getStartTime() != null ? teacherSchedule.getStartTime().format(TIME_FORMATTER) : null);
+			scheduleData.put("endTime", teacherSchedule.getEndTime() != null ? teacherSchedule.getEndTime().format(TIME_FORMATTER) : null);
+			scheduleData.put("labNum", teacherSchedule.getLabNum());
+//			scheduleData.put("location", teacherSchedule.getLocation()); // Assuming getLocation() returns labNum
+			return scheduleData;
+		} else {
+			return null; // Or handle the case where there's no schedule
+		}
+	}
 
-    // Delete preparing item
-    public void deletePreparingItem(int id) {
-        preparingItemRepository.deleteById(id);
-    }
 }

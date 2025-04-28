@@ -1,13 +1,12 @@
 package edu.cit.lemslite.Service;
 
+import edu.cit.lemslite.Entity.UserEntity;
+import edu.cit.lemslite.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import edu.cit.lemslite.Entity.UserEntity;
-import edu.cit.lemslite.Repository.UserRepository;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService{

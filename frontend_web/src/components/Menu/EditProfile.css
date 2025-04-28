@@ -1,0 +1,30 @@
+.edit-profile-circle {
+    width: 450px;
+    height: 450px;
+    background-color: white;
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.edit-profile-inner-circle{
+    width: 380px;
+    height: 380px;
+    background-color: #FFFFBA;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+}
+
+.edit-profile-thick-white-line{
+    position: absolute;
+    width: 100%;
+    height: 50px;
+    background-color: white;
+}
+
+.edit-profile-photo-btn{
+    margin-top: 400px;
+}

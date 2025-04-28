@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/borrowitem")
-@CrossOrigin(origins = "http://localhost:5173") // Allow frontend access
+@CrossOrigin(origins = "https://cit-lems.vercel.app")
 public class BorrowItemController {
 
     @Autowired
@@ -25,7 +25,7 @@ public class BorrowItemController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private TeacherScheduleRepository tsrepo;
+    private TeacherScheduleRepository teacherScheduleRepository;
 
     @GetMapping("/all")
     public List<BorrowItemEntity> getAllBorrowItems() {
@@ -41,13 +41,13 @@ public class BorrowItemController {
     @PostMapping("/addBorrowItems")
     public ResponseEntity<?> addBorrowItems(
             @RequestParam String uid,
-            @RequestParam String borrowedId, // ✅ Accept the borrowedId from frontend
-            @RequestParam Long itemId,
+            @RequestParam String borrowedId,
+            @RequestParam Integer itemId,
             @RequestParam String itemName,
             @RequestParam String categoryName,
             @RequestParam Integer quantity,
             @RequestParam String status,
-            @RequestParam(required = false) Integer teacherScheduleId) {
+            @RequestParam(required = false) Integer teacherScheduleId) { // Changed to Integer
 
         try {
             UserEntity user = userRepository.findByInstiId(uid);
@@ -56,20 +56,22 @@ public class BorrowItemController {
             }
 
             BorrowItemEntity borrowItemEntity = new BorrowItemEntity();
-            borrowItemEntity.setUser(user); // ✅ Set the user
-            borrowItemEntity.setBorrowedId(borrowedId);  // ✅ Set the same Borrowed ID
+            borrowItemEntity.setUser(user);
+            borrowItemEntity.setBorrowedId(borrowedId);
             borrowItemEntity.setItemId(itemId);
             borrowItemEntity.setItemName(itemName);
             borrowItemEntity.setCategoryName(categoryName);
             borrowItemEntity.setQuantity(quantity);
             borrowItemEntity.setStatus(status);
             borrowItemEntity.setBorrowedDate(new Date());
-            if(teacherScheduleId != null) {
-            	TeacherScheduleEntity teacherSchedule = tsrepo.findById(teacherScheduleId).orElse(null);
-            	if (teacherSchedule == null) {
-                	return ResponseEntity.badRequest().body("teacher schedule with ID: " + teacherScheduleId + " could not be found");
+
+            if (teacherScheduleId != null) {
+                Optional<TeacherScheduleEntity> teacherScheduleOptional = teacherScheduleRepository.findById(teacherScheduleId);
+                if (teacherScheduleOptional.isPresent()) {
+                    borrowItemEntity.setTeacherSchedule(teacherScheduleOptional.get());
+                } else {
+                    return ResponseEntity.badRequest().body("Teacher schedule with ID: " + teacherScheduleId + " could not be found");
                 }
-//            	borrowItemEntity.setTeacherSchedule(teacherSchedule);
             }
 
             return borrowItemService.addBorrowItem(borrowItemEntity);
@@ -88,8 +90,21 @@ public class BorrowItemController {
         }
     }
 
-
+    @GetMapping("/teacherSchedule/{preparingItemId}")  // Corrected the path variable name to preparingItemId
+    public ResponseEntity<?> getTeacherScheduleByPreparingItemId(@PathVariable Long preparingItemId) {
+        try {
+            BorrowItemEntity borrowItem = borrowItemService.getBorrowItemById(preparingItemId); // Added this method to the service
+            if (borrowItem == null) {
+                return ResponseEntity.notFound().build(); // Return 404 if the item is not found
+            }
+            TeacherScheduleEntity schedule = borrowItem.getTeacherSchedule();
+            if (schedule != null) {
+                return ResponseEntity.ok(schedule);
+            } else {
+                return ResponseEntity.ok(null); // Return 200 with null body, indicating no schedule
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
+    }
 }
-
-
-

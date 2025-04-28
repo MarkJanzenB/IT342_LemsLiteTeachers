@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/yearsection")
-@CrossOrigin
+@CrossOrigin(origins = "https://cit-lems.vercel.app")
 public class YearSectionController {
     @Autowired
     YearSectionService yrsecserv;
@@ -29,11 +29,6 @@ public class YearSectionController {
             @RequestParam String section) {
         return yrsecserv.getYearSectionsByYearAndSection(year, section);
     }
-
-//    @GetMapping("/active")
-//    public ResponseEntity<?> getActiveYearSections() {
-//        return yrsecserv.getActiveYearSections();
-//    }
 
     @PostMapping
     public ResponseEntity<?> createYearSection(@RequestBody YearSectionEntity yearSection) {

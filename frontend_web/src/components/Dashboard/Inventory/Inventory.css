@@ -1,0 +1,39 @@
+.inventory-container {
+    display: flex;
+    height: 100vh;
+}
+.inventory-content {
+    flex-grow: 1;
+    padding: 10px;
+    margin-top: 100px;/* Adjust the padding as needed */
+}
+
+.fade-slide-up {
+    animation: fadeSlideUp 0.5s forwards;
+}
+.papercontainer{}
+@keyframes fadeSlideUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+.table-slide-up {
+    animation: tableSlideUp 0.5s forwards;
+}
+
+@keyframes tableSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

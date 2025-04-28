@@ -1,12 +1,11 @@
 package edu.cit.lemslite.Service;
 
-import java.util.List;
-
+import edu.cit.lemslite.Entity.ItemCategoryEntity;
+import edu.cit.lemslite.Repository.ItemCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import edu.cit.lemslite.Entity.ItemCategoryEntity;
-import edu.cit.lemslite.Repository.ItemCategoryRepository;
+import java.util.List;
 
 @Service
 public class ItemCategoryService {
