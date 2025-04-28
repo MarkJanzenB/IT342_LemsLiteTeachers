@@ -29,7 +29,7 @@ const UseEditItem = ({jwttoken, onModalClose, editdataname, editdata, opensnackb
       const updatedEditData = {
         ...editData,
       };
-      axios.put(`http://localhost:8080/inventory/updateinventory?id=${updatedEditData.inventory_id}`, updatedEditData, {
+      axios.put(`https://it342-lemsliteteachers.onrender.com/inventory/updateinventory?id=${updatedEditData.inventory_id}`, updatedEditData, {
         headers: {
           "Authorization": `Bearer ${jwttoken}`
         }

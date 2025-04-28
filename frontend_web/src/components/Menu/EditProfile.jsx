@@ -56,7 +56,7 @@ export default function EditProfile() {
 
     useEffect(() => {
         const uid = getJWTUid();
-        axios.get(`http://localhost:8080/user/getuser?uid=${uid}`, {
+        axios.get(`https://it342-lemsliteteachers.onrender.com/user/getuser?uid=${uid}`, {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
@@ -92,7 +92,7 @@ export default function EditProfile() {
 
     // const updateUser = async () => {
     //     try {
-    //         await axios.put(`http://localhost:8080/user/update`, fetchedData, {
+    //         await axios.put(`https://it342-lemsliteteachers.onrender.com/user/update`, fetchedData, {
     //             headers: {
     //                 "Authorization": `Bearer ${jwtToken}`
     //             }
@@ -115,7 +115,7 @@ export default function EditProfile() {
                 formData.append('profileImage', imageFile);
             }
 
-            await axios.put(`http://localhost:8080/user/update`, formData, {
+            await axios.put(`https://it342-lemsliteteachers.onrender.com/user/update`, formData, {
                 headers: {
                     "Authorization": `Bearer ${jwtToken}`,
                     "Content-Type": "multipart/form-data"
@@ -136,7 +136,7 @@ export default function EditProfile() {
     };
 
     const handleSavePart2 = async () => {
-        const isUserAlrdyExists = await axios.get(`http://localhost:8080/user/isuseralrdyexists?instiId=${fetchedData.insti_id}`);
+        const isUserAlrdyExists = await axios.get(`https://it342-lemsliteteachers.onrender.com/user/isuseralrdyexists?instiId=${fetchedData.insti_id}`);
         if (isUserAlrdyExists.data) {
             setUserAlrdyExst("Institute ID already exists.");
             setOpenModal(false);

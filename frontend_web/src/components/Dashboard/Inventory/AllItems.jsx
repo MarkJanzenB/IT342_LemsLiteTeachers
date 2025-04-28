@@ -108,7 +108,7 @@ export default function AllItems() {
 
     const fetchAllItems = async () => {
         try {
-            const response = await axios.get("http://localhost:8080/inventory/getAllInventory", {
+            const response = await axios.get("https://it342-lemsliteteachers.onrender.com/inventory/getAllInventory", {
                 headers: {
                     "authorization": `Bearer ${jwtToken}`,
                 }
@@ -123,7 +123,7 @@ export default function AllItems() {
 
     const fetchItemVariants = async (itemId) => {
         try {
-            const response = await axios.get(`http://localhost:8080/inventory/item/${itemId}/variants`, {
+            const response = await axios.get(`https://it342-lemsliteteachers.onrender.com/inventory/item/${itemId}/variants`, {
                 headers: {
                     "authorization": `Bearer ${jwtToken}`,
                 }
@@ -194,7 +194,7 @@ export default function AllItems() {
 
         try {
             const response = await axios.post(
-                'http://localhost:8080/api/borrowcart/addToBorrowCart',
+                'https://it342-lemsliteteachers.onrender.com/api/borrowcart/addToBorrowCart',
                 null,
                 {
                     params: {
@@ -228,7 +228,7 @@ export default function AllItems() {
 
 //REMOVE
     const handleRemoveItem = (category_id) => {
-        axios.delete(`http://localhost:8080/inventory/delete/${category_id}`, {
+        axios.delete(`https://it342-lemsliteteachers.onrender.com/inventory/delete/${category_id}`, {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
@@ -358,7 +358,7 @@ export default function AllItems() {
     const paginatedData = filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     const fetchManufaturers = () => {
-        axios.get(`http://localhost:8080/manufacturer/getall`, {
+        axios.get(`https://it342-lemsliteteachers.onrender.com/manufacturer/getall`, {
             headers : {
                 "authorization": `Bearer ${jwtToken}`
             }
