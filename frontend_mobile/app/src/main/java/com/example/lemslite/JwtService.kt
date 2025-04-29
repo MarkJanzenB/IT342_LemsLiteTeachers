@@ -36,7 +36,7 @@ class JwtService {
     fun getSubFromToken(token: String): String? {
         return try {
             val claims = extractAllClaims(token)
-            claims["subject"] as? String
+            claims["sub"] as? String
         } catch (e: Exception) {
             Log.e("com.example.lemslite.JwtService", "Error extracting subject: ${e.message}", e)
             null
