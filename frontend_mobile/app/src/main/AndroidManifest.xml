@@ -15,6 +15,7 @@
         android:theme="@style/Theme.LEMSLite"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
             android:name=".ReportsActivity"
             android:exported="false" />

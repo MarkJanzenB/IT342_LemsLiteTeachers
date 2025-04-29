@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_schedule"
+        android:icon="@drawable/nav_schedule_icon"
+        android:title="Schedule" />
+    <item
+        android:id="@+id/nav_inventory"
+        android:icon="@drawable/nav_inventory_icon"
+        android:title="Inventory" />
+    <item
+        android:id="@+id/nav_reports"
+        android:icon="@drawable/nav_reports_icon"
+        android:title="Reports" />
+    <item
+        android:id="@+id/nav_borrow_history"
+        android:icon="@drawable/nav_history_icon"
+        android:title="Borrow History" />
+</menu>
