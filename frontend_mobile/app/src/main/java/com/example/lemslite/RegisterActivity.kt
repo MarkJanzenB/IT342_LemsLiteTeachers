@@ -32,6 +32,12 @@ class RegisterActivity : AppCompatActivity() {
                 registerUser(firstName, lastName, instiId, email, password)
             }
         }
+
+        binding.textView7.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun validateInputs(
