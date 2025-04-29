@@ -84,7 +84,7 @@
             android:id="@+id/accountSettingsText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Account Settings"
+            android:text="Profile Picture"
             android:textColor="#000000"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
