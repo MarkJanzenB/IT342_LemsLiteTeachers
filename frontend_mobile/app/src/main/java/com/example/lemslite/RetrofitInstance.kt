@@ -1,3 +1,5 @@
+package com.example.lemslite
+
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
@@ -10,7 +12,7 @@ object RetrofitInstance {
     // Cloud
     private const val BASE_URL = "https://it342-lemsliteteachers.onrender.com/"
 
-    // Local (Uncomment for Testing)
+    // Local (For API testing)
     // private const val BASE_URL = "http://10.0.2.2:8080/"
 
     private val gson: Gson = GsonBuilder()
