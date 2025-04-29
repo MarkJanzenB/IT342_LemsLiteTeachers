@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/teacherschedule")
-@CrossOrigin(origins = "https://cit-lems.vercel.app")
+@CrossOrigin(origins = "https://lems-lite.vercel.app/")
 public class TeacherScheduleController {
     @Autowired
     TeacherScheduleService tcherschedserv;

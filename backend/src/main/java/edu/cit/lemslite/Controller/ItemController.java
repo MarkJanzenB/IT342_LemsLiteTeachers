@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/item")
-@CrossOrigin(origins = "https://cit-lems.vercel.app")
+@CrossOrigin(origins = "https://lems-lite.vercel.app/")
 public class ItemController {
     @Autowired
     ItemService itemserv;

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/inventory")
-@CrossOrigin(origins = "https://cit-lems.vercel.app")
+@CrossOrigin(origins = "https://lems-lite.vercel.app/")
 
 public class InventoryController {
     @Autowired
