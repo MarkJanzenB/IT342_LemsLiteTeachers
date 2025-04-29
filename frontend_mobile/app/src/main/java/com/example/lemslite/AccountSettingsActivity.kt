@@ -1,9 +1,11 @@
 package com.example.lemslite
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
@@ -21,6 +23,22 @@ class AccountSettingsActivity : AppCompatActivity() {
         val backIcon = findViewById<ImageView>(R.id.backIcon)
         backIcon.setOnClickListener {
             finish()
+        }
+
+        findViewById<ConstraintLayout>(R.id.accountSettingsContainer).setOnClickListener {
+            startActivity(Intent(this, EditProfilePictureActivity::class.java))
+        }
+
+        findViewById<ConstraintLayout>(R.id.fullNameContainer).setOnClickListener {
+            startActivity(Intent(this, EditFullNameActivity::class.java))
+        }
+
+        findViewById<ConstraintLayout>(R.id.emailContainer).setOnClickListener {
+            startActivity(Intent(this, EditEmailActivity::class.java))
+        }
+
+        findViewById<ConstraintLayout>(R.id.changePasswordContainer).setOnClickListener {
+            startActivity(Intent(this, ChangePasswordActivity::class.java))
         }
     }
 }
