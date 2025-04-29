@@ -1,29 +1,27 @@
 package com.example.lemslite
 
 import ApiService
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import com.example.lemslite.databinding.ActivityLoginBinding
+import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import androidx.core.content.edit
-import com.google.gson.JsonObject
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val sharedPreferences by lazy {
-        getSharedPreferences("user_session", Context.MODE_PRIVATE)
+        getSharedPreferences("user_session", MODE_PRIVATE)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Check if a valid token exists
         val token = sharedPreferences.getString("jwt_token", null)
         if (token != null && !isTokenExpired(token)) {
             navigateToLoginSuccess()
@@ -58,16 +56,16 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 if (response.isSuccessful) {
                     val token = response.body()
-                    if (token != null) {
+                    if (token != null && token != "User doesn't exists" && token != "Incorrect Password") {
                         handleToken(token)
                     } else {
-                        Log.e("LoginActivity", "Empty response body")
-                        Toast.makeText(this@LoginActivity, "Server returned an empty response. Please try again.", Toast.LENGTH_SHORT).show()
+                        val errorMessage = token ?: "An unexpected error occurred."
+                        Toast.makeText(this@LoginActivity, errorMessage, Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     val errorMessage = response.errorBody()?.string() ?: "An unexpected error occurred."
                     Log.e("LoginActivity", "Login failed: $errorMessage")
-                    Toast.makeText(this@LoginActivity, "Login failed: $errorMessage", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
 
