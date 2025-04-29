@@ -33,7 +33,7 @@
             android:id="@+id/accountTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="clip_horizontal|center"
+            android:paddingStart="16dp"
             android:text="Account"
             android:textColor="#000000"
             android:textSize="18sp"
