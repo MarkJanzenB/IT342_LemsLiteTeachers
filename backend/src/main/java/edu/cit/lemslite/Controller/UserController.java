@@ -74,4 +74,20 @@ public class UserController {
 	public ResponseEntity<?> editPfp(@RequestBody Map<String, Object> newPfpDetails){
 		return userserv.editPfp(newPfpDetails);
 	}
+
+	@PutMapping("/updateName")
+	public ResponseEntity<?> updateName(@RequestParam int uid, @RequestParam(required = false) String newFirstName, @RequestParam(required = false) String newLastName) {
+		return userserv.updateName(uid, newFirstName, newLastName);
+	}
+
+	@PutMapping("/updateEmail")
+	public ResponseEntity<?> updateEmail(@RequestParam int uid, @RequestParam String newEmail) {
+		return userserv.updateEmail(uid, newEmail);
+	}
+
+	@PutMapping("/changePassword")
+	public ResponseEntity<?> changePassword(@RequestParam int uid, @RequestParam String oldPassword, @RequestParam String newPassword) {
+		return userserv.changePassword(uid, oldPassword, newPassword);
+	}
+
 }

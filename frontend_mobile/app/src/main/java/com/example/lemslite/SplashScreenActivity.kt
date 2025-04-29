@@ -54,8 +54,21 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     private fun navigateToOnboarding() {
-        val intent = Intent(this, OnboardingActivity::class.java)
-        startActivity(intent)
+        val sharedPreferences = getSharedPreferences("user_session", MODE_PRIVATE)
+        val token = sharedPreferences.getString("jwt_token", null)
+
+        if (token != null && !isTokenExpired(token)) {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        } else {
+            val intent = Intent(this, OnboardingActivity::class.java)
+            startActivity(intent)
+        }
         finish()
+    }
+
+    private fun isTokenExpired(token: String): Boolean {
+        val jwtService = JwtService()
+        return jwtService.isTokenExpired(token)
     }
 }
