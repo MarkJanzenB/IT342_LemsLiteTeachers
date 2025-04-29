@@ -64,11 +64,11 @@ const UseResupply = ({jwttoken, onModalClose, editdataname, editdata, opensnackb
     const handleAmountChange = (event) => {
         setAmountToAdd(Number(event.target.value));
     };
-  
+
     const handleNumCustomSNChange = (event) => {
-        setNumCustomSN(Number(event.target.value));  
+        setNumCustomSN(Number(event.target.value));
     }
-  
+
     const handleInputChangeCustomSN = (index) => (event) => {
         const newValues = [...customSNValues];
         newValues[index] = event.target.value;
@@ -129,7 +129,7 @@ const UseResupply = ({jwttoken, onModalClose, editdataname, editdata, opensnackb
                         }
                       }}}
                     />
-    
+
                     <TextField
                         name="variant"
                         value={itemVariant}
@@ -140,8 +140,8 @@ const UseResupply = ({jwttoken, onModalClose, editdataname, editdata, opensnackb
                         fullWidth
                         autoComplete={'off'}
                     />
-    
-                    {editData.item_category.category_name === 'Consumables' && 
+
+                    {editData.item_category.category_name === 'Consumables' &&
                       <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DatePicker
                             label="Date of expiry"
@@ -161,7 +161,7 @@ const UseResupply = ({jwttoken, onModalClose, editdataname, editdata, opensnackb
                             }}
                         />
                       </LocalizationProvider>}
-                    
+
                     {error && <Typography color="error" sx={{ mt: 2 }}>{error}</Typography>}
                     <Box display="flex" justifyContent="space-between" mt={2}>
                     <Button variant="outlined" sx={{ color: '#800000', borderColor: '#800000' }} onClick={() => {
@@ -224,7 +224,7 @@ const UseResupply = ({jwttoken, onModalClose, editdataname, editdata, opensnackb
                       }
                     }}}
                   />
-                  
+
                   {error && <Typography color="error" sx={{ mt: 2 }}>{error}</Typography>}
                   <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#016565', textAlign: 'center' }}>
                   Leave it zero(0) if you want everything to have auto generated serial number
