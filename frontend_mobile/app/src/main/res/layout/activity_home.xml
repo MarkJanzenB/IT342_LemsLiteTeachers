@@ -56,7 +56,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_bar" />
 
-    <!-- Description -->
     <TextView
         android:id="@+id/descriptionText"
         android:layout_width="0dp"
@@ -70,7 +69,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logoImage" />
 
-    <!-- Divider -->
     <View
         android:id="@+id/dividerLine"
         android:layout_width="0dp"
@@ -237,9 +235,11 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
+            android:id="@+id/homeNavButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="#EDEDED"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -257,6 +257,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/scheduleNavButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -277,6 +278,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/inventoryNavButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -297,6 +299,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/reportsNavButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -317,6 +320,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/historyNavButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
