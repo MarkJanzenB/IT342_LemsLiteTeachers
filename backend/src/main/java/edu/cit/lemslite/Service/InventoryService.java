@@ -1,36 +1,49 @@
 package edu.cit.lemslite.Service;
 
+import edu.cit.lemslite.Entity.InventoryEntity;
+import edu.cit.lemslite.Entity.ItemCategoryEntity;
+import edu.cit.lemslite.Repository.InventoryRepository;
+import edu.cit.lemslite.Repository.ItemCategoryRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import edu.cit.lemslite.Entity.InventoryEntity;
-import edu.cit.lemslite.Repository.InventoryRepository;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Service
 public class InventoryService {
 	@Autowired
 	InventoryRepository inventoryRepository;
+	
+	@Autowired
+	ItemCategoryRepository icrepo;
 
 	public List<InventoryEntity> getAllInventory() {
 		return inventoryRepository.findAll();
 	}
 
-	public ResponseEntity<?> addInventory(InventoryEntity inventory) {
-		InventoryEntity inventoryfromdb = inventoryRepository.findByNameIgnoreCase(inventory.getName());
-
-		if (inventoryfromdb != null) {
-			return ResponseEntity
-					.status(HttpStatus.CONFLICT) // 409
-					.body(inventory.getName() + " Inventory already exists");
+	@Transactional
+	public ResponseEntity<?> addInventory(List<InventoryEntity> inventoryArray) {
+		List<InventoryEntity> inventoryToAdd = new ArrayList<>();
+		for(InventoryEntity inventory: inventoryArray) {
+			InventoryEntity inventoryfromdb = inventoryRepository.findByNameIgnoreCase(inventory.getName());
+			ItemCategoryEntity itemCategory = icrepo.findById(inventory.getItemCategory().getCategoryId()).orElse(null);
+			
+			if (inventoryfromdb != null) {
+				return ResponseEntity
+						.status(HttpStatus.CONFLICT) // 409
+						.body(inventory.getName() + " Inventory already exists");
+			}
+			inventory.setItemCategory(itemCategory);
+			
+			inventoryToAdd.add(inventory);
 		}
-
 		return ResponseEntity
 				.status(HttpStatus.CREATED) //201
-				.body(inventoryRepository.save(inventory));
+				.body(inventoryRepository.saveAll(inventoryToAdd));
 	}
 
 	public List<InventoryEntity> getInventoryByCategory(int category_id) {
@@ -65,6 +78,7 @@ public class InventoryService {
 		}
 	}
 
+	@Transactional
 	public ResponseEntity<?> updateInventory(int id, InventoryEntity inventoryToUpdate) {
 		Optional<InventoryEntity> inventoryOptional = inventoryRepository.findById(id);
 		if (inventoryOptional.isPresent()) {
@@ -72,6 +86,10 @@ public class InventoryService {
 
 			if (inventoryToUpdate.getName() != null && !inventoryToUpdate.getName().isEmpty()) {
 				InventoryEntity inventoryFromDb = inventoryRepository.findByNameIgnoreCase(inventoryToUpdate.getName());
+				/*
+				 * Cancels the udpate
+				 * if the new name already exists
+				 * */
 				if (inventoryFromDb != null && inventoryFromDb.getInventoryId() != id) {
 					return ResponseEntity
 							.status(HttpStatus.CONFLICT) // 409
@@ -86,6 +104,11 @@ public class InventoryService {
 
 			if (!Float.isNaN(inventoryToUpdate.getQuantity())) {
 				inventory.setQuantity(inventoryToUpdate.getQuantity());
+				if(inventoryToUpdate.getQuantity() > 0) {
+					inventory.setStatus("Available");
+				}else {
+					inventory.setStatus("Out of stock");
+				}
 			}
 
 			return ResponseEntity
@@ -97,4 +120,9 @@ public class InventoryService {
 					.body(id + " Does not exist");
 		}
 	}
+
+	public InventoryEntity getInventoryByName(String itemName) {
+		return inventoryRepository.findByNameIgnoreCase(itemName);
+	}
+
 }

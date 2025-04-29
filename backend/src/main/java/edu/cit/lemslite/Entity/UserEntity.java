@@ -1,22 +1,12 @@
 package edu.cit.lemslite.Entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="Users")
@@ -26,7 +16,7 @@ public class UserEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
 	private int userId;
-
+	
 	@Column(name = "first_name")
 	private String firstName;
 	@Column(name = "last_name")
@@ -38,11 +28,11 @@ public class UserEntity {
 	@Column(nullable = false, name = "is_new")
 	private boolean isNew;
 	private String pfp;
-
+	
 	@ManyToOne
 	@JoinColumn(name = "role_id")
 	private RoleEntity role;
-
+	
 	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private List<RequestEntity> requests = new ArrayList<>();
@@ -50,11 +40,11 @@ public class UserEntity {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private List<BorrowItemEntity> borrowedItems = new ArrayList<>();
-
+	
 	@OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval = false)
 	@JsonIgnore
 	private List<ItemEntity> items = new ArrayList<>();
-
+	
 	public UserEntity() {
 		super();
 		// TODO Auto-generated constructor stub

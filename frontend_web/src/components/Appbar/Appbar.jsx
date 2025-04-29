@@ -22,7 +22,7 @@ import React, { useState, useEffect } from 'react';
                       const jwtToken = localStorage.getItem("jwtToken");
                       if(jwtToken){
                         setIsAuthenticated(true);
-                        axios.get(`http://localhost:8080/user/getuser?uid=${getJWTUid()}`, {
+                        axios.get(`https://it342-lemsliteteachers.onrender.com/user/getuser?uid=${getJWTUid()}`, {
                           headers: {
                               "Authorization": `Bearer ${jwtToken}`
                           }
@@ -39,14 +39,33 @@ import React, { useState, useEffect } from 'react';
                       
                     }, []);
 
-                    const handleLogout = () => {
-                      localStorage.removeItem("jwtToken");
-                      localStorage.removeItem("userRole");
-                      localStorage.removeItem("instiId");
-                      navigate('/login');
-                    };
+                      const handleLogout = () => {
+                          localStorage.clear(); // Clears all stored items
+                          navigate('/login', { replace: true });
+                      };
 
-                    const style = {
+
+                      useEffect(() => {
+                          const jwtToken = localStorage.getItem("jwtToken");
+                          const instiId = localStorage.getItem("instiId");
+
+                          if (jwtToken && instiId) {
+                              // You might want to validate instiId pattern or even make a backend call here
+                              const isValidInstiId = /^[a-zA-Z0-9-_]+$/.test(instiId); // Example validation
+
+                              if (!isValidInstiId) {
+                                  console.warn("InstiId tampering detected!");
+                                  handleLogout(); // Force logout if it's tampered
+                                  return;
+                              }
+
+                              // Continue your normal logic here (e.g., fetch user)
+                          } else {
+                              setIsAuthenticated(false);
+                          }
+                      }, []);
+
+                      const style = {
                       position: 'absolute',
                       top: '50%',
                       left: '50%',
@@ -217,26 +236,15 @@ import React, { useState, useEffect } from 'react';
                                             }}>Edit Profile</Button><br />
                                           </Box>
                                         </Link>
-                                        <Link to="/login" style={{ textDecoration: 'none' }}>
-                                          <Box sx={{
-                                            ...buttonStyle,
-                                            '&:hover': {
-                                              bgcolor: '#056765',
-                                              '& button': {
-                                                color: '#FFF'
-                                              }
-                                            }
-                                          }}>
-                                            <Button sx={{
-                                              fontFamily: 'monospace',
-                                              fontWeight: 'bold',
-                                              color: '#056765',
-                                            }}
-                                                      onClick={handleLogout}
-                                            >
-                                              Log out</Button><br />
+                                          <Box sx={{ ...buttonStyle }}>
+                                              <Button
+                                                  sx={{ fontFamily: 'monospace', fontWeight: 'bold', color: '#056765' }}
+                                                  onClick={handleLogout} // Only handleLogout
+                                              >
+                                                  Log out
+                                              </Button>
                                           </Box>
-                                        </Link>
+
                                       </Typography>
                                     </Box>
                                   </Modal>

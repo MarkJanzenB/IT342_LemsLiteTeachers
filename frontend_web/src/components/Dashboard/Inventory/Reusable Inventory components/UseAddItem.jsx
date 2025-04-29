@@ -2,16 +2,11 @@ import React from "react";
 import { useState } from "react";
 import axios from "axios";
 import { Button, Modal, Box, Typography, TextField,  FormControl, InputLabel, MenuItem, Select,} from "@mui/material";
-import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
-import {DatePicker} from "@mui/x-date-pickers";
-import { format } from 'date-fns';
 
 const UseAddItem = ({jwttoken, onModalClose, opensnackbar}) => {
     const [newItemCategory, setNewItemCategory] = useState(0);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [getDate, setDate] = useState(null);
     const [newItem, setNewItem] = useState({
         item_name: '',
         unique_id: '',
@@ -24,13 +19,14 @@ const UseAddItem = ({jwttoken, onModalClose, opensnackbar}) => {
         variant:'',
       });
 
+    //NOTE: this API is not up to date and WILL cause errors if used without updating
     const handleAddItem = () => {
         if (!newItem.item_name || !newItem.unit || newItemCategory === 0 || !newItem.variant) {
             setError("Please fill in all required fields.");
             return;
         }
     
-        axios.get(`http://localhost:8080/inventory/isinventoryexists?inventoryName=${newItem.item_name}`, {
+        axios.get(`https://it342-lemsliteteachers.onrender.com/inventory/isinventoryexists?inventoryName=${newItem.item_name}`, {
                 headers: {
                     "Authorization": `Bearer ${jwttoken}`
                 }
@@ -40,7 +36,7 @@ const UseAddItem = ({jwttoken, onModalClose, opensnackbar}) => {
                 })
                 .catch(error => {
                     if (error.response.status == 409) {
-                        axios.post("http://localhost:8080/inventory/addinventory", {
+                        axios.post("https://it342-lemsliteteachers.onrender.com/inventory/addinventory", {
                             unit: newItem.unit,
                             name: newItem.item_name,
                             description: newItem.description,
@@ -100,7 +96,7 @@ const UseAddItem = ({jwttoken, onModalClose, opensnackbar}) => {
 
     const checkItemExists = async (itemName) => {
         try {
-            const response = await axios.get(`http://localhost:8080/inventory/isinventoryexists?inventoryName=${itemName}`, {
+            const response = await axios.get(`https://it342-lemsliteteachers.onrender.com/inventory/isinventoryexists?inventoryName=${itemName}`, {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
@@ -157,7 +153,7 @@ const UseAddItem = ({jwttoken, onModalClose, opensnackbar}) => {
                     label="Name"
                     variant="outlined"
                     fullWidth
-                    required={true}
+                    required
                     autoComplete={'off'}
                 />
                 {message && <Typography color="primary" sx={{ mt: 0.5, fontSize: '14px' }}>{message}</Typography>}

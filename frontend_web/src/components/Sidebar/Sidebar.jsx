@@ -41,7 +41,7 @@ export default function Sidebar({ page }) {
     const [subjectId, setSubjectId] = useState(0);
 
     const handleCreateRequest = () => {
-        axios.get("http://localhost:8080/user/getallusersbyroleid?roleId=1", {
+        axios.get("https://it342-lemsliteteachers.onrender.com/user/getallusersbyroleid?roleId=1", {
             headers: { "Authorization": `Bearer ${jwtToken}` }
         })
             .then(response => {
@@ -53,7 +53,7 @@ export default function Sidebar({ page }) {
             })
             .catch(error => console.log(error));
 
-        axios.get("http://localhost:8080/subject/getallsubject", {
+        axios.get("https://it342-lemsliteteachers.onrender.com/subject/getallsubject", {
             headers: { "Authorization": `Bearer ${jwtToken}` }
         })
             .then(response => setSubjects(response.data))
@@ -137,7 +137,7 @@ export default function Sidebar({ page }) {
             requestData.date_requested = getFormattedLocalDateTime();
         }
 
-        axios.post("http://localhost:8080/request/addrequest", requestData, {
+        axios.post("https://it342-lemsliteteachers.onrender.com/request/addrequest", requestData, {
             headers: { "Authorization": `Bearer ${jwtToken}` }
         })
         .then(response => {
@@ -215,12 +215,11 @@ export default function Sidebar({ page }) {
                         <button className={`sidebar-button ${isActive('/inventory') ? 'active' : ''}`}
                             onClick={handleAllItems} style={{display: 'block'}}>All Items
                         </button>
-                        {userRole !== 1 && (
                             <button className={`sidebar-button ${isActive('/inventory/categories') ? 'active' : ''}`} onClick={handleCategoryPage} style={{ display: 'block' }}>Categories</button>
-                        )}
                         {userRole === 1 && (
                             <button className={`sidebar-button ${isActive('/borrowcart') ? 'active' : ''}`} onClick={handleBorrowCart} style={{ display: 'block' }}>Borrow Cart</button>
                         )}
+                        <button className={`sidebar-button ${isActive('/history/PreparingItem') ? 'active' : ''}`} onClick={handlePreparingItem} style={{ display: 'block' }}>Preparing Item</button>
                     </>
                 )}
                 {page === 'reports' && (
@@ -238,7 +237,6 @@ export default function Sidebar({ page }) {
                         {userRole !== 1 && (
                             <button className={`sidebar-button ${isActive('/history/ResupplyHistory') ? 'active' : ''}`} onClick={handleResupplyHistory} style={{ display: 'block' }}>Resupplies</button>
                         )}
-                        <button className={`sidebar-button ${isActive('/history/PreparingItem') ? 'active' : ''}`} onClick={handlePreparingItem} style={{ display: 'block' }}>Preparing Item</button>
                         <button className={`sidebar-button ${isActive('/history/ReturnHistory') ? 'active' : ''}`} onClick={handleReturnHistory} style={{ display: 'block' }}>Returns</button>
 
                     </>

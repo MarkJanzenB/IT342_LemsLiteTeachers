@@ -1,27 +1,37 @@
 package edu.cit.lemslite.Controller;
 
-import edu.cit.lemslite.Entity.SchoolYearEntity;
 import edu.cit.lemslite.Service.SchoolYearService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/schoolyear")
-@CrossOrigin
+@CrossOrigin(origins = "https://cit-lems.vercel.app")
 public class SchoolYearController {
-
+    
     @Autowired
     private SchoolYearService schoolYearService;
-
-    @PostMapping("/add")
-    public SchoolYearEntity addSchoolYear(@RequestBody SchoolYearEntity schoolYear) {
-        return schoolYearService.addSchoolYear(schoolYear);
+    
+    @GetMapping("/message")
+    public String testMessage() {
+        return "SchoolYearController is working";
     }
-
-    @GetMapping("/all")
-    public List<SchoolYearEntity> getAllSchoolYears() {
-        return schoolYearService.getAllSchoolYears();
+    
+    @PostMapping("/save")
+    public ResponseEntity<?> saveSchoolYear(@RequestBody Map<String, Object> payload) {
+        return schoolYearService.saveSchoolYear(payload);
+    }
+    
+    @GetMapping("/{instiId}")
+    public ResponseEntity<?> getSchoolYear(@PathVariable String instiId) {
+        return schoolYearService.getSchoolYear(instiId);
+    }
+    
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateSchoolYear(@PathVariable int id, @RequestBody Map<String, Object> payload) {
+        return schoolYearService.updateSchoolYear(id, payload);
     }
 }

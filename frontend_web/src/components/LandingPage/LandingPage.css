@@ -36,17 +36,6 @@ body, html {
 }
 
 
-.waterMark {
-  background-image: url("src/assets/static/img/Cebu_Institute_of_Technology_University_logo.png");
-  width: 720px;
-  top: 25%;
-  height: 600px;
-  left: 60.5%;
-  display: inline-block;
-  position: absolute;
-  background-size: cover;
-  background-repeat:no-repeat;
-}
 
 .landing-page::before {
   content: '';

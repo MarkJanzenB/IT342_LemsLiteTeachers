@@ -14,6 +14,9 @@ export const isJWTExpired = () => {
     return currentDate.getTime() >= decodedToken.exp * 1000;
 }
 
+/*
+ *Get the institute id here
+ */
 export const getJWTSub = () => {
     const decodedToken = jwtDecoder();
     
@@ -49,7 +52,6 @@ export const checkUserRole = (expectedRoleId) => {
     const decodedToken = jwtDecode(jwtToken);
     return decodedToken.role_id === expectedRoleId;
 };
-
 // Usage example:
 export const isUserRole1 = checkUserRole(1);
 console.log("Is user role 1?", isUserRole1);
@@ -58,10 +60,4 @@ export const getJWTUid = () => {
     const decodedToken = jwtDecoder();
 
     return decodedToken.uid;
-}
-
-// Add this function to get instiId from the JWT
-export const getJWTInstiId = () => {
-    const decodedToken = jwtDecoder();
-    return decodedToken?.sub || null;
 }

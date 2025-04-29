@@ -5,6 +5,7 @@ import { jwtDecode } from 'jwt-decode'; // Ensure correct import for jwt-decode
 import './Login.css'; // Preserves your existing styles
 import { CircularProgress } from '@mui/material';
 import Button from '@mui/material/Button';
+import lemslogo from '/src/assets/static/img/LEMS1.png';
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -43,8 +44,8 @@ export default function Login() {
     setDisableSUBtn(true);
 
     try {
-      // const response = await axios.post("http://localhost:8080/user/login", formData);
-      const response = await axios.post("http://localhost:8080/user/login", formData);
+      // const response = await axios.post("https://it342-lemsliteteachers.onrender.com/user/login", formData);
+      const response = await axios.post("https://it342-lemsliteteachers.onrender.com/user/login", formData);
       const token = response.data;
 
       if (!token) {
@@ -117,7 +118,7 @@ export default function Login() {
               SIGN UP
             </button>
             <img
-                src="../src/assets/static/img/LEMS1.png"
+                src={lemslogo}
                 alt="LEMS logo"
                 style={{
                   position: 'absolute',

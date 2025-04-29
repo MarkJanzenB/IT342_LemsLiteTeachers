@@ -26,10 +26,8 @@ const CloudinaryWidget = ({onClose}) => {
             maxFileSize: 512000,
             showAdvancedOptions: false,
         }, function(error, result){
-            // console.log(result.info.secure_url);
-            // console.log(result);
             if(result.event === 'success'){
-                axios.put(`http://localhost:8080/user/editpfp`, 
+                axios.put(`https://it342-lemsliteteachers.onrender.com/user/editpfp`, 
                     {
                         pfp_url: result.info.secure_url,
                         uid: getJWTUid(),

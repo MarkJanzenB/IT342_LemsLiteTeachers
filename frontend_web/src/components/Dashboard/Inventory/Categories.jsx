@@ -20,6 +20,7 @@ import {getJWTSub, getJWTUid} from "../../Authentication/jwt.jsx";
 import UseAddItem from "./Reusable Inventory components/UseAddItem.jsx";
 import UseEditItem from "./Reusable Inventory components/UseEditItem.jsx";
 import UseResupply from "./Reusable Inventory components/UseResupply.jsx";
+import UseBulkAdd from "./Reusable Inventory components/UseBulkAdd.jsx";
 const columns = [
     { field: 'name', headerName: 'Name' },
     { field: 'description', headerName: 'Description' },
@@ -141,7 +142,7 @@ export default function Categories() {
         }
         try {
             const response = await axios.post(
-                'http://localhost:8080/api/borrowcart/addToBorrowCart',
+                'https://it342-lemsliteteachers.onrender.com/api/borrowcart/addToBorrowCart',
                 null,
                 {
                     params: {
@@ -168,7 +169,7 @@ export default function Categories() {
                 )
             );
 
-            const response2 = await axios.put("http://localhost:8080/item/borrow",
+            const response2 = await axios.put("https://it342-lemsliteteachers.onrender.com/item/borrow",
                 {
                     "userID": getJWTUid(),
                     "borrowCartID": response.data.id,
@@ -220,14 +221,14 @@ export default function Categories() {
 
     const fetchData = async (categoryId) => {
         if(categoryId != 5){
-            const response = await axios.get(`http://localhost:8080/inventory/getinventorybycategory?categoryId=${categoryId+1}`, {
+            const response = await axios.get(`https://it342-lemsliteteachers.onrender.com/inventory/getinventorybycategory?categoryId=${categoryId+1}`, {
                 headers: {
                     "authorization": `Bearer ${jwtToken}`,
                 }});
             console.log(response.data);
             setData(response.data);
         }else{
-            const response = await axios.get("http://localhost:8080/inventory/getAllInventory", {
+            const response = await axios.get("https://it342-lemsliteteachers.onrender.com/inventory/getAllInventory", {
                 headers: {
                     "authorization": `Bearer ${jwtToken}`,
                 }});
@@ -259,7 +260,7 @@ export default function Categories() {
 
     const handleRemoveItem = (category_id) => {
         const jwtToken =localStorage.getItem("jwtToken");
-        axios.delete(`http://localhost:8080/inventory/delete/${category_id}`, {
+        axios.delete(`https://it342-lemsliteteachers.onrender.com/inventory/delete/${category_id}`, {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
@@ -654,6 +655,7 @@ export default function Categories() {
                                                 </Box>
                                                     );
                                                 }
+                                                
                                                 if (column.field === 'quantity' && roleid != 1){
                                                     return (
                                                         <Box sx={{display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'space-between', width: '110px'}}>
@@ -675,6 +677,14 @@ export default function Categories() {
                                                         </Box>
                                                     )
                                                 }
+                                                /**
+                                                 * customize the status column on this page only
+                                                 */
+                                                if(column.field === 'status'){
+                                                    return (
+                                                      <p style={{borderRadius: '50px', textAlign: 'center', width: '130px', color: 'white', backgroundColor: row[column.field] === 'Out of stock' ? '#de4352' : '#5cdd8b'}}>{row[column.field]}</p>
+                                                    )
+                                                  }
                                                 return row[column.field];
                                             }}
                                         />
@@ -744,13 +754,13 @@ export default function Categories() {
                         </Modal>
 
                         {openModal && (
-                            <UseAddItem
+                            <UseBulkAdd
                                 jwttoken={jwtToken}
                                 onModalClose={() => {
                                     setOpenModal(false);
                                 }}
                                 opensnackbar={() => {
-                                    fetchAllItems();
+                                    fetchData(currentCategory);
                                     setOpenSnackbar(true);
                                     setSnackbarText("Item successfully updated");
                                 }}
@@ -763,7 +773,7 @@ export default function Categories() {
                                 editdataname={editDataName}
                                 editdata={editData}
                                 opensnackbar={() => {
-                                    fetchAllItems();
+                                    fetchData(currentCategory);
                                     setOpenSnackbar(true);
                                     setSnackbarText("Item successfully updated");
                                 }}
@@ -779,7 +789,7 @@ export default function Categories() {
                                 editdataname={editDataName}
                                 editdata={editData}
                                 opensnackbar={() => {
-                                    fetchAllItems();
+                                    fetchData(currentCategory);
                                     setOpenSnackbar(true);
                                     setSnackbarText("Successfully resupplied");
                                 }}
