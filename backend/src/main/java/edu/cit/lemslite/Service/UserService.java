@@ -182,4 +182,57 @@ public class UserService {
 				.status(HttpStatus.OK)
 				.body(userrepo.save(user));
 	}
+
+	public ResponseEntity<?> updateName(int uid, String newFirstName, String newLastName) {
+		Optional<UserEntity> user = userrepo.findById(uid);
+		if (user.isEmpty()) {
+			return ResponseEntity
+					.status(HttpStatus.NOT_FOUND)
+					.body("User not found");
+		}
+		UserEntity foundUser = user.get();
+		if (newFirstName != null && !newFirstName.isEmpty()) {
+			foundUser.setFname(newFirstName);
+		}
+		if (newLastName != null && !newLastName.isEmpty()) {
+			foundUser.setLname(newLastName);
+		}
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(userrepo.save(foundUser));
+	}
+
+	public ResponseEntity<?> updateEmail(int uid, String newEmail) {
+		Optional<UserEntity> user = userrepo.findById(uid);
+		if (user.isEmpty()) {
+			return ResponseEntity
+					.status(HttpStatus.NOT_FOUND)
+					.body("User not found");
+		}
+		UserEntity foundUser = user.get();
+		foundUser.setEmail(newEmail);
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(userrepo.save(foundUser));
+	}
+
+	public ResponseEntity<?> changePassword(int uid, String oldPassword, String newPassword) {
+		Optional<UserEntity> user = userrepo.findById(uid);
+		if (user.isEmpty()) {
+			return ResponseEntity
+					.status(HttpStatus.NOT_FOUND)
+					.body("User not found");
+		}
+		UserEntity foundUser = user.get();
+		if (!encoder.matches(oldPassword, foundUser.getPassword())) {
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body("Old password is incorrect");
+		}
+		foundUser.setPassword(encoder.encode(newPassword));
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(userrepo.save(foundUser));
+	}
+
 }
