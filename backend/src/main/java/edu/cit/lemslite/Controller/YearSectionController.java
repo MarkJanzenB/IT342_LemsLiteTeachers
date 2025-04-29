@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/yearsection")
-@CrossOrigin(origins = "https://cit-lems.vercel.app")
+@CrossOrigin(origins = "https://lems-lite.vercel.app/")
 public class YearSectionController {
     @Autowired
     YearSectionService yrsecserv;
