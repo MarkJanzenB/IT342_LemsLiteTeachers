@@ -41,6 +41,12 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
             }
         }
+
+        binding.textView7.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun loginUser(instiId: String, password: String) {

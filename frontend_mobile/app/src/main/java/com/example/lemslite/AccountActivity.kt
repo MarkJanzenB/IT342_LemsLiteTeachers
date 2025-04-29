@@ -3,6 +3,7 @@ package com.example.lemslite
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -24,6 +25,17 @@ class AccountActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        val jwtService = JwtService()
+        val token = sharedPreferences.getString("jwt_token", null)
+
+        if (token != null) {
+            val userId = jwtService.getSubFromToken(token)
+            val fullName = jwtService.getFullNameFromToken(token)
+
+            findViewById<TextView>(R.id.userId).text = userId ?: "N/A"
+            findViewById<TextView>(R.id.userName).text = fullName ?: "N/A"
         }
 
         val logoutContainer = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.logoutContainer)
