@@ -16,7 +16,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
+        
+    <activity
+        android:name=".BorrowHistoryActivity"
+        android:exported="false"/>
     <activity
         android:name=".RegisterSuccessActivity"
         android:exported="false" />
