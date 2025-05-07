@@ -7,10 +7,13 @@ import android.os.Handler
 import android.os.Looper
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import kotlin.apply
+import kotlin.text.clear
 
 class SplashScreenActivity : AppCompatActivity() {
     private val delayMillis: Long = 3000 // 3 seconds delay
@@ -57,18 +60,21 @@ class SplashScreenActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("user_session", MODE_PRIVATE)
         val token = sharedPreferences.getString("jwt_token", null)
 
-        if (token != null && !isTokenExpired(token)) {
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
+        if (token != null) {
+            val jwtService = JwtService()
+            if (!jwtService.isTokenExpired(token)) {
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+            } else {
+                sharedPreferences.edit().clear().apply()
+                Toast.makeText(this, "Session expired. Please log in again.", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+            }
         } else {
             val intent = Intent(this, OnboardingActivity::class.java)
             startActivity(intent)
         }
         finish()
-    }
-
-    private fun isTokenExpired(token: String): Boolean {
-        val jwtService = JwtService()
-        return jwtService.isTokenExpired(token)
     }
 }
