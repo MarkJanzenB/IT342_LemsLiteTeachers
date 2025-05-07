@@ -1,6 +1,7 @@
 package com.example.lemslite
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -12,9 +13,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import kotlin.apply
-import kotlin.text.clear
+import androidx.core.content.edit
 
+@SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : AppCompatActivity() {
     private val delayMillis: Long = 3000 // 3 seconds delay
 
@@ -66,7 +67,7 @@ class SplashScreenActivity : AppCompatActivity() {
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
             } else {
-                sharedPreferences.edit().clear().apply()
+                sharedPreferences.edit { clear() }
                 Toast.makeText(this, "Session expired. Please log in again.", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
