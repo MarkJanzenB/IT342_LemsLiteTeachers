@@ -4,16 +4,18 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.content.edit
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @SuppressLint("CustomSplashScreen")
 class SplashScreenActivity : AppCompatActivity() {
@@ -30,6 +32,11 @@ class SplashScreenActivity : AppCompatActivity() {
             insets
         }
 
+        setupAnimation()
+        setupNavigation()
+    }
+
+    private fun setupAnimation() {
         val imageView = findViewById<ImageView>(R.id.imageView2)
         val scaleX = ObjectAnimator.ofFloat(imageView, "scaleX", 0.5f, 1.2f, 1f)
         val scaleY = ObjectAnimator.ofFloat(imageView, "scaleY", 0.5f, 1.2f, 1f)
@@ -42,39 +49,36 @@ class SplashScreenActivity : AppCompatActivity() {
 
         scaleX.start()
         scaleY.start()
+    }
 
-        val rootView = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.main)
+    private fun setupNavigation() {
+        val rootView = findViewById<ConstraintLayout>(R.id.main)
 
-        val handler = Handler(Looper.getMainLooper())
-        val transitionRunnable = Runnable {
-            navigateToOnboarding()
+        lifecycleScope.launch {
+            delay(delayMillis)
+            navigateToNextScreen()
         }
-        handler.postDelayed(transitionRunnable, delayMillis)
 
         rootView.setOnClickListener {
-            handler.removeCallbacks(transitionRunnable)
-            navigateToOnboarding()
+            navigateToNextScreen()
         }
     }
 
-    private fun navigateToOnboarding() {
+    private fun navigateToNextScreen() {
         val sharedPreferences = getSharedPreferences("user_session", MODE_PRIVATE)
         val token = sharedPreferences.getString("jwt_token", null)
 
         if (token != null) {
             val jwtService = JwtService()
             if (!jwtService.isTokenExpired(token)) {
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(this, HomeActivity::class.java))
             } else {
                 sharedPreferences.edit { clear() }
                 Toast.makeText(this, "Session expired. Please log in again.", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(this, LoginActivity::class.java))
             }
         } else {
-            val intent = Intent(this, OnboardingActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, OnboardingActivity::class.java))
         }
         finish()
     }
