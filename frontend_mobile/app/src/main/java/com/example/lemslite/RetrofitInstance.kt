@@ -10,10 +10,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 object RetrofitInstance {
 
     // Cloud
-    private const val BASE_URL = "https://it342-lemsliteteachers.onrender.com/"
+    // private const val BASE_URL = "https://it342-lemsliteteachers.onrender.com/"
 
     // Local (For API testing)
-    // private const val BASE_URL = "http://10.0.2.2:8080/"
+    private const val BASE_URL = "http://10.0.2.2:8080/"
 
     private val gson: Gson = GsonBuilder()
         .setLenient()
