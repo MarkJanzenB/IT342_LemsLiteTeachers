@@ -83,10 +83,12 @@ class JwtService {
         }
     }
 
-    fun getUidFromToken(token: String): String? {
+    fun getUidFromToken(token: String): Integer? {
         return try {
             val claims = extractAllClaims(token)
-            claims["uid"] as? String
+            val uid = claims["uid"] as? Integer
+            Log.d("JwtService", "Extracted UID: $uid")
+            uid
         } catch (e: Exception) {
             Log.e("JwtService", "Error extracting uid: ${e.message}", e)
             null
