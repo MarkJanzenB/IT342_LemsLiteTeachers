@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/reservation")
-@CrossOrigin(origins = "https://cit-lems.vercel.app")
+@CrossOrigin(origins = "https://lems-lite.vercel.app/")
 public class ReservationController {
 	@Autowired
 	ReservationService resserv;

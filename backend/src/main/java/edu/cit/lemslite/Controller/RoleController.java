@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/role")
-@CrossOrigin(origins = "https://cit-lems.vercel.app")
+@CrossOrigin(origins = "https://lems-lite.vercel.app/")
 public class RoleController {
 	@Autowired
 	RoleService roleserv;

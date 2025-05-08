@@ -17,7 +17,7 @@
 
     @RestController
     @RequestMapping("/api/borrowcart")
-    @CrossOrigin(origins = "https://cit-lems.vercel.app")
+    @CrossOrigin(origins = "https://lems-lite.vercel.app/")
     public class BorrowCartController {
 
         @Autowired

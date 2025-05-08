@@ -56,11 +56,17 @@ public class JwtService {
 	}
 	
 	private Claims extractAllClaims(String token) {
-		return Jwts.parser()
-				.setSigningKey(getKey())
-				.build()
-				.parseClaimsJws(token)
-				.getBody();
+		try {
+			return Jwts.parser()
+					.setSigningKey(getKey())
+					.build()
+					.parseClaimsJws(token)
+					.getBody();
+		} catch (Exception e) {
+			// Log the error (consider using a logger)
+			System.err.println("Error decoding token: " + e.getMessage());
+			return null; // or throw a custom exception
+		}
 	}
 	
 	public boolean isTokenExpired(String token) {
@@ -72,7 +78,12 @@ public class JwtService {
 	}
 
 	public boolean validateToken(String token, UserDetails userDetails) {
-		final String insti_id = extractInstiId(token);
+		Claims claims = extractAllClaims(token);
+		if (claims == null) {
+			return false; // Token is invalid
+		}
+		final String insti_id = claims.getSubject();
+		
 		return (insti_id.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
 }
