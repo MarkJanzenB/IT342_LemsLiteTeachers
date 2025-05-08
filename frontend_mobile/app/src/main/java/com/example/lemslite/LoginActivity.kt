@@ -49,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginUser(instiId: String, password: String) {
-        val apiService = RetrofitInstance.retrofit.create(ApiService::class.java)
+        val apiService = RetrofitInstance.getRetrofit(this).create(ApiService::class.java)
 
         val loginDetails = JsonObject().apply {
             addProperty("insti_id", instiId)

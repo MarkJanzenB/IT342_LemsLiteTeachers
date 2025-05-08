@@ -63,7 +63,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun registerUser(firstName: String, lastName: String, instiId: String, email: String, password: String) {
-        val apiService = RetrofitInstance.retrofit.create(ApiService::class.java)
+        val apiService = RetrofitInstance.getRetrofit(this).create(ApiService::class.java)
 
         val userDetails = JsonObject().apply {
             addProperty("first_name", firstName)
