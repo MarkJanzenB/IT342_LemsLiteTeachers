@@ -4,12 +4,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.lemslite.models.UserDetailsResponse
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import androidx.core.content.edit
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class AccountActivity : AppCompatActivity() {
     private val sharedPreferences by lazy {
@@ -27,23 +33,23 @@ class AccountActivity : AppCompatActivity() {
             insets
         }
 
-        val jwtService = JwtService()
         val token = sharedPreferences.getString("jwt_token", null)
-
         if (token != null) {
-            val userId = jwtService.getSubFromToken(token)
-            val fullName = jwtService.getFullNameFromToken(token)
-
-            findViewById<TextView>(R.id.userId).text = userId ?: "N/A"
-            findViewById<TextView>(R.id.userName).text = fullName ?: "N/A"
+            val jwtService = JwtService()
+            val uid = jwtService.getUidFromToken(token)
+            if (uid != null) {
+                fetchUserDetails(uid)
+            } else {
+                Toast.makeText(this, "Invalid user ID. Please log in again.", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        val logoutContainer = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.logoutContainer)
+        val logoutContainer = findViewById<ConstraintLayout>(R.id.logoutContainer)
         logoutContainer.setOnClickListener {
             showLogoutDialog()
         }
 
-        val accountSettingsContainer = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.accountSettingsContainer)
+        val accountSettingsContainer = findViewById<ConstraintLayout>(R.id.accountSettingsContainer)
         accountSettingsContainer.setOnClickListener {
             val intent = Intent(this, AccountSettingsActivity::class.java)
             startActivity(intent)
@@ -53,6 +59,27 @@ class AccountActivity : AppCompatActivity() {
         backIcon.setOnClickListener {
             finish()
         }
+    }
+
+    private fun fetchUserDetails(uid: Integer) {
+        val apiService = RetrofitInstance.getRetrofit(this).create(ApiService::class.java)
+        apiService.getUserDetails(uid).enqueue(object : Callback<UserDetailsResponse> {
+            override fun onResponse(call: Call<UserDetailsResponse>, response: Response<UserDetailsResponse>) {
+                if (response.isSuccessful) {
+                    val userDetails = response.body()
+                    if (userDetails != null) {
+                        findViewById<TextView>(R.id.userId).text = userDetails.insti_id
+                        findViewById<TextView>(R.id.userName).text = "${userDetails.first_name} ${userDetails.last_name}"
+                    }
+                } else {
+                    Toast.makeText(this@AccountActivity, "Failed to fetch user details.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<UserDetailsResponse>, t: Throwable) {
+                Toast.makeText(this@AccountActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun showLogoutDialog() {
@@ -69,7 +96,7 @@ class AccountActivity : AppCompatActivity() {
     }
 
     private fun performLogout() {
-        sharedPreferences.edit { remove("jwt_token") }
+        sharedPreferences.edit { clear() }
 
         val intent = Intent(this, LandingPageActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
