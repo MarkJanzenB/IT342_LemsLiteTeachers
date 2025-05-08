@@ -1,4 +1,4 @@
-package com.example.lemslite
+package com.example.lemslite.activities
 
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -10,6 +10,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import android.text.Editable
 import android.text.TextWatcher
+import com.example.lemslite.services.ApiService
+import com.example.lemslite.services.JwtService
+import com.example.lemslite.instances.RetrofitInstance
 import com.example.lemslite.models.UserDetailsResponse
 import kotlin.apply
 

@@ -1,4 +1,4 @@
-package com.example.lemslite
+package com.example.lemslite.fragments
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.example.lemslite.R
+import com.example.lemslite.activities.LandingPageActivity
 
 class OnboardingFragment3 : Fragment() {
     override fun onCreateView(

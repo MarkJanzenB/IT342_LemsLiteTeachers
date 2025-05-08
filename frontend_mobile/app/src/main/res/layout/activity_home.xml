@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:elevation="2dp"
-    tools:context=".HomeActivity">
+    tools:context=".activities.HomeActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top_bar"

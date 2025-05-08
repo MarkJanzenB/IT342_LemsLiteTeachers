@@ -1,10 +1,12 @@
-package com.example.lemslite
+package com.example.lemslite.activities
 
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.lemslite.services.ApiService
+import com.example.lemslite.instances.RetrofitInstance
 import com.example.lemslite.databinding.ActivityRegisterBinding
 import com.google.gson.JsonObject
 import retrofit2.Call

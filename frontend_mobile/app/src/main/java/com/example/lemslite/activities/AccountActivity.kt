@@ -1,4 +1,4 @@
-package com.example.lemslite
+package com.example.lemslite.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,6 +11,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.lemslite.services.ApiService
+import com.example.lemslite.services.JwtService
+import com.example.lemslite.R
+import com.example.lemslite.instances.RetrofitInstance
 import com.example.lemslite.models.UserDetailsResponse
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import retrofit2.Call

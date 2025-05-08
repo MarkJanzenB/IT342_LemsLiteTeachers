@@ -1,4 +1,4 @@
-package com.example.lemslite
+package com.example.lemslite.instances
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -28,7 +28,8 @@ object RetrofitInstance {
         }
 
         val authInterceptor = Interceptor { chain ->
-            val sharedPreferences: SharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+            val sharedPreferences: SharedPreferences =
+                context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
             val token = sharedPreferences.getString("jwt_token", null)
             val requestBuilder = chain.request().newBuilder()
 

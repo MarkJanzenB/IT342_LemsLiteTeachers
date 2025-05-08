@@ -1,10 +1,11 @@
-package com.example.lemslite
+package com.example.lemslite.activities
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.lemslite.R
 import com.google.android.material.button.MaterialButton
 
 class RegisterSuccessActivity : AppCompatActivity() {

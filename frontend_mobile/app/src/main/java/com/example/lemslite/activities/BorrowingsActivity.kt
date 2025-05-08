@@ -1,4 +1,4 @@
-package com.example.lemslite
+package com.example.lemslite.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,14 +6,16 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.lemslite.R
 
-class ReportsActivity : AppCompatActivity() {
+class BorrowingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_reports)
+        setContentView(R.layout.activity_borrowings)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -44,8 +46,8 @@ class ReportsActivity : AppCompatActivity() {
             startActivity(Intent(this, InventoryActivity::class.java))
         }
 
-        findViewById<LinearLayout>(R.id.historyNavButton).setOnClickListener {
-            startActivity(Intent(this, BorrowHistoryActivity::class.java))
+        findViewById<LinearLayout>(R.id.reportsNavButton).setOnClickListener {
+            startActivity(Intent(this, ReportsActivity::class.java))
         }
     }
 }

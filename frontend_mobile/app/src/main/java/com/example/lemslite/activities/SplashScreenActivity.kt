@@ -1,4 +1,4 @@
-package com.example.lemslite
+package com.example.lemslite.activities
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
@@ -14,6 +14,8 @@ import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.lemslite.services.JwtService
+import com.example.lemslite.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

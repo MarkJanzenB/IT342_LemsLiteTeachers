@@ -1,4 +1,4 @@
-package com.example.lemslite
+package com.example.lemslite.services
 
 import com.example.lemslite.models.UserDetailsResponse
 import com.google.gson.JsonObject
