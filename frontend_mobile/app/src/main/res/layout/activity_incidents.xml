@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.InventoryActivity">
+    tools:context=".activities.IncidentsActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top_bar"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
             android:paddingEnd="0dp"
-            android:text="Inventory"
+            android:text="Incidents"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -53,6 +53,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <LinearLayout
         android:id="@+id/bottomNavBar"
@@ -113,7 +114,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#EDEDED"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -135,6 +135,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="#EDEDED"
             android:gravity="center"
             android:orientation="vertical">
 

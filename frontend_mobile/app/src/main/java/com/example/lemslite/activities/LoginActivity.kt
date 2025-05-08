@@ -1,12 +1,14 @@
-package com.example.lemslite
+package com.example.lemslite.activities
 
-import ApiService
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import com.example.lemslite.services.ApiService
+import com.example.lemslite.services.JwtService
+import com.example.lemslite.instances.RetrofitInstance
 import com.example.lemslite.databinding.ActivityLoginBinding
 import com.google.gson.JsonObject
 import retrofit2.Call
@@ -51,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginUser(instiId: String, password: String) {
-        val apiService = RetrofitInstance.retrofit.create(ApiService::class.java)
+        val apiService = RetrofitInstance.getRetrofit(this).create(ApiService::class.java)
 
         val loginDetails = JsonObject().apply {
             addProperty("insti_id", instiId)

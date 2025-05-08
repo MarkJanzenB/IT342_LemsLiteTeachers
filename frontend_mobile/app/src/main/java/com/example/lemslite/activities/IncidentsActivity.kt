@@ -1,4 +1,4 @@
-package com.example.lemslite
+package com.example.lemslite.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,40 +8,33 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.lemslite.R
 
-class HomeActivity : AppCompatActivity() {
+class IncidentsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_home)
-
+        setContentView(R.layout.activity_incidents)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        val profileIcon = findViewById<ImageView>(R.id.profileIcon)
+        val userIcon = findViewById<ImageView>(R.id.userIcon)
 
-        profileIcon.setOnClickListener {
+        userIcon.setOnClickListener {
             val intent = Intent(this, AccountActivity::class.java)
             startActivity(intent)
         }
 
-        findViewById<LinearLayout>(R.id.button1).setOnClickListener {
-            startActivity(Intent(this, ScheduleActivity::class.java))
+        val backIcon = findViewById<ImageView>(R.id.backIcon)
+        backIcon.setOnClickListener {
+            finish()
         }
 
-        findViewById<LinearLayout>(R.id.button2).setOnClickListener {
-            startActivity(Intent(this, InventoryActivity::class.java))
-        }
-
-        findViewById<LinearLayout>(R.id.button3).setOnClickListener {
-            startActivity(Intent(this, ReportsActivity::class.java))
-        }
-
-        findViewById<LinearLayout>(R.id.button4).setOnClickListener {
-            startActivity(Intent(this, BorrowHistoryActivity::class.java))
+        findViewById<LinearLayout>(R.id.homeNavButton).setOnClickListener {
+            startActivity(Intent(this, HomeActivity::class.java))
         }
 
         findViewById<LinearLayout>(R.id.scheduleNavButton).setOnClickListener {
@@ -52,13 +45,8 @@ class HomeActivity : AppCompatActivity() {
             startActivity(Intent(this, InventoryActivity::class.java))
         }
 
-        findViewById<LinearLayout>(R.id.reportsNavButton).setOnClickListener {
-            startActivity(Intent(this, ReportsActivity::class.java))
-        }
-
         findViewById<LinearLayout>(R.id.historyNavButton).setOnClickListener {
             startActivity(Intent(this, BorrowHistoryActivity::class.java))
         }
-
     }
 }
