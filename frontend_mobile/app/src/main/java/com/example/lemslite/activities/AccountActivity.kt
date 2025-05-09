@@ -11,11 +11,12 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.lemslite.services.ApiService
-import com.example.lemslite.services.JwtService
+import com.bumptech.glide.Glide
 import com.example.lemslite.R
 import com.example.lemslite.instances.RetrofitInstance
 import com.example.lemslite.models.UserDetailsResponse
+import com.example.lemslite.services.ApiService
+import com.example.lemslite.services.JwtService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import retrofit2.Call
 import retrofit2.Callback
@@ -74,6 +75,14 @@ class AccountActivity : AppCompatActivity() {
                     if (userDetails != null) {
                         findViewById<TextView>(R.id.userId).text = userDetails.insti_id
                         findViewById<TextView>(R.id.userName).text = "${userDetails.first_name} ${userDetails.last_name}"
+
+                        val profilePictureUrl = userDetails.pfp
+                        if (!profilePictureUrl.isNullOrEmpty()) {
+                            val profilePicture = findViewById<ImageView>(R.id.profilePicture)
+                            Glide.with(this@AccountActivity)
+                                .load(profilePictureUrl)
+                                .into(profilePicture)
+                        }
                     }
                 } else {
                     Toast.makeText(this@AccountActivity, "Failed to fetch user details.", Toast.LENGTH_SHORT).show()
