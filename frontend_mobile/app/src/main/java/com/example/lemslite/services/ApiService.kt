@@ -27,4 +27,17 @@ interface ApiService {
     fun getUserDetails(
         @Query("uid") uid: Integer
     ): Call<UserDetailsResponse>
+
+    @PUT("/user/updateEmail")
+    fun updateEmail(
+        @Query("uid") uid: Integer,
+        @Query("newEmail") newEmail: String
+    ): Call<Void>
+
+    @PUT("/user/changePassword")
+    fun changePassword(
+        @Query("uid") uid: Integer,
+        @Query("oldPassword") oldPassword: String,
+        @Query("newPassword") newPassword: String
+    ): Call<Void>
 }
