@@ -39,6 +39,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.glide)
+    implementation(libs.cloudinary.android)
     implementation(libs.jsonwebtoken.jjwt.api)
     runtimeOnly(libs.jjwt.impl)
     runtimeOnly(libs.jjwt.jackson)
