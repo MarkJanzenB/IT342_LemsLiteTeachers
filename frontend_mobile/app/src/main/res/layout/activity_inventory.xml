@@ -44,12 +44,13 @@
             app:layout_constraintStart_toEndOf="@id/backIcon"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/userIcon"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:contentDescription="User Icon"
             android:src="@drawable/nav_user_icon"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
