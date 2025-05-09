@@ -11,10 +11,12 @@ import retrofit2.http.Query
 
 interface ApiService {
     @POST("/user/login")
-    fun login(@Body loginDetails: JsonObject): Call<String>
+    fun login(@Body loginDetails: JsonObject
+    ): Call<String>
 
     @POST("/user/register")
-    fun register(@Body userDetails: JsonObject): Call<Void>
+    fun register(@Body userDetails: JsonObject
+    ): Call<Void>
 
     @PUT("/user/updateName")
     fun updateName(
@@ -40,4 +42,10 @@ interface ApiService {
         @Query("oldPassword") oldPassword: String,
         @Query("newPassword") newPassword: String
     ): Call<Void>
+
+    @PUT("/user/editpfp")
+    fun editPfp(
+        @Body newPfpDetails: JsonObject
+    ): Call<Void>
+    
 }
