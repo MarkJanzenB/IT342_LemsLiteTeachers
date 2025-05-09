@@ -70,6 +70,8 @@
             android:id="@+id/firstNameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
             android:hint="First Name"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -88,6 +90,8 @@
             android:id="@+id/lastNameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
             android:hint="Last Name"/>
     </com.google.android.material.textfield.TextInputLayout>
 
