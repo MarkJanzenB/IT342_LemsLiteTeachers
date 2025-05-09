@@ -20,6 +20,7 @@ import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import com.yalantis.ucrop.UCrop
 
 class EditProfilePictureActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditProfilePictureBinding
@@ -79,22 +80,46 @@ class EditProfilePictureActivity : AppCompatActivity() {
         startActivityForResult(intent, CAPTURE_IMAGE_REQUEST)
     }
 
+    private fun startCropActivity(uri: Uri) {
+        val destinationUri = Uri.fromFile(File(cacheDir, "cropped_image.jpg"))
+        val options = UCrop.Options().apply {
+            setCompressionFormat(Bitmap.CompressFormat.JPEG)
+            setCompressionQuality(90)
+            setToolbarTitle("Crop Image")
+        }
+
+        UCrop.of(uri, destinationUri)
+            .withAspectRatio(1f, 1f)
+            .withOptions(options)
+            .start(this)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
             when (requestCode) {
                 PICK_IMAGE_REQUEST -> {
                     imageUri = data?.data
-                    binding.profileImage.setImageURI(imageUri)
+                    imageUri?.let { startCropActivity(it) }
                 }
                 CAPTURE_IMAGE_REQUEST -> {
                     val bitmap = data?.extras?.get("data") as? Bitmap
                     bitmap?.let {
                         imageUri = saveBitmapToFile(it)
-                        binding.profileImage.setImageBitmap(bitmap)
+                        imageUri?.let { startCropActivity(it) }
+                    }
+                }
+                UCrop.REQUEST_CROP -> {
+                    val resultUri = UCrop.getOutput(data!!)
+                    if (resultUri != null) {
+                        imageUri = resultUri
+                        binding.profileImage.setImageURI(imageUri)
                     }
                 }
             }
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            val cropError = UCrop.getError(data!!)
+            Toast.makeText(this, "Crop error: ${cropError?.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -116,6 +141,7 @@ class EditProfilePictureActivity : AppCompatActivity() {
         imageUri?.let { uri ->
             CloudinaryService.uploadImage(this, uri) { secureUrl ->
                 if (secureUrl != null) {
+                    Toast.makeText(this, "Profile photo updated successfully!", Toast.LENGTH_SHORT).show()
                     updateProfilePicture(secureUrl)
                 } else {
                     Toast.makeText(this, "Failed to upload image.", Toast.LENGTH_SHORT).show()
