@@ -14,6 +14,7 @@ import com.example.lemslite.services.ApiService
 import com.example.lemslite.services.JwtService
 import com.example.lemslite.instances.RetrofitInstance
 import com.example.lemslite.models.UserDetailsResponse
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlin.apply
 
 class EditFullNameActivity : AppCompatActivity() {
@@ -58,12 +59,22 @@ class EditFullNameActivity : AppCompatActivity() {
         binding.saveChangesButton.setOnClickListener {
             val newFirstName = binding.firstNameEditText.text.toString().trim()
             val newLastName = binding.lastNameEditText.text.toString().trim()
-            if (token != null) {
-                val jwtService = JwtService()
-                val uid = jwtService.getUidFromToken(token)
-                if (uid != null) {
-                    updateName(uid, newFirstName, newLastName, sharedPreferences)
-                }
+            if (newFirstName != originalFirstName || newLastName != originalLastName) {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("Confirm Changes?")
+                    .setNegativeButton("CANCEL") { dialog, _ -> dialog.dismiss() }
+                    .setPositiveButton("CONFIRM") { _, _ ->
+                        if (token != null) {
+                            val jwtService = JwtService()
+                            val uid = jwtService.getUidFromToken(token)
+                            if (uid != null) {
+                                updateName(uid, newFirstName, newLastName, sharedPreferences)
+                            }
+                        }
+                    }
+                    .show()
+            } else {
+                Toast.makeText(this, "No changes detected.", Toast.LENGTH_SHORT).show()
             }
         }
 
