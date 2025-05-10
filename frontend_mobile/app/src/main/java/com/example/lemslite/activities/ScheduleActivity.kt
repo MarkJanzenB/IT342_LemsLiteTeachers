@@ -53,7 +53,7 @@ class ScheduleActivity : AppCompatActivity() {
 
         val backIcon = findViewById<ImageView>(R.id.backIcon)
         backIcon.setOnClickListener {
-            finish()
+            onBackPressedDispatcher.onBackPressed()
         }
 
         findViewById<LinearLayout>(R.id.homeNavButton).setOnClickListener {
@@ -96,5 +96,20 @@ class ScheduleActivity : AppCompatActivity() {
                 Toast.makeText(this@ScheduleActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val token = sharedPreferences.getString("jwt_token", null)
+        if (token != null) {
+            val jwtService = JwtService()
+            val uid = jwtService.getUidFromToken(token)
+            if (uid != null) {
+                val userIcon = findViewById<ImageView>(R.id.userIcon)
+                fetchUserDetails(uid, userIcon)
+            } else {
+                Toast.makeText(this, "Invalid user ID. Please log in again.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
