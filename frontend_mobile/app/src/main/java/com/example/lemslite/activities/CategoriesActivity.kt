@@ -7,7 +7,6 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
@@ -20,7 +19,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class InventoryActivity : AppCompatActivity() {
+class CategoriesActivity : AppCompatActivity() {
     private val sharedPreferences by lazy {
         getSharedPreferences("user_session", MODE_PRIVATE)
     }
@@ -28,7 +27,7 @@ class InventoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_inventory)
+        setContentView(R.layout.activity_categories)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -72,22 +71,6 @@ class InventoryActivity : AppCompatActivity() {
         findViewById<LinearLayout>(R.id.historyNavButton).setOnClickListener {
             startActivity(Intent(this, BorrowHistoryActivity::class.java))
         }
-
-        findViewById<CardView>(R.id.AllItemsCard).setOnClickListener {
-            startActivity(Intent(this, AllItemsActivity::class.java))
-        }
-
-        findViewById<CardView>(R.id.browseEquipmentsCard).setOnClickListener {
-            startActivity(Intent(this, CategoriesActivity::class.java))
-        }
-
-        findViewById<CardView>(R.id.borrowCartCard).setOnClickListener {
-            startActivity(Intent(this, BorrowCartActivity::class.java))
-        }
-
-        findViewById<CardView>(R.id.preparingItemsCard).setOnClickListener {
-            startActivity(Intent(this, PreparingItemsActivity::class.java))
-        }
     }
 
     private fun fetchUserDetails(uid: Integer, userIcon: ImageView) {
@@ -99,18 +82,18 @@ class InventoryActivity : AppCompatActivity() {
                     if (userDetails != null) {
                         val profilePictureUrl = userDetails.pfp
                         if (!profilePictureUrl.isNullOrEmpty()) {
-                            Glide.with(this@InventoryActivity)
+                            Glide.with(this@CategoriesActivity)
                                 .load(profilePictureUrl)
                                 .into(userIcon)
                         }
                     }
                 } else {
-                    Toast.makeText(this@InventoryActivity, "Failed to fetch user details.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CategoriesActivity, "Failed to fetch user details.", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<UserDetailsResponse>, t: Throwable) {
-                Toast.makeText(this@InventoryActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CategoriesActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
