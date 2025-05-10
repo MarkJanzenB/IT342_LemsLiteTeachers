@@ -1,27 +1,34 @@
 package edu.cit.lemslite.Service;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import javax.crypto.SecretKey;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-
 @Service
 public class JwtService {
-
-	@Value("${jwt.secret}")
-	private String secretKey;
+	private String yawe = "";
+	
+	public JwtService() {
+		try {
+			KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
+			SecretKey sk = keyGen.generateKey();
+			yawe = Base64.getEncoder().encodeToString(sk.getEncoded());
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public String generateToken(String insti_id, int roleId, String first_name, String last_name, int uid) {
 		Map<String, Object> claims = new HashMap<>();
@@ -33,17 +40,19 @@ public class JwtService {
 		claims.put("uid", uid);
 		
 		return Jwts.builder()
-				.setClaims(claims)
-				.setSubject(insti_id)
-				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 8 * 60 * 60 * 1000)) // 8 hours
+				.claims()
+				.add(claims)
+				.subject(insti_id)
+				.issuedAt(new Date(System.currentTimeMillis()))
+				.expiration(new Date(System.currentTimeMillis() + 8 * 60 * 60 * 1000)) // 8 hours * 60 minutes * 60 seconds * 1000 milliseconds
+				.and()
 				.signWith(getKey())
 				.compact();
 	}
 
 	private SecretKey getKey() {
-		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-		return Keys.hmacShaKeyFor(keyBytes);
+		byte[] yaweBytes = Decoders.BASE64.decode(yawe);
+		return Keys.hmacShaKeyFor(yaweBytes);
 	}
 
 	public String extractInstiId(String token) {
@@ -56,17 +65,11 @@ public class JwtService {
 	}
 	
 	private Claims extractAllClaims(String token) {
-		try {
-			return Jwts.parser()
-					.setSigningKey(getKey())
-					.build()
-					.parseClaimsJws(token)
-					.getBody();
-		} catch (Exception e) {
-			// Log the error (consider using a logger)
-			System.err.println("Error decoding token: " + e.getMessage());
-			return null; // or throw a custom exception
-		}
+		return Jwts.parser()
+				.verifyWith(getKey())
+				.build()
+				.parseSignedClaims(token)
+				.getPayload();
 	}
 	
 	public boolean isTokenExpired(String token) {
@@ -78,12 +81,8 @@ public class JwtService {
 	}
 
 	public boolean validateToken(String token, UserDetails userDetails) {
-		Claims claims = extractAllClaims(token);
-		if (claims == null) {
-			return false; // Token is invalid
-		}
-		final String insti_id = claims.getSubject();
-		
+		final String insti_id = extractInstiId(token);
 		return (insti_id.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
+
 }

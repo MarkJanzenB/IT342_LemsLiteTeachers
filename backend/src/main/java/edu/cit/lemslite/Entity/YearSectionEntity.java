@@ -3,73 +3,81 @@ package edu.cit.lemslite.Entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
-import java.util.List;
-
 @Entity
 @Table(name = "year_section")
 public class YearSectionEntity {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "year_id")
-	private int yearId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "yrsec_id")
+    private int yrsec_id;
+    
+    @Column(name = "year")
+    private int year;
+    
+    @Column(name = "section")
+    private String section;
+    
+    @Column(name = "yearsect")
+    private String yearsect;
+    
+    // Default constructor
+    public YearSectionEntity() {
+    }
+    
+    // Parameterized constructor
+    public YearSectionEntity(int yrsec_id, int year, String section, String yearsect) {
+        this.yrsec_id = yrsec_id;
+        this.year = year;
+        this.section = section;
+        this.yearsect = yearsect;
+    }
+//    @PrePersist
+//    @PreUpdate
+//    private void updateYearsect() {
+//        this.yearsect = this.year + "-" + this.section;
+//    }
 
-	@Column(name = "year")
-	private String year;
 
-	@Column(name = "section")
-	private String section;
-
-	@Column(name = "is_active")
-	private boolean active;
-
-	@OneToMany(mappedBy = "yearSection")
-	private List<TeacherScheduleEntity> teacherSchedules;
-
-	public YearSectionEntity() {
-		super();
-	}
-
-	public YearSectionEntity(int yearId, String year, String section, boolean active, String department) {
-		this.yearId = yearId;
-		this.year = year;
-		this.section = section;
-		this.active = active;
-	}
-
-	@JsonProperty("year_id")
-	public int getYearId() {
-		return yearId;
-	}
-
-	public void setYearId(int yearId) {
-		this.yearId = yearId;
-	}
-
-	@JsonProperty("year")
-	public String getYear() {
-		return year;
-	}
-
-	public void setYear(String year) {
-		this.year = year;
-	}
-
-	@JsonProperty("section")
-	public String getSection() {
-		return section;
-	}
-
-	public void setSection(String section) {
-		this.section = section;
-	}
-
-	@JsonProperty("is_active")
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+    // Getters and Setters
+    @JsonProperty("yrsec_id")
+    public int getYrsecId() {
+        return yrsec_id;
+    }
+    
+    public void setYrsecId(int yrsec_id) {
+        this.yrsec_id = yrsec_id;
+    }
+    
+    @JsonProperty("year")
+    public int getYear() {
+        return year;
+    }
+    
+    public void setYear(int year) {
+        this.year = year;
+    }
+    
+    @JsonProperty("section")
+    public String getSection() {
+        return section;
+    }
+    
+    public void setSection(String section) {
+        this.section = section;
+    }
+    
+    @JsonProperty("yearsect")
+    public String getYearsect() {
+        return yearsect;
+    }
+    
+    public void setYearsect(String yearsect) {
+        this.yearsect = yearsect;
+    }
+    @PrePersist
+    @PreUpdate
+    private void updateYearsect() {
+        this.yearsect = this.year + "-" + this.section;
+    }
 
 }

@@ -7,10 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/damageReports")
-@CrossOrigin(origins = "https://lems-lite.vercel.app/")
+@CrossOrigin(origins = "https://lems-lite.vercel.app")
 public class DamageReportController {
 
     @Autowired
@@ -31,7 +32,7 @@ public class DamageReportController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public DamageReportEntity createDamageReport(@RequestBody DamageReportEntity damageReport) {
         return damageReportService.createDamageReport(damageReport);
     }
@@ -51,4 +52,10 @@ public class DamageReportController {
         damageReportService.deleteDamageReport(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/linechart")
+    public ResponseEntity<Map<String, Map<String, List<Integer>>>> getMonthlyDamageCounts() {
+        return ResponseEntity.ok(damageReportService.getMonthlyCountsPerSectionPerYear());
+    }
+
 }

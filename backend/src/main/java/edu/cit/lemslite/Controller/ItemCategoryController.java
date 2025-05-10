@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/itemcategory")
-@CrossOrigin(origins = "https://lems-lite.vercel.app/")
+@CrossOrigin(origins = "https://lems-lite.vercel.app")
 
 public class ItemCategoryController {
     @Autowired

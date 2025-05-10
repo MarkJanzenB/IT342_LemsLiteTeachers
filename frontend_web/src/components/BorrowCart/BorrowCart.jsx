@@ -254,7 +254,7 @@ export default function BorrowCart() {
                 }
             );
 
-            console.log("Borrow cart successfully cleared!");
+            console.log("BorrowReport cart successfully cleared!");
             setBorrowCart([]);
             setOpenModal(false);
             setOpenAlert(true);
@@ -276,85 +276,55 @@ export default function BorrowCart() {
                 <Box sx={{ p: 4 }}>
                     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <Typography variant="h4" gutterBottom>Borrow Cart</Typography>
-
                         <Button
+
                             variant="contained"
+
                             sx={{
+
                                 backgroundColor: '#016565',
+
                                 color: '#FFF',
+
                                 '&:hover': { backgroundColor: borrowCart.length === 0 ? '#ccc' : '#014d4d' }
+
                             }}
+
                             onClick={async () => {
+
                                 await fetchTeacherSchedules();
+
                                 setSelectedSchedule(null); // Reset selectedSchedule when the modal opens
+
                                 setOpenModal(true);
+
                             }}
+
                             disabled={borrowCart.length === 0}
+
                         >
+
                             Finalize Borrow
+
                         </Button>
-
-
                     </Box>
                     <TableContainer component={Paper} sx={{ mt: 4 }}>
                         <Table>
                             <TableHead sx={{ backgroundColor: '#016565' }}>
-
                                 <TableRow>
-
                                     <TableCell sx={{ color: '#FFF', fontWeight: 'bold' }}>Item Name</TableCell>
-
                                     <TableCell sx={{ color: '#FFF', fontWeight: 'bold' }}>Category</TableCell>
-
-                                    <TableCell sx={{ color: '#FFF', fontWeight: 'bold' }}>Variant</TableCell>
-
+                                    <TableCell sx={{ color: '#FFF', fontWeight: 'bold' }}>Variant</TableCell> {/* New TableCell for Variant */}
                                     <TableCell sx={{ color: '#FFF', fontWeight: 'bold' }}>Quantity</TableCell>
-
                                     <TableCell sx={{ color: '#FFF', fontWeight: 'bold' }}>Action</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {borrowCart.map((item, index) => (
-                                    <TableRow key={item.id}> {/* Using item.id which corresponds to borrow_cart_id */}
+                                    <TableRow key={item.id}>
                                         <TableCell>{item.itemName}</TableCell>
                                         <TableCell>{item.categoryName}</TableCell>
-
-                                        <TableCell>
-                                            {item.variants && item.variants.length > 0 ? (
-                                                <select
-                                                    value={item.variant || ""}
-                                                    onChange={async (e) => {
-                                                        const newVariant = e.target.value;
-                                                        setBorrowCart(prevCart =>
-                                                            prevCart.map(cartItem =>
-                                                                cartItem.id === item.id
-                                                                    ? { ...cartItem, variant: newVariant }
-                                                                    : cartItem
-                                                            )
-                                                        );
-                                                        try {
-                                                            await axios.put(
-                                                                `https://it342-lemsliteteachers.onrender.com/api/borrowcart/updateVariant/${item.id}`,
-                                                                { variant: newVariant },
-                                                                { headers: { Authorization: `Bearer ${token}` } }
-                                                            );
-                                                        } catch (error) {
-                                                            console.error("Error updating variant:", error);
-                                                        }
-                                                    }}
-                                                >
-                                                    {item.variants.map((variantOption, idx) => (
-                                                        <option key={idx} value={variantOption}>
-                                                            {variantOption}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            ) : (
-                                                <Typography variant="body2" color="text.secondary">N/A</Typography>
-                                            )}
-                                        </TableCell>
-
-
+                                        <TableCell>{item.selectedVariant || 'N/A'}</TableCell> {/* Display the variant */}
                                         <TableCell>
                                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                                 <IconButton
@@ -369,17 +339,16 @@ export default function BorrowCart() {
                                                     size="small"
                                                     onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                                                 >
-                                                <AddIcon />
+                                                    <AddIcon />
                                                 </IconButton>
                                             </Box>
                                         </TableCell>
-
                                         <TableCell>
                                             <IconButton
                                                 color="error"
                                                 onClick={() => handleRemoveItem(item.id, item.quantity, item.itemName)}
                                             >
-                                                <DeleteIcon /> {/* Using an icon for remove */}
+                                                <DeleteIcon />
                                             </IconButton>
                                         </TableCell>
                                     </TableRow>

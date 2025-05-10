@@ -9,7 +9,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/schoolyear")
-@CrossOrigin(origins = "https://lems-lite.vercel.app/")
+@CrossOrigin(origins = "https://lems-lite.vercel.app")
 public class SchoolYearController {
     
     @Autowired
