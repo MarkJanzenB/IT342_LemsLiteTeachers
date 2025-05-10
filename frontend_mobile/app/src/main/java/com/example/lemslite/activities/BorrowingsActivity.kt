@@ -2,6 +2,7 @@ package com.example.lemslite.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ListView

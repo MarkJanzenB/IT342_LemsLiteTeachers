@@ -29,12 +29,12 @@ class BorrowItemAdapter(private var items: List<BorrowItem>) : RecyclerView.Adap
 
     override fun onBindViewHolder(holder: BorrowItemViewHolder, position: Int) {
         val item = items[position]
-        holder.borrowedId.text = " ${item.borrowedId}"
+        holder.borrowedId.text = " ${item.referenceCode}"
         holder.itemName.text = " ${item.itemName}"
         holder.categoryName.text = " ${item.categoryName}"
         holder.quantity.text = " ${item.quantity}"
         holder.status.text = " ${item.status}"
-        holder.borrowedDate.text = " ${item.borrowedDate}"
+        holder.borrowedDate.text = " ${item.dateCreated}"
     }
 
     override fun getItemCount(): Int = items.size
