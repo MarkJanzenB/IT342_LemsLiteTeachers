@@ -1,5 +1,6 @@
 package com.example.lemslite.services
 
+import com.example.lemslite.models.BorrowItem
 import com.example.lemslite.models.Item
 import com.example.lemslite.models.UserDetailsResponse
 import com.google.gson.JsonObject
@@ -57,5 +58,9 @@ interface ApiService {
     @GET("/inventory/getAllInventory")
     fun getAllItems(
     ): Call<List<Item>>
+
+    @GET("/borrowitem/all")
+    fun getBorrowings(
+    ): Call<List<BorrowItem>>
     
 }

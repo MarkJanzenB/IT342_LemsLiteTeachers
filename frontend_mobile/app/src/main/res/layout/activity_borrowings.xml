@@ -173,7 +173,9 @@
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
-    <ListView
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/borrowView"
         android:layout_width="409dp"
         android:layout_height="611dp"
         android:layout_marginStart="1dp"
