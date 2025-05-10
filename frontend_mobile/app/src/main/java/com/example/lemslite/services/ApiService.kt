@@ -1,5 +1,6 @@
 package com.example.lemslite.services
 
+import com.example.lemslite.models.Item
 import com.example.lemslite.models.UserDetailsResponse
 import com.google.gson.JsonObject
 import retrofit2.http.Body
@@ -52,5 +53,9 @@ interface ApiService {
     fun removePfp(
         @Query("uid") uid: Int
     ): Call<Void>
+
+    @GET("/inventory/getAllInventory")
+    fun getAllItems(
+    ): Call<List<Item>>
     
 }
