@@ -109,7 +109,10 @@ public class PreparingItemService {
         						item.setStatus("In-use");
         						item.setUser(user);
         						item.setPreparingItem(prepItem);
-        						itemRepository.save(item);
+        						ItemEntity newlySavedItem = itemRepository.save(item);
+        						//TODO: Marks
+        						//Generate new TH record
+        						//set TH type to borrowed
         						handled++;
         					}
         				}
@@ -136,7 +139,10 @@ public class PreparingItemService {
         				item.setStatus("In-use");
         				item.setUser(user);
         				item.setPreparingItem(prepItem);
-        				itemRepository.save(item);
+        				ItemEntity newlySavedItem = itemRepository.save(item);
+        				//TODO: Marks
+						//Generate new TH record
+						//set TH type to borrowed
         				autoHandled++;
         			}
         			
@@ -152,7 +158,10 @@ public class PreparingItemService {
         					item.setStatus("In-use");
             				item.setUser(user);
             				item.setPreparingItem(prepItem);
-            				itemRepository.save(item);
+            				ItemEntity newlySavedItem = itemRepository.save(item);
+            				//TODO: Marks
+    						//Generate new TH record
+    						//set TH type to borrowed
         				}
         			}
         		}

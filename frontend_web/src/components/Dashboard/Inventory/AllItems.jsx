@@ -40,6 +40,7 @@ export default function AllItems() {
     const [openModalEdit, setOpenModalEdit] = useState(false); //Edit Modal
     const [editData, setEditData] = useState({});
     const [openBorrowModal, setOpenBorrowModal] = useState(false);
+    const [openRemoveConfirmation, setOpenRemoveConfirmation] = useState(false);
     const [openModal, setOpenModal] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [newItemCategory, setNewItemCategory] = useState(0);
@@ -55,6 +56,7 @@ export default function AllItems() {
     const [openResupplyModal, setOpenResupplyModal] = useState(false);
     const [maxQuantity, setMaxQuantity] = useState(0);
     const [availableVariants, setAvailableVariants] = useState([]);
+    const [selectedRowToRemove, setSelectedRowToRemove] = useState();
     const resetSearch = () => {
         setSearchTerm("");
     };
@@ -121,41 +123,68 @@ export default function AllItems() {
         }
     };
 
+
+
     const fetchItemVariants = async (itemId) => {
         try {
-            const response = await axios.get(`https://it342-lemsliteteachers.onrender.com/inventory/item/${itemId}/variants`, {
+            const response = await axios.get(`https://it342-lemsliteteachers.onrender.com/inventory/${itemId}/variants`, {
                 headers: {
                     "authorization": `Bearer ${jwtToken}`,
                 }
             });
+            // Assuming your API returns an array of objects like:
+            // [{ variantName: 'N-Vission', quantity: 5 }, { variantName: 'Another', quantity: 10 }]
             setAvailableVariants(response.data);
+            return response.data;
         } catch (error) {
             console.error("Error fetching item variants:", error);
             setSnackbarText("Failed to load item variants");
             setOpenSnackbar(true);
+            return [];
         }
     };
 
-
-    const handleModalOpen = (item) => {
-        setMaxQuantity(item.quantity);
+    const handleModalOpen = async (item) => {
+        setMaxQuantity(item.quantity); // Initial max is the total item quantity
+        const variants = await fetchItemVariants(item.inventory_id);
         setFormData({
             itemId: item.inventory_id,
             itemName: item.name,
             quantity: 1,
-            maxQuantity: item.quantity,
-            itemPhoto: item.image_url || 'https://via.placeholder.com/140',
+            maxQuantity: item.quantity, // Initial max
+            itemPhoto: item.image_url || '[https://via.placeholder.com/140](https://via.placeholder.com/140)',
             category: item?.item_category?.category_name || "Unknown",
-            variant: item.variant || "", // Set initial variant
+            variant: variants.length > 0 ? (variants[0]?.variantName || variants[0]) : undefined, // Set initial variant if available
         });
-
-        fetchItemVariants(item.inventory_id); // Fetch variants for the specific item
-
+        setAvailableVariants(variants);
+        // Immediately set maxQuantity based on the initial variant if present
+        if (variants.length > 0) {
+            const initialVariant = variants[0];
+            setMaxQuantity(initialVariant?.quantity !== undefined ? initialVariant.quantity : item.quantity);
+        }
         setOpenBorrowModal(true);
     };
 
+    const handleVariantChange = (event) => {
+        const newVariant = event.target.value;
+        setFormData({ ...formData, variant: newVariant, quantity: 1 });
+
+        // Find the quantity for the selected variant from availableVariants
+        const selectedVariantData = availableVariants.find(v => (typeof v === 'object' && v.variantName === newVariant) || v === newVariant);
+        if (selectedVariantData) {
+            setMaxQuantity(typeof selectedVariantData === 'object' && 'quantity' in selectedVariantData ? selectedVariantData.quantity : maxQuantity);
+        } else {
+            // Fallback if variant data not found (shouldn't happen if API returns correctly)
+            setMaxQuantity(0);
+        }
+    };
+
+
+
 
     const handleBorrowModalClose = () => {
+        setSelectedRowToRemove(null);
+        setOpenRemoveConfirmation(false);
         setOpenBorrowModal(false);
         setAvailableVariants([]);
     };
@@ -192,6 +221,17 @@ export default function AllItems() {
             return;
         }
 
+        // Check if variant is required and not selected
+        const hasVariants = availableVariants && availableVariants.length > 0;
+        const isVariantSelected = formData.variant !== undefined && formData.variant !== "";
+
+
+        if (hasVariants && !isVariantSelected) {
+            setSnackbarText('Please select a variant for this item.');
+            setOpenSnackbar(true);
+            return;
+        }
+
         try {
             const response = await axios.post(
                 'https://it342-lemsliteteachers.onrender.com/api/borrowcart/addToBorrowCart',
@@ -202,7 +242,7 @@ export default function AllItems() {
                         itemName: formData.itemName,
                         categoryName: formData.category,
                         quantity: parseInt(formData.quantity),
-                        variant: formData.variant, // Send the selected variant
+                        variant: formData.variant, // Use formData.variant here
                     },
                     headers: {
                         'Authorization': `Bearer ${jwtToken}`,
@@ -212,23 +252,27 @@ export default function AllItems() {
             );
 
             // Update the inventory without deducting it, since it's not yet finalized
-            setSnackbarText(`${formData.itemName} (Variant: ${formData.variant}) added to Borrow Cart.`);
+            setSnackbarText(`${formData.itemName} ${hasVariants ? `(Variant: ${formData.variant})` : ''} added to Borrow Cart.`);
             setOpenSnackbar(true);
             setOpenBorrowModal(false);
         } catch (error) {
             console.error('Error adding item to borrow cart:', error);
-            setSnackbarText('Failed to add item to Borrow Cart.');
+            setSnackbarText('Failed to add item to BorrowReport Cart.');
             setOpenSnackbar(true);
         }
     };
 
-
+    const setOpenRemoveConfirmationFunction = (category_id) => {
+        setSelectedRowToRemove(category_id);
+        setOpenRemoveConfirmation(true);
+        console.log(category_id);
+    }
 
 
 
 //REMOVE
-    const handleRemoveItem = (category_id) => {
-        axios.delete(`https://it342-lemsliteteachers.onrender.com/inventory/delete/${category_id}`, {
+    const handleRemoveItem = () => {
+        axios.delete(`https://it342-lemsliteteachers.onrender.com/inventory/delete/${selectedRowToRemove}`, {
             headers: {
                 "Authorization": `Bearer ${jwtToken}`
             }
@@ -237,6 +281,7 @@ export default function AllItems() {
                 fetchAllItems();
                 setSnackbarText(response.data.name + " has been successfully removed.");
                 setOpenSnackbar(true);
+                setOpenRemoveConfirmation(false);
             })
             .catch(error => console.error("Error removing item:", error))
     };
@@ -440,7 +485,10 @@ export default function AllItems() {
                                     columns={columns}
                                     data={paginatedData}
                                     onRowClick={handleRowClick}
-                                    onRemoveClick={handleRemoveItem}
+                                    onRemoveClick={() => {
+                                        setOpenRemoveConfirmation(true);
+                                    }}
+
                                     roleid={roleid}
                                     showRemoveColumn={false}
                                     isInventoryPage={true}
@@ -460,6 +508,7 @@ export default function AllItems() {
                                                                 console.log("Clicked row:", row);
                                                                 handleModalOpen(row);
                                                             }}
+                                                            disabled={row.quantity === 0} // Disable if quantity is 0
                                                         >
                                                             Borrow
                                                         </Button>
@@ -475,7 +524,7 @@ export default function AllItems() {
                                                             }}
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
-                                                                handleRemoveItem(row.inventory_id);
+                                                                setOpenRemoveConfirmationFunction(row.inventory_id);
                                                             }}
                                                         >
                                                             Remove
@@ -617,21 +666,27 @@ export default function AllItems() {
                                     />
 
                                     {/* Variant Selection */}
-                                    <FormControl fullWidth>
+                                    <FormControl fullWidth error={availableVariants.length > 0 && !formData.variant}>
                                         <InputLabel id="variant-label">Variant</InputLabel>
                                         <Select
                                             labelId="variant-label"
                                             id="variant"
                                             value={formData.variant}
                                             label="Variant"
-                                            onChange={(e) => setFormData({ ...formData, variant: e.target.value })}
+                                            onChange={handleVariantChange}
+                                            required={availableVariants.length > 0}
                                         >
                                             {availableVariants.map((variant) => (
-                                                <MenuItem key={variant} value={variant}>
-                                                    {variant}
+                                                <MenuItem key={typeof variant === 'object' && 'variantName' in variant ? variant.variantName : variant} value={typeof variant === 'object' && 'variantName' in variant ? variant.variantName : variant}>
+                                                    {typeof variant === 'object' && 'variantName' in variant ? variant.variantName : variant}
                                                 </MenuItem>
                                             ))}
                                         </Select>
+                                        {availableVariants.length > 0 && !formData.variant && (
+                                            <Typography color="error" sx={{ mt: 1 }}>
+                                                Please select a variant.
+                                            </Typography>
+                                        )}
                                     </FormControl>
 
                                     <TextField
@@ -640,15 +695,17 @@ export default function AllItems() {
                                         value={formData.quantity}
                                         fullWidth
                                         onChange={(e) => {
-                                            const newValue = Math.max(1, Number(e.target.value));
+                                            const newValue = Math.max(1, Math.min(maxQuantity, Number(e.target.value)));
                                             setFormData({ ...formData, quantity: newValue });
                                         }}
-                                        slotProps={{input:{
-                                                inputProps:{
-                                                    max: maxQuantity,
+                                        slotProps={{
+                                            input: {
+                                                inputProps: {
+                                                    max: maxQuantity, // Bind max prop to maxQuantity
                                                     min: 1,
-                                                }
-                                            }}}
+                                                },
+                                            },
+                                        }}
                                     />
                                 </Box>
 
@@ -664,12 +721,65 @@ export default function AllItems() {
                                             '&:hover': { backgroundColor: '#1E7A1E' },
                                         }}
                                         onClick={handleFormSubmit}
+                                        disabled={(availableVariants.length > 0 && !formData.variant) || formData.quantity > maxQuantity || formData.quantity < 1}
                                     >
                                         Add to Borrow Cart
+                                    </Button>
+                                    {formData.quantity > maxQuantity && (
+                                        <Typography color="error" sx={{ mt: 1 }}>
+                                            Quantity exceeds available stock ({maxQuantity}).
+                                        </Typography>
+                                    )}
+                                    {formData.quantity < 1 && (
+                                        <Typography color="error" sx={{ mt: 1 }}>
+                                            Quantity must be at least 1.
+                                        </Typography>
+                                    )}
+                                </Box>
+                            </Box>
+                        </Modal>
+
+                        <Modal open={openRemoveConfirmation} onClose={handleBorrowModalClose}>
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    width: 500,
+                                    bgcolor: '#F2EE9D',
+                                    boxShadow: 24,
+                                    p: 4,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 2,
+                                    borderRadius: '25px',
+                                }}
+                            >
+                                <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#016565', textAlign: 'center' }}>
+                                    Are you sure you want to remove this item?
+                                </Typography>
+                                <Box display="flex" justifyContent="space-between" mt={2}>
+                                    <Button variant="outlined" sx={{ color: '#800000', borderColor: '#800000' }} onClick={() => {
+                                        handleBorrowModalClose()
+                                    }}>
+
+                                        Cancel
+
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        sx={{ backgroundColor: '#800000', color: '#FFF', '&:hover': { backgroundColor: '#5c0000' } }}
+                                        onClick={() => {
+                                            handleRemoveItem()
+                                        }}
+                                    >
+                                        Remove
                                     </Button>
                                 </Box>
                             </Box>
                         </Modal>
+
                     </div>
                 </div>
             </div>

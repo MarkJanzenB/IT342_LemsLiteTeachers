@@ -8,9 +8,12 @@ import java.util.List;
 
 @Repository
 public interface YearSectionRepository extends JpaRepository<YearSectionEntity, Integer> {
-    // Custom finder methods
+    // Find by year
+    List<YearSectionEntity> findByYear(int year);
 
-    // Find by year and section
-    List<YearSectionEntity> findByYearAndSection(String year, String section);
+    // Find by section
+    List<YearSectionEntity> findBySection(String section);
 
+    // Find by yearsect
+    YearSectionEntity findByYearsect(String yearsect);
 }

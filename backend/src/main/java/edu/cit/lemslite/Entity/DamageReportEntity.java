@@ -22,8 +22,12 @@ public class DamageReportEntity {
 
     private String subject;
 
-    @Column(name = "year_sec")
-    private String yearSec;
+//    @Column(name = "year_sec")
+//    private String yearSec;
+    
+    @ManyToOne
+    @JoinColumn(name = "year_sec", nullable = true)
+    private YearSectionEntity yearSec;
 
     private String instructor;
 
@@ -75,14 +79,6 @@ public class DamageReportEntity {
         this.subject = subject;
     }
 
-    public String getYearSec() {
-        return yearSec;
-    }
-
-    public void setYearSec(String yearSec) {
-        this.yearSec = yearSec;
-    }
-
     public String getInstructor() {
         return instructor;
     }
@@ -114,4 +110,14 @@ public class DamageReportEntity {
     public void setIncidentStatus(String status) {
         this.incidentStatus = status;
     }
+
+	public YearSectionEntity getYearSec() {
+		return yearSec;
+	}
+
+	public void setYearSec(YearSectionEntity yearSec) {
+		this.yearSec = yearSec;
+	}
+    
+    
 }

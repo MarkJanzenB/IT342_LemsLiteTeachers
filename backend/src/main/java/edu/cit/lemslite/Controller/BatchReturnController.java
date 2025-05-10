@@ -11,7 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/batchreturn")
-@CrossOrigin(origins = "https://lems-lite.vercel.app/")
+@CrossOrigin(origins = "https://lems-lite.vercel.app")
 public class BatchReturnController {
 
     @Autowired

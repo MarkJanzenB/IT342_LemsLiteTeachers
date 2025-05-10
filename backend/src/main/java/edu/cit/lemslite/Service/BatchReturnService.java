@@ -50,6 +50,10 @@ public class BatchReturnService {
     		Integer itemId = entry.getKey();
     		String status = entry.getValue();
     		
+    		/*
+    		 * Adds quantity to inventory if the item is returned in good condition
+    		 * Meaning it can still be used and borrowed
+    		 * */
     		ItemEntity item = itemrepo.findById(itemId).orElseThrow();
     		if("Available".equals(status)) {
     			InventoryEntity inventory = item.getInventory();
@@ -57,6 +61,12 @@ public class BatchReturnService {
     		}
     		item.setStatus(status);
     		itemrepo.save(item);
+			//TODO: Marks
+    		//Add checker if status is Available or Damaged
+    		//If status is available: TH type returned in good condition or setTransactionType(status)
+			//If status is not available: TH type returned in bad condition or setTransactionType(status)
+    		//Pwede ma combined like or setTransactionType("Returned w/" + status);
+    		//Di ko sure kung ma print apil ang slash
     	}
     }
 
