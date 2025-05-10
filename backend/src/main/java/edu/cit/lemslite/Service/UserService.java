@@ -235,4 +235,19 @@ public class UserService {
 				.body(userrepo.save(foundUser));
 	}
 
+	public ResponseEntity<?> removePfp(int uid) {
+		Optional<UserEntity> user = userrepo.findById(uid);
+		if (user.isEmpty()) {
+			return ResponseEntity
+					.status(HttpStatus.NOT_FOUND)
+					.body("User not found");
+		}
+		UserEntity foundUser = user.get();
+		foundUser.setPfp(null);
+		userrepo.save(foundUser);
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body("Profile picture removed successfully");
+	}
+
 }

@@ -4,15 +4,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.appcompat.widget.SearchView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.lemslite.R
+import com.example.lemslite.adapters.ItemsAdapter
 import com.example.lemslite.instances.RetrofitInstance
+import com.example.lemslite.models.Item
 import com.example.lemslite.models.UserDetailsResponse
 import com.example.lemslite.services.ApiService
 import com.example.lemslite.services.JwtService
@@ -20,15 +24,17 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class InventoryActivity : AppCompatActivity() {
+class AllItemsActivity : AppCompatActivity() {
     private val sharedPreferences by lazy {
         getSharedPreferences("user_session", MODE_PRIVATE)
     }
+    private lateinit var itemsAdapter: ItemsAdapter
+    private val items = mutableListOf<Item>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_inventory)
+        setContentView(R.layout.activity_all_items)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -73,21 +79,51 @@ class InventoryActivity : AppCompatActivity() {
             startActivity(Intent(this, BorrowHistoryActivity::class.java))
         }
 
-        findViewById<CardView>(R.id.AllItemsCard).setOnClickListener {
-            startActivity(Intent(this, AllItemsActivity::class.java))
-        }
+        setupRecyclerView()
+        setupSearchView()
+        fetchItems()
+    }
 
-        findViewById<CardView>(R.id.browseEquipmentsCard).setOnClickListener {
-            startActivity(Intent(this, CategoriesActivity::class.java))
-        }
+    private fun setupRecyclerView() {
+        val recyclerView = findViewById<RecyclerView>(R.id.itemsRecyclerView)
+        itemsAdapter = ItemsAdapter(items)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = itemsAdapter
+    }
 
-        findViewById<CardView>(R.id.borrowCartCard).setOnClickListener {
-            startActivity(Intent(this, BorrowCartActivity::class.java))
-        }
+    private fun setupSearchView() {
+        val searchView = findViewById<SearchView>(R.id.searchView)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
 
-        findViewById<CardView>(R.id.preparingItemsCard).setOnClickListener {
-            startActivity(Intent(this, PreparingItemsActivity::class.java))
-        }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val filteredItems = items.filter {
+                    it.name.contains(newText ?: "", ignoreCase = true) ||
+                            it.description.contains(newText ?: "", ignoreCase = true)
+                }
+                itemsAdapter.updateItems(filteredItems)
+                return true
+            }
+        })
+    }
+
+    private fun fetchItems() {
+        val apiService = RetrofitInstance.getRetrofit(this).create(ApiService::class.java)
+        apiService.getAllItems().enqueue(object : Callback<List<Item>> {
+            override fun onResponse(call: Call<List<Item>>, response: Response<List<Item>>) {
+                if (response.isSuccessful) {
+                    items.clear()
+                    items.addAll(response.body() ?: emptyList())
+                    itemsAdapter.updateItems(items)
+                } else {
+                    Toast.makeText(this@AllItemsActivity, "Failed to load items", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<Item>>, t: Throwable) {
+                Toast.makeText(this@AllItemsActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun fetchUserDetails(uid: Integer, userIcon: ImageView) {
@@ -99,18 +135,18 @@ class InventoryActivity : AppCompatActivity() {
                     if (userDetails != null) {
                         val profilePictureUrl = userDetails.pfp
                         if (!profilePictureUrl.isNullOrEmpty()) {
-                            Glide.with(this@InventoryActivity)
+                            Glide.with(this@AllItemsActivity)
                                 .load(profilePictureUrl)
                                 .into(userIcon)
                         }
                     }
                 } else {
-                    Toast.makeText(this@InventoryActivity, "Failed to fetch user details.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AllItemsActivity, "Failed to fetch user details.", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<UserDetailsResponse>, t: Throwable) {
-                Toast.makeText(this@InventoryActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@AllItemsActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }

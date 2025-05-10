@@ -23,7 +23,7 @@ class AccountSettingsActivity : AppCompatActivity() {
 
         val backIcon = findViewById<ImageView>(R.id.backIcon)
         backIcon.setOnClickListener {
-            finish()
+            onBackPressedDispatcher.onBackPressed()
         }
 
         findViewById<ConstraintLayout>(R.id.accountSettingsContainer).setOnClickListener {

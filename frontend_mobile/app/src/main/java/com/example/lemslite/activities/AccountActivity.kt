@@ -11,11 +11,12 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.lemslite.services.ApiService
-import com.example.lemslite.services.JwtService
+import com.bumptech.glide.Glide
 import com.example.lemslite.R
 import com.example.lemslite.instances.RetrofitInstance
 import com.example.lemslite.models.UserDetailsResponse
+import com.example.lemslite.services.ApiService
+import com.example.lemslite.services.JwtService
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import retrofit2.Call
 import retrofit2.Callback
@@ -61,7 +62,7 @@ class AccountActivity : AppCompatActivity() {
 
         val backIcon = findViewById<ImageView>(R.id.backIcon)
         backIcon.setOnClickListener {
-            finish()
+            onBackPressedDispatcher.onBackPressed()
         }
     }
 
@@ -74,6 +75,14 @@ class AccountActivity : AppCompatActivity() {
                     if (userDetails != null) {
                         findViewById<TextView>(R.id.userId).text = userDetails.insti_id
                         findViewById<TextView>(R.id.userName).text = "${userDetails.first_name} ${userDetails.last_name}"
+
+                        val profilePictureUrl = userDetails.pfp
+                        if (!profilePictureUrl.isNullOrEmpty()) {
+                            val profilePicture = findViewById<ImageView>(R.id.profilePicture)
+                            Glide.with(this@AccountActivity)
+                                .load(profilePictureUrl)
+                                .into(profilePicture)
+                        }
                     }
                 } else {
                     Toast.makeText(this@AccountActivity, "Failed to fetch user details.", Toast.LENGTH_SHORT).show()
@@ -105,5 +114,19 @@ class AccountActivity : AppCompatActivity() {
         val intent = Intent(this, LandingPageActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val token = sharedPreferences.getString("jwt_token", null)
+        if (token != null) {
+            val jwtService = JwtService()
+            val uid = jwtService.getUidFromToken(token)
+            if (uid != null) {
+                fetchUserDetails(uid)
+            } else {
+                Toast.makeText(this, "Invalid user ID. Please log in again.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
