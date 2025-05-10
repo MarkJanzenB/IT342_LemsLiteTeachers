@@ -62,7 +62,7 @@ class AccountActivity : AppCompatActivity() {
 
         val backIcon = findViewById<ImageView>(R.id.backIcon)
         backIcon.setOnClickListener {
-            finish()
+            onBackPressedDispatcher.onBackPressed()
         }
     }
 
@@ -114,5 +114,19 @@ class AccountActivity : AppCompatActivity() {
         val intent = Intent(this, LandingPageActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val token = sharedPreferences.getString("jwt_token", null)
+        if (token != null) {
+            val jwtService = JwtService()
+            val uid = jwtService.getUidFromToken(token)
+            if (uid != null) {
+                fetchUserDetails(uid)
+            } else {
+                Toast.makeText(this, "Invalid user ID. Please log in again.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

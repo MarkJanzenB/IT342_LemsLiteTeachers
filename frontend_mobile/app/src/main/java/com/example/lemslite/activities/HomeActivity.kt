@@ -109,4 +109,19 @@ class HomeActivity : AppCompatActivity() {
             }
         })
     }
+
+    override fun onResume() {
+        super.onResume()
+        val token = sharedPreferences.getString("jwt_token", null)
+        if (token != null) {
+            val jwtService = JwtService()
+            val uid = jwtService.getUidFromToken(token)
+            if (uid != null) {
+                val userIcon = findViewById<ImageView>(R.id.userIcon)
+                fetchUserDetails(uid, userIcon)
+            } else {
+                Toast.makeText(this, "Invalid user ID. Please log in again.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }
