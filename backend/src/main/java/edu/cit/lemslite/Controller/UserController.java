@@ -90,4 +90,8 @@ public class UserController {
 		return userserv.changePassword(uid, oldPassword, newPassword);
 	}
 
+	@PutMapping("/removePfp")
+	public ResponseEntity<?> removePfp(@RequestParam int uid) {
+		return userserv.removePfp(uid);
+	}
 }
