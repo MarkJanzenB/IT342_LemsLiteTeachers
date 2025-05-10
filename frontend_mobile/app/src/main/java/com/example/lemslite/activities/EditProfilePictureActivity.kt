@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.example.lemslite.R
 import com.example.lemslite.databinding.ActivityEditProfilePictureBinding
 import com.example.lemslite.instances.RetrofitInstance
 import com.example.lemslite.models.UserDetailsResponse
@@ -52,6 +53,46 @@ class EditProfilePictureActivity : AppCompatActivity() {
 
         binding.uploadImageButton.setOnClickListener { showImageOptions() }
         binding.saveChangesButton.setOnClickListener { saveProfilePicture() }
+
+        binding.removeImageButton.setOnClickListener {
+            val jwtToken = getSharedPreferences("user_session", MODE_PRIVATE).getString("jwt_token", null)
+            if (jwtToken == null) {
+                Toast.makeText(this, "JWT token is missing. Please log in again.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val jwtService = JwtService()
+            val uid = jwtService.getUidFromToken(jwtToken)?.toInt()
+            if (uid == null) {
+                Toast.makeText(this, "Invalid user ID. Please log in again.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val builder = android.app.AlertDialog.Builder(this)
+            builder.setTitle("Confirm Removal")
+            builder.setMessage("Are you sure you want to remove your profile picture?")
+            builder.setPositiveButton("Yes") { _, _ ->
+                val apiService = RetrofitInstance.getRetrofit(this).create(ApiService::class.java)
+                apiService.removePfp(uid).enqueue(object : Callback<Void> {
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        if (response.isSuccessful) {
+                            Toast.makeText(this@EditProfilePictureActivity, "Profile picture removed successfully!", Toast.LENGTH_SHORT).show()
+                            binding.profileImage.setImageResource(R.drawable.user_icon)
+                        } else {
+                            Toast.makeText(this@EditProfilePictureActivity, "Failed to remove profile picture.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        Toast.makeText(this@EditProfilePictureActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
+            builder.setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.create().show()
+        }
     }
 
     private fun showImageOptions() {

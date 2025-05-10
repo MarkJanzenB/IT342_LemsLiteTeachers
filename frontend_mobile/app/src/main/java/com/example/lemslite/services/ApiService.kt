@@ -47,5 +47,10 @@ interface ApiService {
     fun editPfp(
         @Body newPfpDetails: JsonObject
     ): Call<Void>
+
+    @PUT("/user/removePfp")
+    fun removePfp(
+        @Query("uid") uid: Int
+    ): Call<Void>
     
 }
