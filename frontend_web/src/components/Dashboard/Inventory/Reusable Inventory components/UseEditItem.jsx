@@ -112,7 +112,7 @@ const UseEditItem = ({jwttoken, onModalClose, editdataname, editdata, opensnackb
                     //       sx={{ backgroundColor: '#800000', color: '#FFF', '&:hover': { backgroundColor: '#5c0000' } }}
                     //       onClick={() => setPage(2)}
                     //     >
-                    //         Resupply
+                    //         ResupplyReport
                     //     </Button>
                     //     </>
                     //   }

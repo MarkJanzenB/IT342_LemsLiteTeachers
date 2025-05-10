@@ -43,6 +43,7 @@ public class TransactionHistory {
     public void setBatchResupply(BatchResupplyEntity batchResupply) { // Add setter
         this.batchResupply = batchResupply;
     }
+    
     public TransactionHistory(int id, int itemId, int userId, String transactionType, Date transactionDate, String details) {
         this.id = id;
         this.itemId = itemId;

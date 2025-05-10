@@ -1,8 +1,11 @@
 package edu.cit.lemslite.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "SchoolYear")
@@ -23,9 +26,16 @@ public class SchoolYearEntity {
     @Column(name = "end_date", nullable = false)
     @Temporal(TemporalType.DATE)
     private Date endDate;
-    
-    private String instiId; // Added field for institution ID
-    
+
+    @Column(name = "insti_id")
+    private String instiId;
+
+    // Add bidirectional relationship with TeacherScheduleEntity
+    @OneToMany(mappedBy = "schoolYear", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<TeacherScheduleEntity> teacherSchedules = new HashSet<>();
+
+
     // Default constructor
     public SchoolYearEntity() {
     }
@@ -78,7 +88,27 @@ public class SchoolYearEntity {
     public void setInstiId(String instiId) {
         this.instiId = instiId;
     }
-    
+
+    public Set<TeacherScheduleEntity> getTeacherSchedules() {
+        return teacherSchedules;
+    }
+
+    public void setTeacherSchedules(Set<TeacherScheduleEntity> teacherSchedules) {
+        this.teacherSchedules = teacherSchedules;
+    }
+
+    // Helper method to add teacher schedule
+    public void addTeacherSchedule(TeacherScheduleEntity teacherSchedule) {
+        teacherSchedules.add(teacherSchedule);
+        teacherSchedule.setSyId(this);
+    }
+
+    // Helper method to remove teacher schedule
+    public void removeTeacherSchedule(TeacherScheduleEntity teacherSchedule) {
+        teacherSchedules.remove(teacherSchedule);
+        teacherSchedule.setSyId(null);
+    }
+
     @Override
     public String toString() {
         return "SchoolYearEntity{" +

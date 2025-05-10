@@ -28,22 +28,32 @@ public class TeacherScheduleEntity {
     @JoinColumn(name = "teacher_id", nullable = true)
     private UserEntity teacher;
     @ManyToOne
-    @JoinColumn(name = "year_id", nullable = true)
+    @JoinColumn(name = "yrsec_id",referencedColumnName = "yrsec_id" ,nullable = true)
     private YearSectionEntity yearSection;
     @ManyToOne
     @JoinColumn(name = "createdby_id", nullable = true)
     private UserEntity createdBy;
+
+    @ManyToOne
+    @JoinColumn(name = "sy_id", nullable = true)  // Not nullable since it's required
+    private SchoolYearEntity schoolYear;
+    @ManyToOne
+    @JoinColumn(name = "subject_id", nullable = true) // Not nullable since it's required
+    private SubjectEntity subject;
+
+
     @Column(name = "date_created")
     private LocalDate dateCreated;
     @OneToOne(mappedBy = "teacherSchedule")
-    private BorrowItemEntity BorrowItemEntity;
+    private BorrowItemEntity borrowItem;
 
     public TeacherScheduleEntity() {
         super();
     }
 
     public TeacherScheduleEntity(int teacherScheduleId, LocalTime startTime, LocalTime endTime, String labNum, Date date,
-                                 UserEntity teacher, YearSectionEntity yearSection, UserEntity createdBy, LocalDate dateCreated) {
+                                 UserEntity teacher, YearSectionEntity yearSection, UserEntity createdBy, LocalDate dateCreated,SchoolYearEntity schoolYear, SubjectEntity subject
+    ) {
         super();
         this.teacherScheduleId = teacherScheduleId;
         this.startTime = startTime;
@@ -54,6 +64,8 @@ public class TeacherScheduleEntity {
         this.yearSection = yearSection;
         this.createdBy = createdBy;
         this.dateCreated = dateCreated;
+        this.schoolYear = schoolYear;
+        this.subject = subject;
     }
 
     @PrePersist
@@ -122,5 +134,27 @@ public class TeacherScheduleEntity {
     }
     public void setDateCreated(LocalDate dateCreated) {
         this.dateCreated = dateCreated;
+    }
+    @JsonProperty("school_year")
+    public SchoolYearEntity getSchoolYear() {
+        return schoolYear;
+    }
+    public void setSyId(SchoolYearEntity schoolYear) {
+        this.schoolYear = schoolYear;
+    }
+    @JsonProperty("borrow_item")
+    public BorrowItemEntity getBorrowItem() {
+        return borrowItem;
+    }
+    public void setBorrowItem(BorrowItemEntity borrowItem) {
+        this.borrowItem = borrowItem;
+    }
+    @JsonProperty("subject")
+    public SubjectEntity getSubject() {
+        return subject;
+    }
+
+    public void setSubject(SubjectEntity subject) {
+        this.subject = subject;
     }
 }

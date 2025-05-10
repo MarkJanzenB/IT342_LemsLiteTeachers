@@ -11,6 +11,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format, lastDayOfMonth, setDate } from 'date-fns';
+import lemslogo from '/src/assets/static/img/LEMS1.png';
 
 const style = {
     position: 'absolute',
@@ -160,7 +161,7 @@ export default function GetStarted(){
                 >
                     <Box sx={style}>
                         <Box sx={{ display: 'flex', justifyContent: 'center'}}>
-                            <img src={'../src/assets/static/img/LEMS1.png'} alt="Logo" width={500} />
+                            <img src={lemslogo} alt="Logo" width={500} />
                         </Box>
                         <Typography id="modal-modal-titles" className='.roboto-thin' variant="h4" component="h2" sx={{ fontWeight: 'bold' }}>
                             {parseInt(localStorage.getItem("userRole")) === 1 || parseInt(localStorage.getItem("userRole")) === 3

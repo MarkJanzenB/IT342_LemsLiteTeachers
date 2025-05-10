@@ -217,13 +217,13 @@ export default function PreparingItem() {
 
                         />
 
-                    <Button
-                        variant="contained"
-                        onClick={() => navigate("/inventory")}
-                        style={{ backgroundColor: "#016565" }}
-                    >
-                        Borrow More
-                    </Button>
+                        <Button
+                            variant="contained"
+                            onClick={() => navigate("/inventory")}
+                            style={{ backgroundColor: "#016565" }}
+                        >
+                            Borrow More
+                        </Button>
                     </div>
 
 
@@ -308,6 +308,7 @@ export default function PreparingItem() {
                                     <TableRow>
                                         <TableCell>Category</TableCell>
                                         <TableCell>Item Name</TableCell>
+                                        <TableCell>Variant</TableCell> {/* ADDED VARIANT COLUMN */}
                                         <TableCell>Quantity</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -316,6 +317,7 @@ export default function PreparingItem() {
                                         <TableRow key={index}>
                                             <TableCell>{item.categoryName}</TableCell>
                                             <TableCell>{item.itemName}</TableCell>
+                                            <TableCell>{item.variant || 'N/A'}</TableCell> {/* DISPLAY VARIANT */}
                                             <TableCell>{item.quantity}</TableCell>
                                         </TableRow>
                                     ))}
@@ -341,27 +343,24 @@ export default function PreparingItem() {
                                 p: 2
                             }}>
 
-                                {/**
-                                 * REFACTOR: figure out a reason to use the progress bar
-                                 */}
                                 {/* Step Progress Bar */}
                                 {/*{step > 0 && (*/}
-                                {/*    <Box sx={{ width: '100%', mb: 2 }}>*/}
-                                {/*        <LinearProgress variant="determinate" value={step === 1 ? 50 : 100} />*/}
-                                {/*    </Box>*/}
+                                {/* <Box sx={{ width: '100%', mb: 2 }}>*/}
+                                {/* <LinearProgress variant="determinate" value={step === 1 ? 50 : 100} />*/}
+                                {/* </Box>*/}
                                 {/*)}*/}
 
                                 <Box sx={{ mt: 2 }}>
                                     <Typography variant="body2" sx={{ mb: 2, fontStyle: 'italic', color: 'gray' }}>
                                         Select the available serial numbers for the items below. Leave blank if the item does not require a Serial No.
                                     </Typography>
-                                    {selectedBatch&&selectedBatch.map(item => {
+                                    {selectedBatch && selectedBatch.map(item => {
                                         if (item.categoryName === "Consumables") return null;
                                         return (
                                             <Box key={item.id}>
-                                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{item.itemName}s:</Typography>
+                                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>{item.itemName} ({item.variant || 'N/A'}) s:</Typography> {/* INCLUDE VARIANT IN TITLE */}
                                                 {Array.from({ length: itemQuantities[item.id] }, (_, index) => (
-                                                    <Box key={index} sx={{ display: 'flex', alignItems: 'center', mt: 1 , justifyContent: 'space-between'}}>
+                                                    <Box key={index} sx={{ display: 'flex', alignItems: 'center', mt: 1, justifyContent: 'space-between' }}>
                                                         <Typography>
                                                             {index + 1}. {item.itemName} Serial No.
                                                         </Typography>
@@ -438,4 +437,3 @@ export default function PreparingItem() {
         </>
     );
 }
-

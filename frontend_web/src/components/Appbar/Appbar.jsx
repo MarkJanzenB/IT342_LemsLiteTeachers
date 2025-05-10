@@ -124,70 +124,41 @@ import React, { useState, useEffect } from 'react';
                             </Typography>
                             {page === 'home' ? (
                                 <>
-                                  <Button
-                                      variant={'outlined'}
+                                  <Link to="/login" style={{ textDecoration: 'none', marginRight: '10px' }}>
+                                    <Button
+                                      variant="contained"
                                       sx={{
-                                        fontSize: '1.5em',
+                                        backgroundColor: 'white',
+                                        color: '#056765',
+                                        fontFamily: 'monospace',
+                                        fontWeight: 'bold',
+                                        border: '1px solid #056765',
                                         '&:hover': {
-                                          backgroundColor: '#FFF1DB',
-                                          color: '#BAFFC9',
+                                          backgroundColor: '#056765',
+                                          color: 'white',
                                         },
                                       }}
-                                      onClick={handleOpen}
-                                  >
-                                    <img src={m1} alt="menu" style={{ width: '50px', height: '50px' }} />
-                                  </Button>
-                                  <Modal
-                                      open={open}
-                                      aria-labelledby="modal-modal-title"
-                                      aria-describedby="modal-modal-description"
-                                  >
-                                    <Box sx={style}>
-                                      <div style={{ position: 'absolute', top: 20, right: 7 }}>
-                                        <Button onClick={handleClose}><img src={"/exit.gif"} style={{
-                                          width: '20px',
-                                          height: '20px',
-                                        }}/></Button>
-                                      </div><br/>
-
-                                      <Typography id="modal-modal-title" variant="h6" component="h2" align={"center"}>
-                                        <Link to="/register" style={{ textDecoration: 'none' }}>
-                                          <Box sx={{
-                                            ...buttonStyle,
-                                            '&:hover': {
-                                              bgcolor: '#056765',
-                                              '& button': {
-                                                color: '#FFF'
-                                              }
-                                            }
-                                          }}>
-                                            <Button sx={{
-                                              fontFamily: 'monospace',
-                                              fontWeight: 'bold',
-                                              color: '#056765',
-                                            }}>Create An Account</Button><br />
-                                          </Box>
-                                        </Link>
-                                        <Link to="/login" style={{ textDecoration: 'none' }}>
-                                          <Box sx={{
-                                            ...buttonStyle,
-                                            '&:hover': {
-                                              bgcolor: '#056765',
-                                              '& button': {
-                                                color: '#FFF'
-                                              }
-                                            }
-                                          }}>
-                                            <Button sx={{
-                                              fontFamily: 'monospace',
-                                              fontWeight: 'bold',
-                                              color: '#056765',
-                                            }}>Sign In</Button><br />
-                                          </Box>
-                                        </Link>
-                                      </Typography>
-                                    </Box>
-                                  </Modal>
+                                    >
+                                      Log In
+                                    </Button>
+                                  </Link>
+                                  <Link to="/register" style={{ textDecoration: 'none' }}>
+                                    <Button
+                                      variant="contained"
+                                      sx={{
+                                        backgroundColor: '#056765',
+                                        color: 'white',
+                                        fontFamily: 'monospace',
+                                        fontWeight: 'bold',
+                                        '&:hover': {
+                                          backgroundColor: '#FFF1DB',
+                                          color: '#056765',
+                                        },
+                                      }}
+                                    >
+                                      Create Account
+                                    </Button>
+                                  </Link>
                                 </>
                             ) : (
                                 <>

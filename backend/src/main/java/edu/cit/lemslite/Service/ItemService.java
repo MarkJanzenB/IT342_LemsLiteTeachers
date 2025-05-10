@@ -148,10 +148,15 @@ public class ItemService {
 				}
 
 				itemsToSave.add(newItem);
+				
 			}
 		}
 
 		List<ItemEntity> savedItems = itemrepo.saveAll(itemsToSave);
+		//TODO: Marks
+		//get the item entity returned by savedItems
+		//Transaction history: Type Resupply
+		
 		return ResponseEntity
 				.status(HttpStatus.CREATED) // 201
 				.body(savedItems);

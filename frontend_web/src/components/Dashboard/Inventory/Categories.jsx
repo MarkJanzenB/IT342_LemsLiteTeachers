@@ -56,6 +56,8 @@ export default function Categories() {
     const [openBorrowModal, setOpenBorrowModal] = useState(false);
     const [viewListNumber, setViewListNumber] = useState(0);
     const [openResupplyModal, setOpenResupplyModal] = useState(false);
+    const [openRemoveConfirmation, setOpenRemoveConfirmation] = useState(false);
+    const [selectedRowToRemove, setSelectedRowToRemove] = useState();
 
     const [formData, setFormData] = React.useState({
         itemId: '',
@@ -121,6 +123,8 @@ export default function Categories() {
 
     const handleBorrowModalClose = () => {
         setOpenBorrowModal(false);
+        setSelectedRowToRemove(null);
+        setOpenRemoveConfirmation(false);
     };
 
     const handleAddItemModalClose = () => {
@@ -132,7 +136,7 @@ export default function Categories() {
     };
 
 
-    // Handle form submission (Add to Borrow Cart)
+    // Handle form submission (Add to BorrowReport Cart)
     const handleFormSubmit = async (event) => {
         event.preventDefault();
         if (formData.quantity < 1) {
@@ -186,7 +190,7 @@ export default function Categories() {
             setOpenBorrowModal(false);
         } catch (error) {
             console.error('Error adding item to borrow cart:', error);
-            setSnackbarText('Failed to add item to Borrow Cart.');
+            setSnackbarText('Failed to add item to BorrowReport Cart.');
             setOpenSnackbar(true);
         }
     };
@@ -269,6 +273,7 @@ export default function Categories() {
                 fetchData(currentCategory);
                 setSnackbarText(response.data.name + " has been successfully removed.");
                 setOpenSnackbar(true);
+                setOpenRemoveConfirmation(false);
             })
             .catch(error)
     };
@@ -751,6 +756,46 @@ export default function Categories() {
                                     Add to Borrow Cart
                                 </Button>
                             </Box>
+                        </Modal>
+
+                        <Modal open={openRemoveConfirmation} onClose={handleBorrowModalClose}>
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    width: 500,
+                                    bgcolor: '#F2EE9D',
+                                    boxShadow: 24,
+                                    p: 4,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 2,
+                                    borderRadius: '25px',
+                                }}
+                            >
+                                <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#016565', textAlign: 'center' }}>
+                                    Are you sure you want to remove this item?
+                                </Typography>
+                                <Box display="flex" justifyContent="space-between" mt={2}>
+                                <Button variant="outlined" sx={{ color: '#800000', borderColor: '#800000' }} onClick={() => {
+                                    handleBorrowModalClose()
+                                }}>
+                                    Cancel
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    sx={{ backgroundColor: '#800000', color: '#FFF', '&:hover': { backgroundColor: '#5c0000' } }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOpenRemoveConfirmationFunction(row.inventory_id);
+                                    }}
+                                >
+                                    Remove
+                                </Button>
+                                </Box>
+                            </Box>       
                         </Modal>
 
                         {openModal && (

@@ -33,7 +33,7 @@ const theme = createTheme({
     },
 });
 
-export default function ReturnHistory({ userId }) {
+export default function BorrowHistory({ userId }) {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [openModal, setOpenModal] = useState(false);
@@ -50,9 +50,11 @@ export default function ReturnHistory({ userId }) {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarText, setSnackbarText] = useState("");
     const [groupedItems, setGroupedItems] = useState({});
-    const [itemStatuses, setItemStatuses] = useState([]);
     const instiId = getJWTSub();
     const navigate = useNavigate();
+    const [teacherSchedule, setTeacherSchedule] = useState("N/A");
+    const [itemStatuses, setItemStatuses] = useState({});
+
 
     useEffect(() => {
         fetchBorrowData();
@@ -72,9 +74,9 @@ export default function ReturnHistory({ userId }) {
         try {
             let apiUrl;
             if (userRole === "1") {
-                apiUrl = `https://it342-lemsliteteachers.onrender.com/api/preparing-items/getpreparingitems?instiId=${instiId}&status=Returned`;
+                apiUrl = `https://it342-lemsliteteachers.onrender.com/api/preparing-items/getpreparingitems?instiId=${instiId}&status=In-use`;
             } else {
-                apiUrl = `https://it342-lemsliteteachers.onrender.com/api/preparing-items/getpreparingitems?status=Returned`;
+                apiUrl = `https://it342-lemsliteteachers.onrender.com/api/preparing-items/getpreparingitems?status=In-use`;
             }
 
             const response = await axios.get(apiUrl, {
@@ -98,6 +100,34 @@ export default function ReturnHistory({ userId }) {
             console.error("Error fetching borrow items:", error);
         }
     };
+
+
+        const fetchTeacherSchedule = async (preparingItemId) => {
+            const token = localStorage.getItem("jwtToken");
+            if (!token) {
+                console.error("No JWT token found. Please log in again.");
+                setTeacherSchedule("N/A");
+                return;
+            }
+
+            try {
+                const response = await axios.get(
+                    `https://it342-lemsliteteachers.onrender.com/api/preparing-items/teacherSchedule/${preparingItemId}`,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                if (response.data) {
+                    const schedule = response.data;
+                    const formattedSchedule = `${new Date(schedule.date).toLocaleDateString()} | ${schedule.startTime} - ${schedule.endTime} | Lab ${schedule.labNum || schedule.location || 'N/A'}`;
+                    setTeacherSchedule(formattedSchedule);
+                } else {
+                    setTeacherSchedule("N/A");
+                }
+            } catch (error) {
+                console.error("Error fetching teacher schedule:", error);
+                setTeacherSchedule("N/A");
+            }
+        };
+
 
     const fetchBorrowList = async () => {
         const instiId = localStorage.getItem("instiId");
@@ -134,11 +164,19 @@ export default function ReturnHistory({ userId }) {
     const filterItems = () => {
         let filtered = borrowList;
 
-        if (searchQuery) {
-            filtered = filtered.filter(item =>
-                item.itemName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                item.id.toString().includes(searchQuery)
-            );
+        if (searchQuery.trim() !== "") {
+            const searchTerm = searchQuery.toLowerCase();
+            filtered = filtered.filter(item => {
+                const borrowerName = item.user
+                    ? `${item.user.first_name} ${item.user.last_name}`.toLowerCase()
+                    : '';
+
+                return (
+                    (item.itemName && item.itemName.toLowerCase().includes(searchTerm)) ||
+                    (item.id && item.id.toString().includes(searchTerm)) ||
+                    borrowerName.includes(searchTerm)
+                );
+            });
         }
 
         if (categoryFilter) {
@@ -147,6 +185,7 @@ export default function ReturnHistory({ userId }) {
 
         setFilteredBorrowList(filtered);
     };
+
 
     const handleStatusChange = async (borrowedId, status) => {
         const token = localStorage.getItem("jwtToken");
@@ -168,13 +207,19 @@ export default function ReturnHistory({ userId }) {
 
     const filteredGroups = Object.entries(borrowGroups)
         .filter(([borrowId, items]) => {
+            const lowerQuery = searchQuery.toLowerCase();
+            const teacherName = `${items[0]?.user?.first_name ?? ""} ${items[0]?.user?.last_name ?? ""}`.toLowerCase();
+
             const matchesSearch = searchQuery === "" ||
-                borrowId.toString().includes(searchQuery) ||
-                items.some(item => item.itemName.toLowerCase().includes(searchQuery.toLowerCase()));
+                borrowId.toString().toLowerCase().includes(lowerQuery) ||
+                items.some(item => item.itemName.toLowerCase().includes(lowerQuery)) ||
+                teacherName.includes(lowerQuery);
 
             const matchesStatus = statusFilter === "" || items[0].status === statusFilter;
             return matchesSearch && matchesStatus;
         })
+
+
         .sort((a, b) => new Date(b[1][0].borrowedDate || 0) - new Date(a[1][0].borrowedDate || 0));
 
     const handleChangePage = (event, newPage) => setPage(newPage);
@@ -189,6 +234,13 @@ export default function ReturnHistory({ userId }) {
         setSelectedBatch(batch);
         setSelectedBorrowId(borrowId);
         setOpenModal(true);
+
+        // Fetch teacher schedule when modal opens
+        if (batch && batch[0]?.id) {
+            fetchTeacherSchedule(batch[0].id);
+        } else {
+            setTeacherSchedule("N/A");
+        }
 
         const preparingIds = batch
             .filter(item => item.categoryName !== "Consumables")
@@ -222,7 +274,7 @@ export default function ReturnHistory({ userId }) {
     };
 
     const groupByItemName = (batch) => {
-          
+
         return batch.reduce((acc, item) => {
         const name = item.item_name || item.itemName;
           if (!acc[name]) {
@@ -235,7 +287,7 @@ export default function ReturnHistory({ userId }) {
 
     const handleStatusChangePerItem = (status, itemId) => {
         const newStatus = status;
-    
+
         setItemStatuses((prevStatuses) => {
             return {
                 ...prevStatuses,
@@ -243,7 +295,7 @@ export default function ReturnHistory({ userId }) {
             };
         });
     };
-    
+
     useEffect(() => {
         Object.entries(groupedItems).forEach(([itemName, items]) => {
             if (items[0].categoryName !== 'Consumables') {
@@ -288,7 +340,7 @@ export default function ReturnHistory({ userId }) {
                 <div style={{ padding: '20px', flexGrow: 1, marginTop: '100px', overflow: 'hidden' }}>
                     <div style={{ display: "flex", gap: "10px", marginBottom: "16px", alignItems: "center" }}>
                         <TextField
-                            label="Search by BorrowReport ID or Item Name"
+                            label="Search by Borrow ID or Item Name"
                             variant="outlined"
                             fullWidth
                             value={searchQuery}
@@ -305,7 +357,7 @@ export default function ReturnHistory({ userId }) {
                                     justifyContent: 'center' // Center text horizontally
                                 }}
                         >
-                            {showBorrowList ? "View Main BorrowHistory" : "View BorrowReport BorrowHistory"}
+                            {showBorrowList ? "View Main List" : "View Borrow List"}
                         </Button>
                         {localStorage.getItem("userRole") === '1' && (
                         <Button variant="contained"
@@ -362,6 +414,7 @@ export default function ReturnHistory({ userId }) {
                                             <TableCell>Borrowed ID</TableCell>
                                             <TableCell>Category</TableCell>
                                             <TableCell>Item Name</TableCell>
+                                            <TableCell>Variant</TableCell>
                                             <TableCell>Quantity</TableCell>
                                             <TableCell>Borrowed Date</TableCell>
                                             <TableCell>Status</TableCell>
@@ -373,6 +426,7 @@ export default function ReturnHistory({ userId }) {
                                                 <TableCell>{item.referenceCode || "N/A"}</TableCell>
                                                 <TableCell>{item.categoryName || "N/A"}</TableCell>
                                                 <TableCell>{item.itemName || "N/A"}</TableCell>
+                                                <TableCell>{item.variant || 'N/A'}</TableCell>
                                                 <TableCell>{item.quantity}</TableCell>
                                                 <TableCell>
                                                     {item.dateCreated ? new Date(item.dateCreated).toLocaleDateString("en-US", {
@@ -406,9 +460,10 @@ export default function ReturnHistory({ userId }) {
                                     <Table stickyHeader>
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell>BorrowReport ID</TableCell>
+                                                <TableCell>Borrow ID</TableCell>
                                                 <TableCell>Teacher Name</TableCell>
                                                 <TableCell>Borrowed Date</TableCell>
+                                                <TableCell>Status</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -427,6 +482,22 @@ export default function ReturnHistory({ userId }) {
                                                         day: "numeric",
                                                     }) : "N/A"}
                                                 </TableCell>
+                                                    <TableCell>
+                                                        {localStorage.getItem("userRole") !== "1" ? (
+                                                            <Select
+                                                                className="status-dropdown"
+                                                                value={items[0].status}
+                                                                onChange={(e) => handleStatusChange(borrowId, e.target.value)}
+                                                                onClick={(e) => e.stopPropagation()}
+                                                                disabled
+                                                            >
+                                                                <MenuItem value="Preparing">Preparing</MenuItem>
+                                                                <MenuItem value="In-use">In-use</MenuItem>
+                                                            </Select>
+                                                        ) : (
+                                                            <Typography>{items[0].status}</Typography>
+                                                        )}
+                                                    </TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
@@ -475,26 +546,24 @@ export default function ReturnHistory({ userId }) {
                     {selectedBatch && (<>
                         <Typography variant="h6" component="h2"
                                 sx={{fontWeight: 'bold', color: '#016565', textAlign: 'center'}}>
-                        BorrowReport ID {selectedBorrowId}
+                        Borrow ID {selectedBorrowId}
                         </Typography>
 
-                        <Typography variant="body1">Date Borrowed: {selectedBatch[0].dateCreated ? new Date(selectedBatch[0].dateCreated).toLocaleDateString("en-US", {
+                        <Typography variant="body1"><strong>Date Borrowed:</strong> {selectedBatch[0].dateCreated ? new Date(selectedBatch[0].dateCreated).toLocaleDateString("en-US", {
                                 year: "numeric",
                                 month: "long",
                                 day: "numeric",
                             }) : "N/A"}
                         </Typography>
-                        <Typography>
-                            Schedule: "N/A"
-                        </Typography>
-                        <Typography variant="body1">Teacher: {selectedBatch[0]?.user?.first_name && selectedBatch[0]?.user?.last_name
+                        <Typography className="modal-info"><strong>Schedule:</strong> {teacherSchedule}</Typography>
+                        <Typography variant="body1"><strong>Teacher:</strong> {selectedBatch[0]?.user?.first_name && selectedBatch[0]?.user?.last_name
                                 ? `${selectedBatch[0].user.first_name} ${selectedBatch[0].user.last_name}`
                                 : "N/A"}</Typography>
                         <TableContainer component={Paper} style={{width: '100%', height: '100%'}} stickyHeader>
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell 
+                                        <TableCell
                                             sx={{
                                         position: 'sticky',
                                         top: 0,
@@ -533,8 +602,8 @@ export default function ReturnHistory({ userId }) {
                                                         <Table size="small">
                                                             <TableHead>
                                                                 <TableRow>
-                                                                    <TableCell>Item</TableCell>
                                                                     <TableCell>Serial Number</TableCell>
+                                                                    <TableCell>Variant</TableCell>
                                                                     <TableCell>Category</TableCell>
                                                                     {items[0].categoryName !== 'Consumables' && <TableCell sx={{width: '250px'}}>Return Status</TableCell>}
                                                                 </TableRow>
@@ -543,36 +612,37 @@ export default function ReturnHistory({ userId }) {
                                                                 {items.map((item, index) => {
                                                                     return(
                                                                         <TableRow key={index}>
-                                                                            <TableCell>{item.item_name ? item.item_name : item.itemName}</TableCell>
                                                                             <TableCell>{item.unique_id ? item.unique_id : ""}</TableCell>
+                                                                            <TableCell>{item.variant || 'N/A'}</TableCell>
                                                                             <TableCell>{item.categoryName ? item.categoryName : item.inventory.item_category.category_name}</TableCell>
-                                                                            {items[0].categoryName !== 'Consumables' && 
+                                                                            {items[0].categoryName !== 'Consumables' &&
                                                                                 <TableCell>
-                                                                                <Box
-                                                                                  sx={{
-                                                                                    width: '200px',
-                                                                                    px: 2,
-                                                                                    py: 1,
-                                                                                    borderRadius: '4px',
-                                                                                    bgcolor:
-                                                                                      item.status === "Damage"
-                                                                                        ? '#c33130'
-                                                                                        : item.status === "Missing"
-                                                                                        ? '#a86a0d'
-                                                                                        : item.status === "Wrong Item"
-                                                                                        ? '#ffcc00'
-                                                                                        : item.status === "Available"
-                                                                                        ? '#0c9a17'
-                                                                                        : 'transparent',
-                                                                                    color: item.status === "Wrong Item" ? 'black' : 'white',
-                                                                                    fontWeight: 500,
-                                                                                    textAlign: 'center',
-                                                                                  }}
-                                                                                >
-                                                                                  {item.status === "Available" ? "Returned" : item.status}
-                                                                                </Box>
-                                                                              </TableCell>
-                                                                              
+                                                                                    <Select
+                                                                                        value={itemStatuses[item.item_id]}
+                                                                                        onChange={(e) => handleStatusChangePerItem(e.target.value, item.item_id)}
+                                                                                        sx={{
+                                                                                            width: '200px',
+                                                                                            bgcolor:
+                                                                                              itemStatuses[item.item_id] === "Damage"
+                                                                                                ? '#c33130'
+                                                                                                : itemStatuses[item.item_id] === "Missing"
+                                                                                                ? '#a86a0d'
+                                                                                                : itemStatuses[item.item_id] === "Wrong Item"
+                                                                                                ? '#ffcc00'
+                                                                                                : itemStatuses[item.item_id] === "Available"
+                                                                                                ? '#0c9a17'
+                                                                                                : '',
+                                                                                            color: itemStatuses[item.item_id] === "Wrong Item"
+                                                                                                ? 'black'
+                                                                                                : 'white'
+                                                                                        }}
+                                                                                    >
+                                                                                        <MenuItem value="Available">Available</MenuItem>
+                                                                                        <MenuItem value="Damage">Damage</MenuItem>
+                                                                                        <MenuItem value="Missing">Missing</MenuItem>
+                                                                                        <MenuItem value="Wrong Item">Wrong Item</MenuItem>
+                                                                                    </Select>
+                                                                                </TableCell>
                                                                             }
                                                                         </TableRow>
                                                                     )
@@ -592,6 +662,11 @@ export default function ReturnHistory({ userId }) {
                     <Box display="flex" justifyContent="space-between" mt={2}>
                         <Button variant="outlined" sx={{color: '#800000', borderColor: '#800000'}}
                                 onClick={handleCloseModal}>Close</Button>
+                        <Button variant="contained" sx={{
+                                                        backgroundColor: '#800000',
+                                                        color: '#FFF',
+                                                        '&:hover': {backgroundColor: '#5c0000'}
+                                                    }} onClick={handleReturnItems}>Return Items</Button>
                     </Box>
                 </Box>
             </Modal>
