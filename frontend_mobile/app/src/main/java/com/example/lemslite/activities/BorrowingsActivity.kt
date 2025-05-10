@@ -26,7 +26,7 @@ import retrofit2.Response
 
 class BorrowingsActivity : AppCompatActivity() {
     private lateinit var borrowRecyclerView: RecyclerView
-    private lateinit var borrowAdapter: BorrowItemAdapter
+    val adapter = BorrowItemAdapter(emptyList())
     private val borrows = mutableListOf<BorrowItem>()
     private val sharedPreferences by lazy {
         getSharedPreferences("user_session", MODE_PRIVATE)
@@ -58,11 +58,8 @@ class BorrowingsActivity : AppCompatActivity() {
         }
 
         borrowRecyclerView = findViewById(R.id.borrowView)
+        borrowRecyclerView.adapter = adapter
         borrowRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        if (uid != null) {
-            borrowAdapter = BorrowItemAdapter(this, borrows, uid.toInt())
-        }
 
 
         userIcon.setOnClickListener {
@@ -119,13 +116,13 @@ class BorrowingsActivity : AppCompatActivity() {
 
     private fun fetchBorrowItems(uid: Integer) {
         val apiService = RetrofitInstance.getRetrofit(this).create(ApiService::class.java)
-        apiService.getBorrowings().enqueue(object : Callback<List<BorrowItem>> {
+        apiService.getBorrowings("uid","In-use").enqueue(object : Callback<List<BorrowItem>> {
             override fun onResponse(call: Call<List<BorrowItem>>, response: Response<List<BorrowItem>>) {
                 if (response.isSuccessful) {
                     val allItems = response.body() ?: emptyList()
                     borrows.clear()
-                    borrows.addAll(allItems.filter { it.userId == uid.toInt() })
-                    borrowAdapter.notifyDataSetChanged()
+                    borrows.addAll(response.body() ?: emptyList())
+                    adapter.updateItems(borrows)
                 } else {
                     Toast.makeText(this@BorrowingsActivity, "Failed to load items", Toast.LENGTH_SHORT).show()
                 }

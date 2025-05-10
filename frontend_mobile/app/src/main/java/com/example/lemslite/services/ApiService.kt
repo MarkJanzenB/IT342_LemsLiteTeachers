@@ -59,8 +59,10 @@ interface ApiService {
     fun getAllItems(
     ): Call<List<Item>>
 
-    @GET("/borrowitem/all")
+    @GET("/api/preparing-items/getpreparingitems")
     fun getBorrowings(
+        @Query("uid") uid: String,
+        @Query("status") status: String
     ): Call<List<BorrowItem>>
     
 }
